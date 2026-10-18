@@ -6,7 +6,7 @@
 <!-- Breadcrumbs -->
 <div class="mb-2">
     <small class="text-muted" style="font-size: 0.78rem;">
-        <span>Admin</span> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
+        <span>Admin</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
         <span class="text-dark fw-semibold">Pengguna</span>
     </small>
 </div>
@@ -23,7 +23,7 @@
         <x-stat-card 
             label="Total Pengguna" 
             value="24.850" 
-            icon="bi bi-people" 
+            icon="users" 
             iconBg="purple" 
             subtext="Total akun terdaftar" 
         />
@@ -32,7 +32,7 @@
         <x-stat-card 
             label="Pengguna Aktif" 
             value="18.920" 
-            icon="bi bi-shield-check" 
+            icon="shield-check" 
             iconBg="green" 
             trend="12.4%" 
             subtext="aktif bln ini" 
@@ -42,7 +42,7 @@
         <x-stat-card 
             label="Pengguna Baru" 
             value="3.410" 
-            icon="bi bi-clock" 
+            icon="clock" 
             iconBg="orange" 
             trend="8.2%" 
             subtext="vs bln lalu" 
@@ -52,7 +52,7 @@
         <x-stat-card 
             label="Pelanggan Premium" 
             value="3.274" 
-            icon="bi bi-gem" 
+            icon="gem" 
             iconBg="purple" 
             subtext="Memiliki akses penuh" 
         />
@@ -64,7 +64,7 @@
     <div class="row g-2 align-items-center">
         <div class="col-12 col-md-6 col-lg-8">
             <div class="search-input-wrap">
-                <i class="bi bi-search"></i>
+                <i data-lucide="search"></i>
                 <input type="text" id="userSearchInput" class="form-control-custom bg-light" placeholder="Cari nama atau email pengguna...">
             </div>
         </div>
@@ -128,12 +128,12 @@
                         <small class="text-muted">0812-34**-8910</small>
                     </td>
                     <td class="text-muted" style="font-size: 0.8rem;">15 Jan 2026</td>
-                    <td class="status-cell"><span class="badge-pill-success"><i class="bi bi-shield-check"></i> Aktif</span></td>
-                    <td><span class="badge-pill-premium"><i class="bi bi-gem"></i> Premium Aktif</span></td>
+                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="shield-check"></i> Aktif</span></td>
+                    <td><span class="badge-pill-premium"><i data-lucide="gem"></i> Premium Aktif</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">16 Okt 2026, 01:20 WIB</td>
                     <td class="text-end">
                         <button class="btn btn-sm btn-humora-secondary py-1 px-2 btn-open-user-detail" style="font-size: 0.76rem;">
-                            <i class="bi bi-eye"></i> Detail
+                            <i data-lucide="eye"></i> Detail
                         </button>
                     </td>
                 </tr>
@@ -164,12 +164,12 @@
                         <small class="text-muted">0813-88**-1243</small>
                     </td>
                     <td class="text-muted" style="font-size: 0.8rem;">18 Jan 2026</td>
-                    <td class="status-cell"><span class="badge-pill-success"><i class="bi bi-shield-check"></i> Aktif</span></td>
-                    <td><span class="badge-pill-premium"><i class="bi bi-gem"></i> Premium Aktif</span></td>
+                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="shield-check"></i> Aktif</span></td>
+                    <td><span class="badge-pill-premium"><i data-lucide="gem"></i> Premium Aktif</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">16 Okt 2026, 15:15 WIB</td>
                     <td class="text-end">
                         <button class="btn btn-sm btn-humora-secondary py-1 px-2 btn-open-user-detail" style="font-size: 0.76rem;">
-                            <i class="bi bi-eye"></i> Detail
+                            <i data-lucide="eye"></i> Detail
                         </button>
                     </td>
                 </tr>
@@ -200,12 +200,12 @@
                         <small class="text-muted">0857-12**-7788</small>
                     </td>
                     <td class="text-muted" style="font-size: 0.8rem;">22 Jan 2026</td>
-                    <td class="status-cell"><span class="badge-pill-success"><i class="bi bi-shield-check"></i> Aktif</span></td>
-                    <td><span class="badge-pill-warning"><i class="bi bi-clock-history"></i> Kedaluwarsa</span></td>
+                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="shield-check"></i> Aktif</span></td>
+                    <td><span class="badge-pill-warning"><i data-lucide="history"></i> Kedaluwarsa</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">10 Okt 2026, 19:00 WIB</td>
                     <td class="text-end">
                         <button class="btn btn-sm btn-humora-secondary py-1 px-2 btn-open-user-detail" style="font-size: 0.76rem;">
-                            <i class="bi bi-eye"></i> Detail
+                            <i data-lucide="eye"></i> Detail
                         </button>
                     </td>
                 </tr>
@@ -236,12 +236,12 @@
                         <small class="text-muted">0821-99**-4321</small>
                     </td>
                     <td class="text-muted" style="font-size: 0.8rem;">1 Feb 2026</td>
-                    <td class="status-cell"><span class="badge-pill-success"><i class="bi bi-shield-check"></i> Aktif</span></td>
+                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="shield-check"></i> Aktif</span></td>
                     <td><span class="badge-pill-gray">Akun Gratis</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">16 Okt 2026, 05:45 WIB</td>
                     <td class="text-end">
                         <button class="btn btn-sm btn-humora-secondary py-1 px-2 btn-open-user-detail" style="font-size: 0.76rem;">
-                            <i class="bi bi-eye"></i> Detail
+                            <i data-lucide="eye"></i> Detail
                         </button>
                     </td>
                 </tr>
@@ -272,12 +272,12 @@
                         <small class="text-muted">0878-55**-6611</small>
                     </td>
                     <td class="text-muted" style="font-size: 0.8rem;">5 Feb 2026</td>
-                    <td class="status-cell"><span class="badge-pill-danger"><i class="bi bi-ban"></i> Ditangguhkan</span></td>
+                    <td class="status-cell"><span class="badge-pill-danger"><i data-lucide="ban"></i> Ditangguhkan</span></td>
                     <td><span class="badge-pill-gray">Akun Gratis</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">12 Okt 2026, 08:30 WIB</td>
                     <td class="text-end">
                         <button class="btn btn-sm btn-humora-secondary py-1 px-2 btn-open-user-detail" style="font-size: 0.76rem;">
-                            <i class="bi bi-eye"></i> Detail
+                            <i data-lucide="eye"></i> Detail
                         </button>
                     </td>
                 </tr>
@@ -308,12 +308,12 @@
                         <small class="text-muted">0812-11**-3344</small>
                     </td>
                     <td class="text-muted" style="font-size: 0.8rem;">10 Feb 2026</td>
-                    <td class="status-cell"><span class="badge-pill-success"><i class="bi bi-shield-check"></i> Aktif</span></td>
-                    <td><span class="badge-pill-premium"><i class="bi bi-gem"></i> Premium Aktif</span></td>
+                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="shield-check"></i> Aktif</span></td>
+                    <td><span class="badge-pill-premium"><i data-lucide="gem"></i> Premium Aktif</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">15 Okt 2026, 17:30 WIB</td>
                     <td class="text-end">
                         <button class="btn btn-sm btn-humora-secondary py-1 px-2 btn-open-user-detail" style="font-size: 0.76rem;">
-                            <i class="bi bi-eye"></i> Detail
+                            <i data-lucide="eye"></i> Detail
                         </button>
                     </td>
                 </tr>
@@ -344,12 +344,12 @@
                         <small class="text-muted">0819-22**-8899</small>
                     </td>
                     <td class="text-muted" style="font-size: 0.8rem;">14 Feb 2026</td>
-                    <td class="status-cell"><span class="badge-pill-success"><i class="bi bi-shield-check"></i> Aktif</span></td>
-                    <td><span class="badge-pill-premium"><i class="bi bi-gem"></i> Premium Aktif</span></td>
+                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="shield-check"></i> Aktif</span></td>
+                    <td><span class="badge-pill-premium"><i data-lucide="gem"></i> Premium Aktif</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">15 Okt 2026, 14:15 WIB</td>
                     <td class="text-end">
                         <button class="btn btn-sm btn-humora-secondary py-1 px-2 btn-open-user-detail" style="font-size: 0.76rem;">
-                            <i class="bi bi-eye"></i> Detail
+                            <i data-lucide="eye"></i> Detail
                         </button>
                     </td>
                 </tr>
@@ -380,12 +380,12 @@
                         <small class="text-muted">0852-66**-7700</small>
                     </td>
                     <td class="text-muted" style="font-size: 0.8rem;">20 Feb 2026</td>
-                    <td class="status-cell"><span class="badge-pill-success"><i class="bi bi-shield-check"></i> Aktif</span></td>
+                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="shield-check"></i> Aktif</span></td>
                     <td><span class="badge-pill-gray">Akun Gratis</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">14 Okt 2026, 23:20 WIB</td>
                     <td class="text-end">
                         <button class="btn btn-sm btn-humora-secondary py-1 px-2 btn-open-user-detail" style="font-size: 0.76rem;">
-                            <i class="bi bi-eye"></i> Detail
+                            <i data-lucide="eye"></i> Detail
                         </button>
                     </td>
                 </tr>
@@ -408,9 +408,9 @@
         </div>
         <nav aria-label="Page navigation">
             <ul class="pagination pagination-sm mb-0">
-                <li class="page-item disabled"><a class="page-link" href="#"><i class="bi bi-chevron-left"></i></a></li>
+                <li class="page-item disabled"><a class="page-link" href="#"><i data-lucide="chevron-left"></i></a></li>
                 <li class="page-item active"><a class="page-link" href="#" style="background-color: #43135C; border-color: #43135C;">1</a></li>
-                <li class="page-item disabled"><a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a></li>
+                <li class="page-item disabled"><a class="page-link" href="#"><i data-lucide="chevron-right"></i></a></li>
             </ul>
         </nav>
     </div>
@@ -448,20 +448,20 @@
                     <div class="col-6">
                         <small class="text-muted d-block" style="font-size: 0.75rem;">Status Akun</small>
                         <div id="modalUserStatusWrap" class="mt-1">
-                            <span class="badge-pill-success" id="modalUserStatus"><i class="bi bi-shield-check"></i> Aktif</span>
+                            <span class="badge-pill-success" id="modalUserStatus"><i data-lucide="shield-check"></i> Aktif</span>
                         </div>
                     </div>
                     <div class="col-6">
                         <small class="text-muted d-block" style="font-size: 0.75rem;">Status Langganan</small>
                         <div id="modalUserSubWrap" class="mt-1">
-                            <span class="badge-pill-premium" id="modalUserSub"><i class="bi bi-gem"></i> Premium Aktif (Paket 3 Bulan)</span>
+                            <span class="badge-pill-premium" id="modalUserSub"><i data-lucide="gem"></i> Premium Aktif (Paket 3 Bulan)</span>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer modal-footer-humora justify-content-between">
                 <button type="button" class="btn btn-outline-danger btn-sm" id="btnToggleUserStatus">
-                    <i class="bi bi-ban me-1"></i> Tangguhkan Akun
+                    <i data-lucide="ban" class="me-1"></i> Tangguhkan Akun
                 </button>
                 <button type="button" class="btn btn-humora-secondary" data-bs-dismiss="modal">Tutup</button>
             </div>
@@ -509,19 +509,19 @@
                 modalUserPhone.innerText = phone;
 
                 if (status === 'Aktif') {
-                    modalUserStatusWrap.innerHTML = '<span class="badge-pill-success"><i class="bi bi-shield-check"></i> Aktif</span>';
+                    modalUserStatusWrap.innerHTML = '<span class="badge-pill-success"><i data-lucide="shield-check"></i> Aktif</span>';
                     btnToggleUserStatus.className = 'btn btn-outline-danger btn-sm';
-                    btnToggleUserStatus.innerHTML = '<i class="bi bi-ban me-1"></i> Tangguhkan Akun';
+                    btnToggleUserStatus.innerHTML = '<i data-lucide="ban" class="me-1"></i> Tangguhkan Akun';
                 } else {
-                    modalUserStatusWrap.innerHTML = '<span class="badge-pill-danger"><i class="bi bi-ban"></i> Ditangguhkan</span>';
+                    modalUserStatusWrap.innerHTML = '<span class="badge-pill-danger"><i data-lucide="ban"></i> Ditangguhkan</span>';
                     btnToggleUserStatus.className = 'btn btn-outline-success btn-sm';
-                    btnToggleUserStatus.innerHTML = '<i class="bi bi-check-circle me-1"></i> Aktifkan Kembali';
+                    btnToggleUserStatus.innerHTML = '<i data-lucide="check-circle" class="me-1"></i> Aktifkan Kembali';
                 }
 
                 if (sub.includes('Premium')) {
-                    modalUserSubWrap.innerHTML = `<span class="badge-pill-premium"><i class="bi bi-gem"></i> ${sub}</span>`;
+                    modalUserSubWrap.innerHTML = `<span class="badge-pill-premium"><i data-lucide="gem"></i> ${sub}</span>`;
                 } else if (sub.includes('Kedaluwarsa')) {
-                    modalUserSubWrap.innerHTML = `<span class="badge-pill-warning"><i class="bi bi-clock-history"></i> ${sub}</span>`;
+                    modalUserSubWrap.innerHTML = `<span class="badge-pill-warning"><i data-lucide="history"></i> ${sub}</span>`;
                 } else {
                     modalUserSubWrap.innerHTML = `<span class="badge-pill-gray">${sub}</span>`;
                 }
@@ -539,20 +539,20 @@
             if (currentStatus === 'Aktif') {
                 activeUserRow.dataset.userStatus = 'Ditangguhkan';
                 if (statusCell) {
-                    statusCell.innerHTML = '<span class="badge-pill-danger"><i class="bi bi-ban"></i> Ditangguhkan</span>';
+                    statusCell.innerHTML = '<span class="badge-pill-danger"><i data-lucide="ban"></i> Ditangguhkan</span>';
                 }
-                modalUserStatusWrap.innerHTML = '<span class="badge-pill-danger"><i class="bi bi-ban"></i> Ditangguhkan</span>';
+                modalUserStatusWrap.innerHTML = '<span class="badge-pill-danger"><i data-lucide="ban"></i> Ditangguhkan</span>';
                 btnToggleUserStatus.className = 'btn btn-outline-success btn-sm';
-                btnToggleUserStatus.innerHTML = '<i class="bi bi-check-circle me-1"></i> Aktifkan Kembali';
+                btnToggleUserStatus.innerHTML = '<i data-lucide="check-circle" class="me-1"></i> Aktifkan Kembali';
                 window.showHumoraToast(`Akun ${userName} berhasil ditangguhkan.`, 'warning');
             } else {
                 activeUserRow.dataset.userStatus = 'Aktif';
                 if (statusCell) {
-                    statusCell.innerHTML = '<span class="badge-pill-success"><i class="bi bi-shield-check"></i> Aktif</span>';
+                    statusCell.innerHTML = '<span class="badge-pill-success"><i data-lucide="shield-check"></i> Aktif</span>';
                 }
-                modalUserStatusWrap.innerHTML = '<span class="badge-pill-success"><i class="bi bi-shield-check"></i> Aktif</span>';
+                modalUserStatusWrap.innerHTML = '<span class="badge-pill-success"><i data-lucide="shield-check"></i> Aktif</span>';
                 btnToggleUserStatus.className = 'btn btn-outline-danger btn-sm';
-                btnToggleUserStatus.innerHTML = '<i class="bi bi-ban me-1"></i> Tangguhkan Akun';
+                btnToggleUserStatus.innerHTML = '<i data-lucide="ban" class="me-1"></i> Tangguhkan Akun';
                 window.showHumoraToast(`Akun ${userName} berhasil diaktifkan kembali.`, 'success');
             }
         });

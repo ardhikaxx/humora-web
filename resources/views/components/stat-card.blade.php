@@ -13,20 +13,20 @@
     <div class="stat-card-top">
         <div class="stat-label">{{ $label }}</div>
         <div class="stat-icon-wrap stat-icon-{{ $iconBg }}">
-            <i class="{{ $icon }}"></i>
+            <i data-lucide="{{ $icon }}"></i>
         </div>
     </div>
     <div>
-        <div class="d-flex align-items-center gap-2 mb-1">
+        <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
             <span class="stat-value">{{ $value }}</span>
             @if($badge)
                 <span class="badge" style="background-color: #FEF08A; color: #854D0E; font-size: 0.7rem; font-weight: 700;">{{ $badge }}</span>
             @endif
         </div>
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
             @if($trend)
                 <span class="stat-trend {{ $trendType }}">
-                    <i class="bi {{ $trendType === 'positive' ? 'bi-arrow-up-right' : 'bi-arrow-down-right' }}"></i>
+                    <i data-lucide="{{ $trendType === 'positive' ? 'arrow-up-right' : 'arrow-down-right' }}"></i>
                     {{ $trend }}
                 </span>
             @endif

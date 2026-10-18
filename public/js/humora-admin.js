@@ -14,24 +14,28 @@ window.showHumoraToast = function (message, type = 'success', duration = 3500) {
     }
 
     const toastId = 'toast-' + Date.now();
-    let iconClass = 'bi-check-circle-fill text-success';
+    let iconName = 'check-circle-2';
+    let iconClass = 'text-success';
     let titleText = 'Berhasil';
 
     if (type === 'danger' || type === 'error') {
-        iconClass = 'bi-x-circle-fill text-danger';
+        iconName = 'x-circle';
+        iconClass = 'text-danger';
         titleText = 'Gagal';
     } else if (type === 'warning') {
-        iconClass = 'bi-exclamation-triangle-fill text-warning';
+        iconName = 'alert-triangle';
+        iconClass = 'text-warning';
         titleText = 'Peringatan';
     } else if (type === 'info') {
-        iconClass = 'bi-info-circle-fill text-info';
+        iconName = 'info';
+        iconClass = 'text-info';
         titleText = 'Informasi';
     }
 
     const toastHtml = `
         <div id="${toastId}" class="toast toast-humora align-items-center border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="d-flex align-items-center p-3">
-                <i class="bi ${iconClass} fs-5 me-2 flex-shrink-0"></i>
+                <i data-lucide="${iconName}" class="${iconClass} fs-5 me-2 flex-shrink-0"></i>
                 <div class="toast-body p-0 flex-grow-1" style="font-size: 0.85rem;">
                     <strong>${titleText}:</strong> ${message}
                 </div>
@@ -41,6 +45,9 @@ window.showHumoraToast = function (message, type = 'success', duration = 3500) {
     `;
 
     container.insertAdjacentHTML('beforeend', toastHtml);
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
     const toastEl = document.getElementById(toastId);
     if (toastEl && window.bootstrap) {
         const bsToast = new bootstrap.Toast(toastEl, { delay: duration });
@@ -50,6 +57,9 @@ window.showHumoraToast = function (message, type = 'success', duration = 3500) {
 };
 
 document.addEventListener('DOMContentLoaded', function () {
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
     // -------------------------------------------------------------
     // 1. GLOBAL DELETE CONFIRMATION MODAL
     // -------------------------------------------------------------
@@ -168,12 +178,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     emptyRow.className = 'empty-state-row';
                     emptyRow.innerHTML = `
                         <td colspan="${cols}" class="empty-table-state">
-                            <i class="bi bi-search"></i>
+                            <i data-lucide="search"></i>
                             <div class="fw-bold">Tidak ada data ditemukan</div>
                             <small class="text-muted">Coba ubah kata kunci pencarian atau sesuaikan filter Anda.</small>
                         </td>
                     `;
                     table.querySelector('tbody').appendChild(emptyRow);
+                    if (window.lucide) {
+                        window.lucide.createIcons();
+                    }
                 }
                 emptyRow.style.display = '';
             } else if (emptyRow) {
@@ -273,7 +286,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="d-flex align-items-center justify-content-between p-3 bg-white rounded-3 border">
                 <div class="d-flex align-items-center gap-3">
                     <div class="stat-icon-wrap ${isVideo ? 'stat-icon-blue' : 'stat-icon-green'}" style="width: 44px; height: 44px;">
-                        <i class="bi ${isVideo ? 'bi-camera-reels' : 'bi-file-earmark-image'} fs-5"></i>
+                        <i data-lucide="${isVideo ? 'clapperboard' : 'file-image'}" class="fs-5"></i>
                     </div>
                     <div class="text-start">
                         <div class="fw-bold text-dark" style="font-size: 0.88rem;">${file.name}</div>
@@ -282,15 +295,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
                 <div class="d-flex gap-2">
                     <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2 btn-replace-file" style="font-size: 0.78rem;">
-                        <i class="bi bi-arrow-repeat"></i> Ganti
+                        <i data-lucide="rotate-cw" class="me-1"></i> Ganti
                     </button>
                     <button type="button" class="btn btn-sm btn-outline-danger py-1 px-2 btn-remove-file" style="font-size: 0.78rem;">
-                        <i class="bi bi-trash"></i>
+                        <i data-lucide="trash-2" class="me-1"></i>
                     </button>
                 </div>
             </div>
         `;
         dropzone.appendChild(fileInput);
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
 
         const replaceBtn = dropzone.querySelector('.btn-replace-file');
         const removeBtn = dropzone.querySelector('.btn-remove-file');
@@ -309,7 +325,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 dropzone.classList.remove('has-file');
                 dropzone.innerHTML = `
                     <div class="humora-dropzone-icon">
-                        <i class="bi bi-cloud-arrow-up"></i>
+                        <i data-lucide="cloud-upload"></i>
                     </div>
                     <div class="fw-bold text-dark mb-1" style="font-size: 0.88rem;">
                         Tarik file ke sini, atau <span class="text-decoration-underline" style="color: #43135C;">pilih dari komputer</span>
@@ -317,6 +333,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     <small class="text-muted" style="font-size: 0.76rem;">Pilih berkas ${isImage ? 'gambar' : 'video'} yang sesuai</small>
                 `;
                 dropzone.appendChild(fileInput);
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
 
                 if (previewImageTag && previewEmptyIcon) {
                     previewImageTag.classList.add('d-none');
@@ -357,12 +376,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 const isPublished = badge.classList.contains('badge-pill-success');
                 if (isPublished) {
                     badge.className = 'badge-pill-warning';
-                    badge.innerHTML = '<i class="bi bi-clock"></i> Draft';
+                    badge.innerHTML = '<i data-lucide="clock"></i> Draft';
                     window.showHumoraToast('Status diubah menjadi Draft.', 'warning');
                 } else {
                     badge.className = 'badge-pill-success';
-                    badge.innerHTML = '<i class="bi bi-check-circle"></i> Terpublikasi';
+                    badge.innerHTML = '<i data-lucide="check-circle"></i> Terpublikasi';
                     window.showHumoraToast('Status diubah menjadi Terpublikasi.', 'success');
+                }
+                if (window.lucide) {
+                    window.lucide.createIcons();
                 }
             }
         }
@@ -383,12 +405,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 const isFree = badge.classList.contains('badge-pill-free');
                 if (isFree) {
                     badge.className = 'badge-pill-premium badge-interactive';
-                    badge.innerHTML = '<i class="bi bi-gem"></i> Premium';
+                    badge.innerHTML = '<i data-lucide="gem"></i> Premium';
                     window.showHumoraToast('Akses video diubah menjadi: Khusus Premium (VIP)', 'info');
                 } else {
                     badge.className = 'badge-pill-free badge-interactive';
-                    badge.innerHTML = '<i class="bi bi-play-circle"></i> Free Preview';
+                    badge.innerHTML = '<i data-lucide="play-circle"></i> Free Preview';
                     window.showHumoraToast('Akses video diubah menjadi: Free Preview (Gratis)', 'success');
+                }
+                if (window.lucide) {
+                    window.lucide.createIcons();
                 }
             }
         }
@@ -410,6 +435,34 @@ document.addEventListener('DOMContentLoaded', function () {
                     window.showHumoraToast('Perubahan berhasil disimpan!');
                 }
             });
+        }
+    });
+
+    // -------------------------------------------------------------
+    // 8. MOBILE SIDEBAR DRAWER NAVIGATION & RESIZE HANDLER
+    // -------------------------------------------------------------
+    const adminSidebar = document.getElementById('adminSidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    function closeMobileSidebar() {
+        if (window.innerWidth < 992 && adminSidebar && sidebarOverlay) {
+            adminSidebar.classList.remove('show');
+            sidebarOverlay.classList.remove('show');
+        }
+    }
+
+    // Auto-close drawer when clicking on any nav link on mobile
+    document.querySelectorAll('.admin-sidebar .nav-humora-link, .admin-sidebar .sidebar-brand-link').forEach(link => {
+        link.addEventListener('click', function () {
+            closeMobileSidebar();
+        });
+    });
+
+    // Handle screen resize smoothly between mobile and desktop
+    window.addEventListener('resize', function () {
+        if (window.innerWidth >= 992) {
+            if (adminSidebar) adminSidebar.classList.remove('show');
+            if (sidebarOverlay) sidebarOverlay.classList.remove('show');
         }
     });
 });

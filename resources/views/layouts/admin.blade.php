@@ -12,7 +12,7 @@
     <!-- Bootstrap Icons CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Humora Custom Admin Style CSS -->
-    <link rel="stylesheet" href="{{ asset('css/humora-admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/humora-admin.css') }}?v={{ file_exists(public_path('css/humora-admin.css')) ? filemtime(public_path('css/humora-admin.css')) : '1.0' }}">
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @yield('styles')
@@ -43,7 +43,7 @@
             <div class="modal-content modal-content-humora">
                 <div class="modal-header modal-header-humora border-0 pb-0">
                     <h5 class="modal-title-humora mb-0 text-danger d-flex align-items-center gap-2" style="font-size: 1rem;">
-                        <i class="bi bi-exclamation-triangle-fill"></i> Konfirmasi Hapus
+                        <i data-lucide="alert-triangle"></i> Konfirmasi Hapus
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Batal"></button>
                 </div>
@@ -55,7 +55,7 @@
                 <div class="modal-footer modal-footer-humora border-0 pt-0 justify-content-end gap-2">
                     <button type="button" class="btn btn-sm btn-humora-secondary" data-bs-dismiss="modal">Batal</button>
                     <button type="button" class="btn btn-sm btn-danger px-3" id="confirmDeleteBtn">
-                        <i class="bi bi-trash me-1"></i> Hapus
+                        <i data-lucide="trash-2" class="me-1"></i> Hapus
                     </button>
                 </div>
             </div>
@@ -68,12 +68,20 @@
     <!-- Bootstrap 5.3 JS Bundle CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <!-- Humora Admin Interactive Script -->
-    <script src="{{ asset('js/humora-admin.js') }}"></script>
+    <script src="{{ asset('js/humora-admin.js') }}?v={{ file_exists(public_path('js/humora-admin.js')) ? filemtime(public_path('js/humora-admin.js')) : '1.0' }}"></script>
 
     <!-- Sidebar Toggle & Initialization Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Lucide Icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
             const sidebar = document.getElementById('adminSidebar');
             const overlay = document.getElementById('sidebarOverlay');
             const toggleBtn = document.getElementById('sidebarToggle');

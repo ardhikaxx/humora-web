@@ -6,7 +6,7 @@
 <!-- Breadcrumbs -->
 <div class="mb-2">
     <small class="text-muted" style="font-size: 0.78rem;">
-        <span>Admin</span> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
+        <span>Admin</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
         <span class="text-dark fw-semibold">Transaksi</span>
     </small>
 </div>
@@ -24,7 +24,7 @@
             id="cardPending"
             label="Menunggu Verifikasi" 
             value="2" 
-            icon="bi bi-clock" 
+            icon="clock" 
             iconBg="orange" 
             subtext="Bukti bayar perlu diperiksa" 
         />
@@ -34,7 +34,7 @@
             id="cardSuccess"
             label="Diverifikasi / Sukses" 
             value="5" 
-            icon="bi bi-check-circle" 
+            icon="check-circle" 
             iconBg="green" 
             subtext="Langganan pengguna aktif" 
         />
@@ -44,7 +44,7 @@
             id="cardRejected"
             label="Ditolak / Tidak Valid" 
             value="1" 
-            icon="bi bi-exclamation-circle" 
+            icon="alert-circle" 
             iconBg="orange" 
             subtext="Bukti palsu / kurang bayar" 
         />
@@ -53,7 +53,7 @@
         <x-stat-card 
             label="Total Pendapatan Terverifikasi" 
             value="Rp 249.200" 
-            icon="bi bi-cash-stack" 
+            icon="banknote" 
             iconBg="purple" 
             subtext="Dari transaksi disetujui" 
         />
@@ -64,7 +64,7 @@
 <div class="alert-banner-humora" id="pendingAlertBanner">
     <div class="alert-banner-content">
         <div class="alert-banner-icon">
-            <i class="bi bi-exclamation-triangle"></i>
+            <i data-lucide="alert-triangle"></i>
         </div>
         <div>
             <div class="fw-bold text-dark" id="pendingBannerTitle" style="font-size: 0.85rem;">ADA 2 PEMBAYARAN MENUNGGU VERIFIKASI ADMIN</div>
@@ -81,7 +81,7 @@
     <div class="row g-2 align-items-center">
         <div class="col-12 col-md-6 col-lg-8">
             <div class="search-input-wrap">
-                <i class="bi bi-search"></i>
+                <i data-lucide="search"></i>
                 <input type="text" id="trxSearchInput" class="form-control-custom bg-light" placeholder="Cari ID transaksi (TRX-...), nama pengguna, atau no referensi...">
             </div>
         </div>
@@ -145,15 +145,15 @@
                     </td>
                     <td><span class="badge-pill-gray">BCA Virtual Account</span></td>
                     <td class="fw-bold text-dark">Rp 49.000</td>
-                    <td class="status-cell"><span class="badge-pill-warning"><i class="bi bi-clock-history"></i> Menunggu Verifikasi</span></td>
+                    <td class="status-cell"><span class="badge-pill-warning"><i data-lucide="history"></i> Menunggu Verifikasi</span></td>
                     <td>
                         <button class="btn btn-sm btn-link p-0 text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 btn-open-verify" style="color: #7C3AED; font-size: 0.78rem;">
-                            <i class="bi bi-eye"></i> Lihat Foto Bukti
+                            <i data-lucide="eye"></i> Lihat Foto Bukti
                         </button>
                     </td>
                     <td class="text-end action-cell">
                         <button class="btn btn-sm btn-humora-primary py-1 px-2 btn-open-verify" style="font-size: 0.76rem;">
-                            <i class="bi bi-shield-check"></i> Periksa & Verifikasi
+                            <i data-lucide="shield-check"></i> Periksa & Verifikasi
                         </button>
                     </td>
                 </tr>
@@ -179,15 +179,15 @@
                     </td>
                     <td><span class="badge-pill-gray">Transfer Bank BCA</span></td>
                     <td class="fw-bold text-dark">Rp 49.000</td>
-                    <td class="status-cell"><span class="badge-pill-warning"><i class="bi bi-clock-history"></i> Menunggu Verifikasi</span></td>
+                    <td class="status-cell"><span class="badge-pill-warning"><i data-lucide="history"></i> Menunggu Verifikasi</span></td>
                     <td>
                         <button class="btn btn-sm btn-link p-0 text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 btn-open-verify" style="color: #7C3AED; font-size: 0.78rem;">
-                            <i class="bi bi-eye"></i> Lihat Foto Bukti
+                            <i data-lucide="eye"></i> Lihat Foto Bukti
                         </button>
                     </td>
                     <td class="text-end action-cell">
                         <button class="btn btn-sm btn-humora-primary py-1 px-2 btn-open-verify" style="font-size: 0.76rem;">
-                            <i class="bi bi-shield-check"></i> Periksa & Verifikasi
+                            <i data-lucide="shield-check"></i> Periksa & Verifikasi
                         </button>
                     </td>
                 </tr>
@@ -213,10 +213,10 @@
                     </td>
                     <td><span class="badge-pill-gray">QRIS</span></td>
                     <td class="fw-bold text-dark">Rp 19.000</td>
-                    <td class="status-cell"><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Diverifikasi</span></td>
+                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="check-circle"></i> Diverifikasi</span></td>
                     <td>
                         <button class="btn btn-sm btn-link p-0 text-decoration-none fw-semibold d-inline-flex align-items-center gap-1 btn-open-verify" style="color: #7C3AED; font-size: 0.78rem;">
-                            <i class="bi bi-eye"></i> Lihat Foto Bukti
+                            <i data-lucide="eye"></i> Lihat Foto Bukti
                         </button>
                     </td>
                     <td class="text-end action-cell">
@@ -248,7 +248,7 @@
                     </td>
                     <td><span class="badge-pill-gray">ShopeePay</span></td>
                     <td class="fw-bold text-dark">Rp 49.000</td>
-                    <td class="status-cell"><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Diverifikasi</span></td>
+                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="check-circle"></i> Diverifikasi</span></td>
                     <td><span class="text-muted" style="font-size: 0.78rem;">Tidak ada foto</span></td>
                     <td class="text-end action-cell">
                         <div class="d-flex justify-content-end gap-1">
@@ -279,7 +279,7 @@
                     </td>
                     <td><span class="badge-pill-gray">Mandiri VA</span></td>
                     <td class="fw-bold text-dark">Rp 19.000</td>
-                    <td class="status-cell"><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Diverifikasi</span></td>
+                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="check-circle"></i> Diverifikasi</span></td>
                     <td><span class="text-muted" style="font-size: 0.78rem;">Tidak ada foto</span></td>
                     <td class="text-end action-cell">
                         <div class="d-flex justify-content-end gap-1">
@@ -310,7 +310,7 @@
                     </td>
                     <td><span class="badge-pill-gray">GoPay</span></td>
                     <td class="fw-bold text-dark">Rp 19.000</td>
-                    <td class="status-cell"><span class="badge-pill-danger"><i class="bi bi-x-circle"></i> Ditolak</span></td>
+                    <td class="status-cell"><span class="badge-pill-danger"><i data-lucide="x-circle"></i> Ditolak</span></td>
                     <td><span class="text-muted" style="font-size: 0.78rem;">Tidak ada foto</span></td>
                     <td class="text-end action-cell">
                         <div class="d-flex justify-content-end gap-1">
@@ -341,7 +341,7 @@
                     </td>
                     <td><span class="badge-pill-gray">BCA Virtual Account</span></td>
                     <td class="fw-bold text-dark">Rp 143.200</td>
-                    <td class="status-cell"><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Diverifikasi</span></td>
+                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="check-circle"></i> Diverifikasi</span></td>
                     <td><span class="text-muted" style="font-size: 0.78rem;">Tidak ada foto</span></td>
                     <td class="text-end action-cell">
                         <div class="d-flex justify-content-end gap-1">
@@ -372,7 +372,7 @@
                     </td>
                     <td><span class="badge-pill-gray">GoPay</span></td>
                     <td class="fw-bold text-dark">Rp 19.000</td>
-                    <td class="status-cell"><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Diverifikasi</span></td>
+                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="check-circle"></i> Diverifikasi</span></td>
                     <td><span class="text-muted" style="font-size: 0.78rem;">Tidak ada foto</span></td>
                     <td class="text-end action-cell">
                         <div class="d-flex justify-content-end gap-1">
@@ -400,9 +400,9 @@
         </div>
         <nav aria-label="Page navigation">
             <ul class="pagination pagination-sm mb-0">
-                <li class="page-item disabled"><a class="page-link" href="#"><i class="bi bi-chevron-left"></i></a></li>
+                <li class="page-item disabled"><a class="page-link" href="#"><i data-lucide="chevron-left"></i></a></li>
                 <li class="page-item active"><a class="page-link" href="#" style="background-color: #43135C; border-color: #43135C;">1</a></li>
-                <li class="page-item disabled"><a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a></li>
+                <li class="page-item disabled"><a class="page-link" href="#"><i data-lucide="chevron-right"></i></a></li>
             </ul>
         </nav>
     </div>
@@ -421,7 +421,7 @@
             <div class="modal-body modal-body-humora">
                 <div class="p-3 bg-light rounded-3 mb-3 text-center border">
                     <div class="d-inline-flex flex-column align-items-center p-3 bg-white rounded-3 shadow-sm border w-100">
-                        <i class="bi bi-receipt fs-1 text-primary mb-2" style="color: #43135C !important;"></i>
+                        <i data-lucide="receipt" class="fs-1 text-primary mb-2" style="color: #43135C !important;"></i>
                         <div class="fw-bold text-dark">Struk Transfer / Mutasi Rekening</div>
                         <small class="text-muted mb-2" id="modalTrxIdUser">TRX-2026-1050 &bull; Dewi Lestari</small>
                         <div class="badge-pill-success py-1 px-3 fs-6" id="modalTrxAmount">Rp 49.000</div>
@@ -440,12 +440,12 @@
             </div>
             <div class="modal-footer modal-footer-humora justify-content-between" id="modalActionFooter">
                 <button type="button" class="btn btn-outline-danger" id="btnRejectTrx">
-                    <i class="bi bi-x-circle me-1"></i> Tolak Transaksi
+                    <i data-lucide="x-circle" class="me-1"></i> Tolak Transaksi
                 </button>
                 <div class="d-flex gap-2">
                     <button type="button" class="btn btn-humora-secondary" data-bs-dismiss="modal">Tutup</button>
                     <button type="button" class="btn btn-humora-primary" id="btnApproveTrx">
-                        <i class="bi bi-check-circle me-1"></i> Setujui & Berikan Akses
+                        <i data-lucide="check-circle" class="me-1"></i> Setujui & Berikan Akses
                     </button>
                 </div>
             </div>
@@ -535,7 +535,7 @@
 
             activeRow.dataset.status = 'Diverifikasi';
             if (statusCell) {
-                statusCell.innerHTML = '<span class="badge-pill-success"><i class="bi bi-check-circle"></i> Diverifikasi</span>';
+                statusCell.innerHTML = '<span class="badge-pill-success"><i data-lucide="check-circle"></i> Diverifikasi</span>';
             }
             if (actionCell) {
                 actionCell.innerHTML = `
@@ -563,7 +563,7 @@
 
             activeRow.dataset.status = 'Ditolak';
             if (statusCell) {
-                statusCell.innerHTML = '<span class="badge-pill-danger"><i class="bi bi-x-circle"></i> Ditolak</span>';
+                statusCell.innerHTML = '<span class="badge-pill-danger"><i data-lucide="x-circle"></i> Ditolak</span>';
             }
             if (actionCell) {
                 actionCell.innerHTML = `

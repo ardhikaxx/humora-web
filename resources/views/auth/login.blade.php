@@ -20,7 +20,7 @@
         <div class="position-relative">
             <input type="password" id="password" name="password" class="form-control-custom pe-5" value="secret123" placeholder="••••••••" required>
             <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-muted text-decoration-none pe-3" id="togglePassword">
-                <i class="bi bi-eye" id="eyeIcon"></i>
+                <i data-lucide="eye" id="eyeIcon"></i>
             </button>
         </div>
     </div>
@@ -34,7 +34,7 @@
 
     <button type="submit" class="btn btn-humora-primary w-100 py-2 justify-content-center">
         <span>Masuk ke Dashboard</span>
-        <i class="bi bi-arrow-right"></i>
+        <i data-lucide="arrow-right"></i>
     </button>
 </form>
 @endsection
@@ -48,8 +48,11 @@
     togglePassword.addEventListener('click', function () {
         const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
         password.setAttribute('type', type);
-        eyeIcon.classList.toggle('bi-eye');
-        eyeIcon.classList.toggle('bi-eye-slash');
+        const iconName = type === 'password' ? 'eye' : 'eye-off';
+        eyeIcon.setAttribute('data-lucide', iconName);
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
     });
 </script>
 @endsection

@@ -1,7 +1,7 @@
 <header class="admin-topbar">
     <div class="d-flex align-items-center gap-3">
         <button class="topbar-toggle-btn" id="sidebarToggle" type="button" title="Toggle Sidebar">
-            <i class="bi bi-layout-sidebar-inset"></i>
+            <i data-lucide="panel-left"></i>
         </button>
         <span class="d-none d-md-inline-block text-muted" style="font-size: 0.82rem; font-weight: 500;">
             Portal Administrator HUMORA
@@ -12,7 +12,7 @@
         <!-- Notification Dropdown -->
         <div class="dropdown">
             <button class="notification-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notifikasi">
-                <i class="bi bi-bell"></i>
+                <i data-lucide="bell"></i>
                 <span class="notification-dot"></span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 p-2" style="width: 300px;">
@@ -22,7 +22,7 @@
                 </li>
                 <li>
                     <a class="dropdown-item p-2 rounded-2 d-flex gap-2 align-items-start mt-1" href="{{ url('/admin/transactions') }}">
-                        <div class="badge-pill-warning p-2 rounded-circle"><i class="bi bi-clock-history"></i></div>
+                        <div class="badge-pill-warning p-2 rounded-circle"><i data-lucide="history"></i></div>
                         <div>
                             <div class="fw-semibold" style="font-size: 0.8rem;">2 Bukti bayar menunggu</div>
                             <small class="text-muted" style="font-size: 0.72rem;">Dewi Lestari & Fikri Haikal</small>
@@ -31,7 +31,7 @@
                 </li>
                 <li>
                     <a class="dropdown-item p-2 rounded-2 d-flex gap-2 align-items-start" href="{{ url('/admin/videos') }}">
-                        <div class="badge-pill-success p-2 rounded-circle"><i class="bi bi-play-circle"></i></div>
+                        <div class="badge-pill-success p-2 rounded-circle"><i data-lucide="play-circle"></i></div>
                         <div>
                             <div class="fw-semibold" style="font-size: 0.8rem;">Video Terbit Baru</div>
                             <small class="text-muted" style="font-size: 0.72rem;">Ep 1: Tipe Bawel dipublikasikan</small>
@@ -55,20 +55,20 @@
                 </li>
                 <li>
                     <a class="dropdown-item p-2 rounded-2 mt-1 d-flex align-items-center gap-2" href="{{ url('/admin/profile') }}">
-                        <i class="bi bi-person text-muted"></i>
+                        <i data-lucide="user" class="text-muted"></i>
                         <span style="font-size: 0.84rem;">Profil Admin</span>
                     </a>
                 </li>
                 <li>
                     <a class="dropdown-item p-2 rounded-2 d-flex align-items-center gap-2" href="{{ url('/admin/settings') }}">
-                        <i class="bi bi-gear text-muted"></i>
+                        <i data-lucide="settings" class="text-muted"></i>
                         <span style="font-size: 0.84rem;">Pengaturan</span>
                     </a>
                 </li>
                 <li><hr class="dropdown-divider my-1"></li>
                 <li>
                     <a class="dropdown-item p-2 rounded-2 d-flex align-items-center gap-2 text-danger" href="{{ url('/login') }}">
-                        <i class="bi bi-box-arrow-right"></i>
+                        <i data-lucide="log-out"></i>
                         <span style="font-size: 0.84rem;">Keluar Portal</span>
                     </a>
                 </li>

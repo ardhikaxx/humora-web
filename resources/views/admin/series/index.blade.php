@@ -6,7 +6,7 @@
 <!-- Breadcrumbs & Header -->
 <div class="mb-2">
     <small class="text-muted" style="font-size: 0.78rem;">
-        <span>Admin</span> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i> <span class="text-dark fw-semibold">Judul Konten</span>
+        <span>Admin</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i> <span class="text-dark fw-semibold">Judul Konten</span>
     </small>
 </div>
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
@@ -15,7 +15,7 @@
         <p class="page-subtitle mb-0">Kelola seluruh judul konten besar dan video yang tampil dalam katalog mobile HUMORA.</p>
     </div>
     <a href="{{ url('/admin/series/create') }}" class="btn btn-humora-primary">
-        <i class="bi bi-plus-lg"></i>
+        <i data-lucide="plus"></i>
         <span>Tambah Judul Baru</span>
     </a>
 </div>
@@ -27,7 +27,7 @@
             id="cardTotalSeries"
             label="Total Judul" 
             value="6" 
-            icon="bi bi-collection-play" 
+            icon="tv" 
             iconBg="purple" 
             subtext="Seluruh katalog lokal" 
         />
@@ -37,7 +37,7 @@
             id="cardPublishedSeries"
             label="Judul Terbit" 
             value="6" 
-            icon="bi bi-check-circle" 
+            icon="check-circle" 
             iconBg="green" 
             subtext="Tampil di mobile app" 
         />
@@ -47,7 +47,7 @@
             id="cardDraftSeries"
             label="Series Draf" 
             value="0" 
-            icon="bi bi-clock" 
+            icon="clock" 
             iconBg="orange" 
             subtext="Belum dipublikasikan" 
         />
@@ -56,7 +56,7 @@
         <x-stat-card 
             label="Series Unggulan" 
             value="1" 
-            icon="bi bi-stars" 
+            icon="sparkles" 
             iconBg="yellow" 
             subtext="Spotlight hero banner" 
         />
@@ -68,11 +68,11 @@
     <div class="row g-2 align-items-center">
         <div class="col-12 col-md-6 col-lg-7">
             <div class="search-input-wrap">
-                <i class="bi bi-search"></i>
+                <i data-lucide="search"></i>
                 <input type="text" id="seriesSearchInput" class="form-control-custom bg-light" placeholder="Cari judul series atau sinopsis...">
             </div>
         </div>
-        <div class="col-4 col-md-2 col-lg-2">
+        <div class="col-6 col-md-2 col-lg-2">
             <select class="form-select-custom" id="seriesGenreFilter">
                 <option selected>Semua Genre</option>
                 <option>Komedi</option>
@@ -82,14 +82,14 @@
                 <option>Workplace</option>
             </select>
         </div>
-        <div class="col-4 col-md-2 col-lg-1">
+        <div class="col-6 col-md-2 col-lg-1">
             <select class="form-select-custom" id="seriesStatusFilter">
                 <option selected>Semua Status</option>
                 <option>Terpublikasi</option>
                 <option>Draft</option>
             </select>
         </div>
-        <div class="col-4 col-md-2 col-lg-2">
+        <div class="col-12 col-md-2 col-lg-2">
             <select class="form-select-custom" id="seriesSortFilter">
                 <option value="newest" selected>Terbaru</option>
                 <option value="oldest">Terlama</option>
@@ -146,15 +146,15 @@
                             <span class="badge-pill-premium" style="font-size: 0.7rem;">2 Premium</span>
                         </div>
                     </td>
-                    <td class="status-cell"><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>9.600</span></td>
+                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>9.600</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">1 Mar 2026</td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/series/1') }}" class="btn-humora-icon" title="Lihat Detail"><i class="bi bi-eye"></i></a>
-                            <a href="{{ url('/admin/series/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon btn-toggle-series-status" title="Toggle Status (Terpublikasi/Draft)"><i class="bi bi-check-circle"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Series Tipe Pembeli di Toko Kelontong" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/series/1') }}" class="btn-humora-icon" title="Lihat Detail"><i data-lucide="eye"></i></a>
+                            <a href="{{ url('/admin/series/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon btn-toggle-series-status" title="Toggle Status (Terpublikasi/Draft)"><i data-lucide="check-circle"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Series Tipe Pembeli di Toko Kelontong" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -189,15 +189,15 @@
                             <span class="badge-pill-premium" style="font-size: 0.7rem;">2 Premium</span>
                         </div>
                     </td>
-                    <td class="status-cell"><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>16.700</span></td>
+                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>16.700</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">4 Mar 2026</td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/series/1') }}" class="btn-humora-icon" title="Lihat Detail"><i class="bi bi-eye"></i></a>
-                            <a href="{{ url('/admin/series/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon btn-toggle-series-status" title="Toggle Status (Terpublikasi/Draft)"><i class="bi bi-check-circle"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Series Momen Canggung Kencan Pertama" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/series/1') }}" class="btn-humora-icon" title="Lihat Detail"><i data-lucide="eye"></i></a>
+                            <a href="{{ url('/admin/series/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon btn-toggle-series-status" title="Toggle Status (Terpublikasi/Draft)"><i data-lucide="check-circle"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Series Momen Canggung Kencan Pertama" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -232,15 +232,15 @@
                             <span class="badge-pill-premium" style="font-size: 0.7rem;">2 Premium</span>
                         </div>
                     </td>
-                    <td class="status-cell"><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>18.900</span></td>
+                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>18.900</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">3 Mar 2026</td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/series/1') }}" class="btn-humora-icon" title="Lihat Detail"><i class="bi bi-eye"></i></a>
-                            <a href="{{ url('/admin/series/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon btn-toggle-series-status" title="Toggle Status (Terpublikasi/Draft)"><i class="bi bi-check-circle"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Series Drama Warga Grup RT" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/series/1') }}" class="btn-humora-icon" title="Lihat Detail"><i data-lucide="eye"></i></a>
+                            <a href="{{ url('/admin/series/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon btn-toggle-series-status" title="Toggle Status (Terpublikasi/Draft)"><i data-lucide="check-circle"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Series Drama Warga Grup RT" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -275,15 +275,15 @@
                             <span class="badge-pill-premium" style="font-size: 0.7rem;">2 Premium</span>
                         </div>
                     </td>
-                    <td class="status-cell"><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>12.400</span></td>
+                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>12.400</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">2 Mar 2026</td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/series/1') }}" class="btn-humora-icon" title="Lihat Detail"><i class="bi bi-eye"></i></a>
-                            <a href="{{ url('/admin/series/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon btn-toggle-series-status" title="Toggle Status (Terpublikasi/Draft)"><i class="bi bi-check-circle"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Series Tipe-Tipe Teman Sekantor" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/series/1') }}" class="btn-humora-icon" title="Lihat Detail"><i data-lucide="eye"></i></a>
+                            <a href="{{ url('/admin/series/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon btn-toggle-series-status" title="Toggle Status (Terpublikasi/Draft)"><i data-lucide="check-circle"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Series Tipe-Tipe Teman Sekantor" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -318,15 +318,15 @@
                             <span class="badge-pill-premium" style="font-size: 0.7rem;">2 Premium</span>
                         </div>
                     </td>
-                    <td class="status-cell"><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>21.500</span></td>
+                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>21.500</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">5 Mar 2026</td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/series/1') }}" class="btn-humora-icon" title="Lihat Detail"><i class="bi bi-eye"></i></a>
-                            <a href="{{ url('/admin/series/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon btn-toggle-series-status" title="Toggle Status (Terpublikasi/Draft)"><i class="bi bi-check-circle"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Series Cara Deketin Cewek" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/series/1') }}" class="btn-humora-icon" title="Lihat Detail"><i data-lucide="eye"></i></a>
+                            <a href="{{ url('/admin/series/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon btn-toggle-series-status" title="Toggle Status (Terpublikasi/Draft)"><i data-lucide="check-circle"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Series Cara Deketin Cewek" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -362,15 +362,15 @@
                             <span class="badge-pill-premium" style="font-size: 0.7rem;">2 Premium</span>
                         </div>
                     </td>
-                    <td class="status-cell"><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>14.200</span></td>
+                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>14.200</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">5 Mar 2026</td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/series/1') }}" class="btn-humora-icon" title="Lihat Detail"><i class="bi bi-eye"></i></a>
-                            <a href="{{ url('/admin/series/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon btn-toggle-series-status" title="Toggle Status (Terpublikasi/Draft)"><i class="bi bi-check-circle"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Series Tipe Penumpang Taxi Online" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/series/1') }}" class="btn-humora-icon" title="Lihat Detail"><i data-lucide="eye"></i></a>
+                            <a href="{{ url('/admin/series/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon btn-toggle-series-status" title="Toggle Status (Terpublikasi/Draft)"><i data-lucide="check-circle"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Series Tipe Penumpang Taxi Online" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -393,9 +393,9 @@
         </div>
         <nav aria-label="Page navigation">
             <ul class="pagination pagination-sm mb-0">
-                <li class="page-item disabled"><a class="page-link" href="#"><i class="bi bi-chevron-left"></i></a></li>
+                <li class="page-item disabled"><a class="page-link" href="#"><i data-lucide="chevron-left"></i></a></li>
                 <li class="page-item active"><a class="page-link" href="#" style="background-color: #43135C; border-color: #43135C;">1</a></li>
-                <li class="page-item disabled"><a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a></li>
+                <li class="page-item disabled"><a class="page-link" href="#"><i data-lucide="chevron-right"></i></a></li>
             </ul>
         </nav>
     </div>
@@ -430,7 +430,7 @@
                 if (isPublished) {
                     row.dataset.status = 'Draft';
                     if (statusCell) {
-                        statusCell.innerHTML = '<span class="badge-pill-warning"><i class="bi bi-clock"></i> Draft</span>';
+                        statusCell.innerHTML = '<span class="badge-pill-warning"><i data-lucide="clock"></i> Draft</span>';
                     }
                     publishedCount = Math.max(0, publishedCount - 1);
                     draftCount += 1;
@@ -438,7 +438,7 @@
                 } else {
                     row.dataset.status = 'Terpublikasi';
                     if (statusCell) {
-                        statusCell.innerHTML = '<span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span>';
+                        statusCell.innerHTML = '<span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span>';
                     }
                     publishedCount += 1;
                     draftCount = Math.max(0, draftCount - 1);

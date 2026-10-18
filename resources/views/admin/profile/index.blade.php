@@ -6,7 +6,7 @@
 <!-- Breadcrumbs -->
 <div class="mb-2">
     <small class="text-muted" style="font-size: 0.78rem;">
-        <span>Admin</span> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
+        <span>Admin</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
         <span class="text-dark fw-semibold">Profil Admin</span>
     </small>
 </div>
@@ -28,11 +28,11 @@
                 <h2 class="fw-bold text-dark mb-1" id="profileHeroName" style="font-size: 1.35rem;">Admin HUMORA</h2>
                 <div class="d-flex flex-wrap align-items-center gap-2 text-muted" style="font-size: 0.82rem;">
                     <span class="d-flex align-items-center gap-1">
-                        <i class="bi bi-envelope"></i> <span id="profileHeroEmail">admin@humora.id</span>
+                        <i data-lucide="mail"></i> <span id="profileHeroEmail">admin@humora.id</span>
                     </span>
                     <span>&bull;</span>
                     <span class="d-flex align-items-center gap-1">
-                        <i class="bi bi-telephone"></i> <span id="profileHeroPhone">+62 812-8899-7711</span>
+                        <i data-lucide="phone"></i> <span id="profileHeroPhone">+62 812-8899-7711</span>
                     </span>
                 </div>
             </div>
@@ -49,7 +49,7 @@
                     <div class="humora-card-title">DATA PROFIL ADMINISTRATOR</div>
                     <div class="humora-card-subtitle">Perbarui Nama Lengkap, Email, dan Nomor Telfon akun Anda.</div>
                 </div>
-                <div class="text-muted"><i class="bi bi-person fs-5"></i></div>
+                <div class="text-muted"><i data-lucide="user" class="fs-5"></i></div>
             </div>
             <div class="humora-card-body p-4">
                 <form id="formUpdateProfile" action="{{ url('/admin/profile') }}" method="POST">
@@ -58,7 +58,7 @@
                     <div class="mb-3">
                         <label class="form-label-custom">Nama Lengkap <span class="text-danger">*</span></label>
                         <div class="input-group">
-                            <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-person"></i></span>
+                            <span class="input-group-text bg-light text-muted border-end-0"><i data-lucide="user"></i></span>
                             <input type="text" id="profNameInput" name="name" class="form-control-custom border-start-0" value="Admin HUMORA" required>
                         </div>
                     </div>
@@ -66,7 +66,7 @@
                     <div class="mb-3">
                         <label class="form-label-custom">Email <span class="text-danger">*</span></label>
                         <div class="input-group">
-                            <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-envelope"></i></span>
+                            <span class="input-group-text bg-light text-muted border-end-0"><i data-lucide="mail"></i></span>
                             <input type="email" id="profEmailInput" name="email" class="form-control-custom border-start-0" value="admin@humora.id" required>
                         </div>
                     </div>
@@ -74,14 +74,14 @@
                     <div class="mb-4">
                         <label class="form-label-custom">Nomor Telfon <span class="text-danger">*</span></label>
                         <div class="input-group">
-                            <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-telephone"></i></span>
+                            <span class="input-group-text bg-light text-muted border-end-0"><i data-lucide="phone"></i></span>
                             <input type="text" id="profPhoneInput" name="phone" class="form-control-custom border-start-0" value="+62 812-8899-7711" required>
                         </div>
                     </div>
 
                     <div class="text-end">
                         <button type="submit" class="btn btn-humora-primary">
-                            <i class="bi bi-floppy"></i>
+                            <i data-lucide="save"></i>
                             <span>Simpan Perubahan Profil</span>
                         </button>
                     </div>
@@ -98,7 +98,7 @@
                     <div class="humora-card-title">PASSWORD AKUN</div>
                     <div class="humora-card-subtitle">Perbarui kata sandi login admin Anda.</div>
                 </div>
-                <div class="text-muted"><i class="bi bi-key fs-5"></i></div>
+                <div class="text-muted"><i data-lucide="key" class="fs-5"></i></div>
             </div>
             <div class="humora-card-body p-4">
                 <form id="formUpdatePassword" action="{{ url('/admin/profile') }}" method="POST">
@@ -109,7 +109,7 @@
                         <div class="position-relative">
                             <input type="password" id="cur_pass" name="current_password" class="form-control-custom pe-5" placeholder="Kata sandi saat ini" required>
                             <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-muted text-decoration-none pe-3" onclick="togglePass('cur_pass', 'cur_eye')">
-                                <i class="bi bi-eye" id="cur_eye"></i>
+                                <i data-lucide="eye" id="cur_eye"></i>
                             </button>
                         </div>
                     </div>
@@ -119,7 +119,7 @@
                         <div class="position-relative">
                             <input type="password" id="new_pass_prof" name="new_password" class="form-control-custom pe-5" placeholder="Minimal 4 karakter" required minlength="4">
                             <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-muted text-decoration-none pe-3" onclick="togglePass('new_pass_prof', 'new_eye')">
-                                <i class="bi bi-eye" id="new_eye"></i>
+                                <i data-lucide="eye" id="new_eye"></i>
                             </button>
                         </div>
                     </div>
@@ -129,13 +129,13 @@
                         <div class="position-relative">
                             <input type="password" id="conf_pass_prof" name="new_password_confirmation" class="form-control-custom pe-5" placeholder="Ulangi kata sandi baru" required>
                             <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-muted text-decoration-none pe-3" onclick="togglePass('conf_pass_prof', 'conf_eye')">
-                                <i class="bi bi-eye" id="conf_eye"></i>
+                                <i data-lucide="eye" id="conf_eye"></i>
                             </button>
                         </div>
                     </div>
 
                     <button type="submit" class="btn btn-humora-primary w-100 justify-content-center">
-                        <i class="bi bi-lock"></i>
+                        <i data-lucide="lock"></i>
                         <span>Perbarui Kata Sandi</span>
                     </button>
                 </form>
@@ -152,10 +152,13 @@
         const eye = document.getElementById(eyeId);
         if (input.type === 'password') {
             input.type = 'text';
-            eye.classList.replace('bi-eye', 'bi-eye-slash');
+            eye.setAttribute('data-lucide', 'eye-off');
         } else {
             input.type = 'password';
-            eye.classList.replace('bi-eye-slash', 'bi-eye');
+            eye.setAttribute('data-lucide', 'eye');
+        }
+        if (window.lucide) {
+            window.lucide.createIcons();
         }
     }
 

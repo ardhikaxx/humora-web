@@ -6,7 +6,7 @@
 <!-- Breadcrumbs -->
 <div class="mb-2">
     <small class="text-muted" style="font-size: 0.78rem;">
-        <span>Admin</span> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
+        <span>Admin</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
         <span class="text-dark fw-semibold">Kategori</span>
     </small>
 </div>
@@ -18,7 +18,7 @@
         <p class="page-subtitle mb-0">Atur kategori dan genre cerita untuk klasifikasi series dan filter eksplorasi di aplikasi mobile.</p>
     </div>
     <button type="button" class="btn btn-humora-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-        <i class="bi bi-plus-lg"></i>
+        <i data-lucide="plus"></i>
         <span>Tambah Kategori</span>
     </button>
 </div>
@@ -26,7 +26,7 @@
 <!-- Search Bar -->
 <div class="humora-card mb-4 p-3">
     <div class="search-input-wrap">
-        <i class="bi bi-search"></i>
+        <i data-lucide="search"></i>
         <input type="text" id="categorySearchInput" class="form-control-custom bg-light" placeholder="Cari nama kategori, slug url, atau deskripsi genre...">
     </div>
 </div>
@@ -75,13 +75,13 @@
                         <span class="badge-pill-tag">6 Series</span>
                     </td>
                     <td class="cat-status-cell">
-                        <span class="badge-pill-success"><i class="bi bi-check-circle"></i> Aktif</span>
+                        <span class="badge-pill-success"><i data-lucide="check-circle"></i> Aktif</span>
                     </td>
                     <td class="text-muted" style="font-size: 0.8rem;">10 Jan 2026</td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <button class="btn-humora-icon btn-edit-category" title="Edit"><i class="bi bi-pencil"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Kategori Komedi" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <button class="btn-humora-icon btn-edit-category" title="Edit"><i data-lucide="pencil"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Kategori Komedi" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -108,13 +108,13 @@
                         <span class="badge-pill-tag">2 Series</span>
                     </td>
                     <td class="cat-status-cell">
-                        <span class="badge-pill-success"><i class="bi bi-check-circle"></i> Aktif</span>
+                        <span class="badge-pill-success"><i data-lucide="check-circle"></i> Aktif</span>
                     </td>
                     <td class="text-muted" style="font-size: 0.8rem;">10 Jan 2026</td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <button class="btn-humora-icon btn-edit-category" title="Edit"><i class="bi bi-pencil"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Kategori Romantis" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <button class="btn-humora-icon btn-edit-category" title="Edit"><i data-lucide="pencil"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Kategori Romantis" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -141,13 +141,13 @@
                         <span class="badge-pill-tag">0 Series</span>
                     </td>
                     <td class="cat-status-cell">
-                        <span class="badge-pill-success"><i class="bi bi-check-circle"></i> Aktif</span>
+                        <span class="badge-pill-success"><i data-lucide="check-circle"></i> Aktif</span>
                     </td>
                     <td class="text-muted" style="font-size: 0.8rem;">12 Jan 2026</td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <button class="btn-humora-icon btn-edit-category" title="Edit"><i class="bi bi-pencil"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Kategori Drama" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <button class="btn-humora-icon btn-edit-category" title="Edit"><i data-lucide="pencil"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Kategori Drama" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -174,13 +174,13 @@
                         <span class="badge-pill-tag">3 Series</span>
                     </td>
                     <td class="cat-status-cell">
-                        <span class="badge-pill-success"><i class="bi bi-check-circle"></i> Aktif</span>
+                        <span class="badge-pill-success"><i data-lucide="check-circle"></i> Aktif</span>
                     </td>
                     <td class="text-muted" style="font-size: 0.8rem;">15 Jan 2026</td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <button class="btn-humora-icon btn-edit-category" title="Edit"><i class="bi bi-pencil"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Kategori Slice of Life" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <button class="btn-humora-icon btn-edit-category" title="Edit"><i data-lucide="pencil"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Kategori Slice of Life" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -207,13 +207,13 @@
                         <span class="badge-pill-tag">0 Series</span>
                     </td>
                     <td class="cat-status-cell">
-                        <span class="badge-pill-success"><i class="bi bi-check-circle"></i> Aktif</span>
+                        <span class="badge-pill-success"><i data-lucide="check-circle"></i> Aktif</span>
                     </td>
                     <td class="text-muted" style="font-size: 0.8rem;">18 Jan 2026</td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <button class="btn-humora-icon btn-edit-category" title="Edit"><i class="bi bi-pencil"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Kategori Persahabatan" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <button class="btn-humora-icon btn-edit-category" title="Edit"><i data-lucide="pencil"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Kategori Persahabatan" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -240,13 +240,13 @@
                         <span class="badge-pill-tag">0 Series</span>
                     </td>
                     <td class="cat-status-cell">
-                        <span class="badge-pill-success"><i class="bi bi-check-circle"></i> Aktif</span>
+                        <span class="badge-pill-success"><i data-lucide="check-circle"></i> Aktif</span>
                     </td>
                     <td class="text-muted" style="font-size: 0.8rem;">20 Jan 2026</td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <button class="btn-humora-icon btn-edit-category" title="Edit"><i class="bi bi-pencil"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Kategori Keluarga" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <button class="btn-humora-icon btn-edit-category" title="Edit"><i data-lucide="pencil"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Kategori Keluarga" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -289,11 +289,11 @@
                 </div>
                 <div class="modal-footer modal-footer-humora">
                     <button type="button" class="btn btn-humora-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-lg"></i>
+                        <i data-lucide="x"></i>
                         <span>Batal</span>
                     </button>
                     <button type="submit" class="btn btn-humora-primary">
-                        <i class="bi bi-plus-lg"></i>
+                        <i data-lucide="plus"></i>
                         <span>Tambah Kategori</span>
                     </button>
                 </div>
@@ -334,11 +334,11 @@
                 </div>
                 <div class="modal-footer modal-footer-humora">
                     <button type="button" class="btn btn-humora-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-lg"></i>
+                        <i data-lucide="x"></i>
                         <span>Batal</span>
                     </button>
                     <button type="submit" class="btn btn-humora-primary">
-                        <i class="bi bi-floppy"></i>
+                        <i data-lucide="save"></i>
                         <span>Simpan Perubahan</span>
                     </button>
                 </div>
@@ -430,14 +430,14 @@
                 <td><span class="badge-pill-tag">0 Series</span></td>
                 <td class="cat-status-cell">
                     ${isActive 
-                        ? '<span class="badge-pill-success"><i class="bi bi-check-circle"></i> Aktif</span>' 
+                        ? '<span class="badge-pill-success"><i data-lucide="check-circle"></i> Aktif</span>' 
                         : '<span class="badge-pill-gray">Nonaktif</span>'}
                 </td>
                 <td class="text-muted" style="font-size: 0.8rem;">Hari ini</td>
                 <td class="text-end">
                     <div class="d-flex justify-content-end gap-1">
-                        <button class="btn-humora-icon btn-edit-category" title="Edit"><i class="bi bi-pencil"></i></button>
-                        <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Kategori ${name}" title="Hapus"><i class="bi bi-trash"></i></button>
+                        <button class="btn-humora-icon btn-edit-category" title="Edit"><i data-lucide="pencil"></i></button>
+                        <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Kategori ${name}" title="Hapus"><i data-lucide="trash-2"></i></button>
                     </div>
                 </td>
             `;
@@ -479,7 +479,7 @@
             if (delBtn) delBtn.setAttribute('data-item-name', `Kategori ${name}`);
             if (statusCell) {
                 statusCell.innerHTML = isActive 
-                    ? '<span class="badge-pill-success"><i class="bi bi-check-circle"></i> Aktif</span>' 
+                    ? '<span class="badge-pill-success"><i data-lucide="check-circle"></i> Aktif</span>' 
                     : '<span class="badge-pill-gray">Nonaktif</span>';
             }
 

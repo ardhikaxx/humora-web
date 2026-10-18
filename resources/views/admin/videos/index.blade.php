@@ -6,7 +6,7 @@
 <!-- Breadcrumbs & Header -->
 <div class="mb-2">
     <small class="text-muted" style="font-size: 0.78rem;">
-        <span>Admin</span> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i> <span class="text-dark fw-semibold">Kelola Video</span>
+        <span>Admin</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i> <span class="text-dark fw-semibold">Kelola Video</span>
     </small>
 </div>
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
@@ -15,7 +15,7 @@
         <p class="page-subtitle mb-0">Kelola seluruh video sketsa (~+2 menit) berdasarkan judul besar, aturan akses Free Preview vs Premium, serta status publikasi.</p>
     </div>
     <a href="{{ url('/admin/videos/create') }}" class="btn btn-humora-primary">
-        <i class="bi bi-plus-lg"></i>
+        <i data-lucide="plus"></i>
         <span>Tambah Video Baru</span>
     </a>
 </div>
@@ -27,7 +27,7 @@
             id="cardTotalVideos"
             label="Total Video" 
             value="24" 
-            icon="bi bi-camera-video" 
+            icon="video" 
             iconBg="purple" 
             subtext="Seluruh video terdaftar" 
         />
@@ -37,7 +37,7 @@
             id="cardFreeVideos"
             label="Free Preview" 
             value="12 Video" 
-            icon="bi bi-stars" 
+            icon="sparkles" 
             iconBg="green" 
             subtext="Gratis tanpa langganan" 
         />
@@ -47,7 +47,7 @@
             id="cardPremiumVideos"
             label="Episode Premium" 
             value="12 Ep" 
-            icon="bi bi-gem" 
+            icon="gem" 
             iconBg="purple" 
             subtext="Terkunci untuk subscriber" 
         />
@@ -57,7 +57,7 @@
             id="cardPublishedVideos"
             label="Status Terbit" 
             value="24 Terbit" 
-            icon="bi bi-check-circle" 
+            icon="check-circle" 
             iconBg="blue" 
             subtext="0 masih draf" 
         />
@@ -69,7 +69,7 @@
     <div class="row g-2 align-items-center">
         <div class="col-12 col-md-4 col-lg-5">
             <div class="search-input-wrap">
-                <i class="bi bi-search"></i>
+                <i data-lucide="search"></i>
                 <input type="text" id="videoSearchInput" class="form-control-custom bg-light" placeholder="Cari judul episode atau nama series...">
             </div>
         </div>
@@ -147,17 +147,17 @@
                     <td class="text-muted fw-bold">#1</td>
                     <td class="fw-medium text-dark">2m 14s</td>
                     <td class="access-cell">
-                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i class="bi bi-play-circle"></i> Free Preview</span>
+                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="play-circle"></i> Free Preview</span>
                     </td>
-                    <td><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
                     <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>4.250</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>4.250</span></td>
                     <td><span class="fw-bold text-success">92%</span></td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i class="bi bi-copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Tipe Bawel" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Tipe Bawel" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -183,17 +183,17 @@
                     <td class="text-muted fw-bold">#1</td>
                     <td class="fw-medium text-dark">2m 10s</td>
                     <td class="access-cell">
-                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i class="bi bi-play-circle"></i> Free Preview</span>
+                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="play-circle"></i> Free Preview</span>
                     </td>
-                    <td><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
                     <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>5.600</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>5.600</span></td>
                     <td><span class="fw-bold text-success">92%</span></td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i class="bi bi-copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Pake Hadiah" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Pake Hadiah" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -219,17 +219,17 @@
                     <td class="text-muted fw-bold">#1</td>
                     <td class="fw-medium text-dark">2m 12s</td>
                     <td class="access-cell">
-                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i class="bi bi-play-circle"></i> Free Preview</span>
+                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="play-circle"></i> Free Preview</span>
                     </td>
-                    <td><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
                     <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>3.800</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>3.800</span></td>
                     <td><span class="fw-bold text-success">92%</span></td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i class="bi bi-copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Tipe Cari Muka" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Tipe Cari Muka" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -255,17 +255,17 @@
                     <td class="text-muted fw-bold">#1</td>
                     <td class="fw-medium text-dark">2m 08s</td>
                     <td class="access-cell">
-                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i class="bi bi-play-circle"></i> Free Preview</span>
+                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="play-circle"></i> Free Preview</span>
                     </td>
-                    <td><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
                     <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>6.100</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>6.100</span></td>
                     <td><span class="fw-bold text-success">92%</span></td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i class="bi bi-copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Iuran Sampah Naik 5 Ribu" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Iuran Sampah Naik 5 Ribu" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -291,17 +291,17 @@
                     <td class="text-muted fw-bold">#1</td>
                     <td class="fw-medium text-dark">2m 11s</td>
                     <td class="access-cell">
-                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i class="bi bi-play-circle"></i> Free Preview</span>
+                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="play-circle"></i> Free Preview</span>
                     </td>
-                    <td><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
                     <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>4.900</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>4.900</span></td>
                     <td><span class="fw-bold text-success">92%</span></td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i class="bi bi-copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Salah Sebut Nama Teman Kencan" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Salah Sebut Nama Teman Kencan" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -327,17 +327,17 @@
                     <td class="text-muted fw-bold">#1</td>
                     <td class="fw-medium text-dark">2m 04s</td>
                     <td class="access-cell">
-                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i class="bi bi-play-circle"></i> Free Preview</span>
+                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="play-circle"></i> Free Preview</span>
                     </td>
-                    <td><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
                     <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>2.900</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>2.900</span></td>
                     <td><span class="fw-bold text-success">92%</span></td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i class="bi bi-copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Tipe Nawar Nggak Masuk Akal" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Tipe Nawar Nggak Masuk Akal" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -363,17 +363,17 @@
                     <td class="text-muted fw-bold">#2</td>
                     <td class="fw-medium text-dark">2m 18s</td>
                     <td class="access-cell">
-                        <span class="badge-pill-premium badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i class="bi bi-gem"></i> Premium</span>
+                        <span class="badge-pill-premium badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="gem"></i> Premium</span>
                     </td>
-                    <td><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
                     <td class="fw-bold text-dark">22.500</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>3.900</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>3.900</span></td>
                     <td><span class="fw-bold text-success">90%</span></td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i class="bi bi-copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Tipe Navigator Handal" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Tipe Navigator Handal" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -399,17 +399,17 @@
                     <td class="text-muted fw-bold">#3</td>
                     <td class="fw-medium text-dark">2m 25s</td>
                     <td class="access-cell">
-                        <span class="badge-pill-premium badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i class="bi bi-gem"></i> Premium</span>
+                        <span class="badge-pill-premium badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="gem"></i> Premium</span>
                     </td>
-                    <td><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
                     <td class="fw-bold text-dark">19.800</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>3.100</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>3.100</span></td>
                     <td><span class="fw-bold text-success">86%</span></td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i class="bi bi-copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Curhat ke Driver" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Curhat ke Driver" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -435,17 +435,17 @@
                     <td class="text-muted fw-bold">#2</td>
                     <td class="fw-medium text-dark">2m 05s</td>
                     <td class="access-cell">
-                        <span class="badge-pill-premium badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i class="bi bi-gem"></i> Premium</span>
+                        <span class="badge-pill-premium badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="gem"></i> Premium</span>
                     </td>
-                    <td><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
                     <td class="fw-bold text-dark">23.100</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>5.200</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>5.200</span></td>
                     <td><span class="fw-bold text-success">91%</span></td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i class="bi bi-copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Gombalan Klasik" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Gombalan Klasik" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -471,17 +471,17 @@
                     <td class="text-muted fw-bold">#2</td>
                     <td class="fw-medium text-dark">2m 15s</td>
                     <td class="access-cell">
-                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i class="bi bi-play-circle"></i> Free Preview</span>
+                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="play-circle"></i> Free Preview</span>
                     </td>
-                    <td><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
                     <td class="fw-bold text-dark">21.000</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>5.800</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>5.800</span></td>
                     <td><span class="fw-bold text-success">88%</span></td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i class="bi bi-copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Parkir Depan Pagar Tetangga" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Parkir Depan Pagar Tetangga" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -504,11 +504,11 @@
         </div>
         <nav aria-label="Page navigation">
             <ul class="pagination pagination-sm mb-0">
-                <li class="page-item disabled"><a class="page-link" href="#"><i class="bi bi-chevron-left"></i></a></li>
+                <li class="page-item disabled"><a class="page-link" href="#"><i data-lucide="chevron-left"></i></a></li>
                 <li class="page-item active"><a class="page-link" href="#" style="background-color: #43135C; border-color: #43135C;">1</a></li>
                 <li class="page-item"><a class="page-link text-dark" href="#">2</a></li>
                 <li class="page-item"><a class="page-link text-dark" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a></li>
+                <li class="page-item"><a class="page-link" href="#"><i data-lucide="chevron-right"></i></a></li>
             </ul>
         </nav>
     </div>
@@ -543,14 +543,14 @@
                 if (currentAccess === 'free') {
                     row.dataset.access = 'premium';
                     btn.className = 'badge-pill-premium badge-interactive btn-toggle-video-access';
-                    btn.innerHTML = '<i class="bi bi-gem"></i> Premium';
+                    btn.innerHTML = '<i data-lucide="gem"></i> Premium';
                     freeVideos = Math.max(0, freeVideos - 1);
                     premiumVideos += 1;
                     window.showHumoraToast(`Akses video "${title}" diubah: Premium (Terkunci)`);
                 } else {
                     row.dataset.access = 'free';
                     btn.className = 'badge-pill-free badge-interactive btn-toggle-video-access';
-                    btn.innerHTML = '<i class="bi bi-play-circle"></i> Free Preview';
+                    btn.innerHTML = '<i data-lucide="play-circle"></i> Free Preview';
                     freeVideos += 1;
                     premiumVideos = Math.max(0, premiumVideos - 1);
                     window.showHumoraToast(`Akses video "${title}" diubah: Free Preview (Gratis)`);

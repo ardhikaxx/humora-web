@@ -6,9 +6,9 @@
 <!-- Breadcrumbs -->
 <div class="mb-2">
     <small class="text-muted" style="font-size: 0.78rem;">
-        <span>Admin</span> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
-        <a href="{{ url('/admin/videos') }}" class="text-decoration-none text-muted">Kelola Video</a> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
-        <span class="text-muted">Video #1</span> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
+        <span>Admin</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
+        <a href="{{ url('/admin/videos') }}" class="text-decoration-none text-muted">Kelola Video</a> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
+        <span class="text-muted">Video #1</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
         <span class="text-dark fw-semibold">Edit</span>
     </small>
 </div>
@@ -24,11 +24,11 @@
         </div>
         <div class="d-flex align-items-center gap-2">
             <a href="{{ url('/admin/videos') }}" class="btn btn-humora-secondary">
-                <i class="bi bi-arrow-left"></i>
+                <i data-lucide="arrow-left"></i>
                 <span>Batal</span>
             </a>
             <button type="submit" class="btn btn-humora-primary">
-                <i class="bi bi-floppy"></i>
+                <i data-lucide="save"></i>
                 <span>Simpan Video</span>
             </button>
         </div>
@@ -94,7 +94,7 @@
                         <div class="d-flex align-items-center justify-content-between p-3 bg-white rounded-3 border">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="stat-icon-wrap stat-icon-green" style="width: 40px; height: 40px;">
-                                    <i class="bi bi-file-earmark-play fs-5"></i>
+                                    <i data-lucide="file-video" class="fs-5"></i>
                                 </div>
                                 <div>
                                     <div class="fw-bold text-dark" style="font-size: 0.88rem;">ForBiggerBlazes.mp4</div>
@@ -102,14 +102,14 @@
                                 </div>
                             </div>
                             <button type="button" class="btn btn-sm btn-outline-danger py-1 px-2" id="btnReplaceVideoAsset" title="Ganti video">
-                                <i class="bi bi-arrow-repeat me-1"></i> Ganti
+                                <i data-lucide="rotate-cw" class="me-1"></i> Ganti
                             </button>
                         </div>
                     </div>
 
                     <div class="humora-dropzone d-none mt-3" id="editVideoDropzone">
                         <div class="humora-dropzone-icon">
-                            <i class="bi bi-cloud-arrow-up"></i>
+                            <i data-lucide="cloud-upload"></i>
                         </div>
                         <div class="fw-bold text-dark mb-1" style="font-size: 0.88rem;">
                             Tarik file video baru ke sini, atau <span class="text-decoration-underline" style="color: #43135C;">pilih dari komputer</span>
@@ -133,7 +133,7 @@
                         <div class="form-check d-flex justify-content-between align-items-start">
                             <div>
                                 <label class="form-check-label fw-bold text-success d-flex align-items-center gap-1 mb-1" for="accessFreeEdit" style="font-size: 0.84rem; cursor: pointer;">
-                                    <i class="bi bi-stars"></i> Free Preview
+                                    <i data-lucide="sparkles"></i> Free Preview
                                 </label>
                                 <small class="text-muted d-block" style="font-size: 0.74rem;">Dapat ditonton tanpa berlangganan.</small>
                             </div>
@@ -146,7 +146,7 @@
                         <div class="form-check d-flex justify-content-between align-items-start">
                             <div>
                                 <label class="form-check-label fw-bold text-purple d-flex align-items-center gap-1 mb-1" for="accessPremiumEdit" style="color: #6B21A8; font-size: 0.84rem; cursor: pointer;">
-                                    <i class="bi bi-gem"></i> Premium
+                                    <i data-lucide="gem"></i> Premium
                                 </label>
                                 <small class="text-muted d-block" style="font-size: 0.74rem;">Hanya untuk subscriber aktif.</small>
                             </div>

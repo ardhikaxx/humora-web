@@ -196,8 +196,11 @@ body {
     white-space: nowrap;
 }
 
-.nav-humora-link i {
+.nav-humora-link i,
+.nav-humora-link svg.lucide {
     font-size: 1.15rem;
+    width: 20px;
+    height: 20px;
     line-height: 1;
     flex-shrink: 0;
 }
@@ -213,7 +216,8 @@ body {
     box-shadow: 0 4px 12px rgba(67, 19, 92, 0.22);
 }
 
-.nav-humora-link.active i {
+.nav-humora-link.active i,
+.nav-humora-link.active svg.lucide {
     color: #ffffff;
 }
 
@@ -312,8 +316,11 @@ body {
         display: none !important;
     }
 
-    body.sidebar-collapsed .nav-humora-link i {
+    body.sidebar-collapsed .nav-humora-link i,
+    body.sidebar-collapsed .nav-humora-link svg.lucide {
         font-size: 1.25rem;
+        width: 22px;
+        height: 22px;
         margin: 0;
     }
 
@@ -879,13 +886,16 @@ body {
     width: 100%;
 }
 
-.search-input-wrap i {
+.search-input-wrap i,
+.search-input-wrap svg.lucide {
     position: absolute;
     left: 1rem;
     top: 50%;
     transform: translateY(-50%);
     color: #9CA3AF;
     font-size: 0.95rem;
+    width: 17px;
+    height: 17px;
     pointer-events: none;
 }
 
@@ -1049,12 +1059,35 @@ body {
     box-shadow: 0 2px 6px rgba(67, 19, 92, 0.2);
 }
 
-/* ================= MOBILE RESPONSIVENESS ================= */
+/* ================= RESPONSIVE DESIGN & BREAKPOINTS ================= */
+
+/* Medium Desktop & Tablet Landscape (992px - 1199.98px) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .stat-value {
+        font-size: 1.4rem;
+    }
+    .admin-content {
+        padding: 1.4rem;
+    }
+}
+
+/* Large Screens (>= 1400px) */
+@media (min-width: 1400px) {
+    .admin-content {
+        padding: 2rem 2.25rem;
+    }
+    .stat-card {
+        padding: 1.35rem;
+    }
+}
+
+/* Tablet & Mobile Screens (<= 991.98px) */
 @media (max-width: 991.98px) {
     .admin-sidebar,
     body.sidebar-collapsed .admin-sidebar {
         width: var(--sidebar-width) !important;
         transform: translateX(-100%);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     }
 
     .admin-sidebar.show,
@@ -1065,6 +1098,19 @@ body {
     .admin-main-wrapper,
     body.sidebar-collapsed .admin-main-wrapper {
         margin-left: 0 !important;
+    }
+
+    .admin-topbar {
+        padding: 0 1.25rem;
+    }
+
+    .admin-content {
+        padding: 1.25rem 1rem;
+    }
+
+    .humora-card-header {
+        flex-wrap: wrap;
+        gap: 0.75rem;
     }
 
     body.sidebar-collapsed .sidebar-logo-expanded {
@@ -1111,13 +1157,324 @@ body {
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: rgba(0, 0, 0, 0.4);
+        background-color: rgba(0, 0, 0, 0.45);
         z-index: 1035;
         display: none;
+        backdrop-filter: blur(2px);
     }
 
     .sidebar-overlay.show {
         display: block;
+    }
+}
+
+/* Small Tablet & Mobile Landscape (<= 767.98px) */
+@media (max-width: 767.98px) {
+    .admin-topbar {
+        padding: 0 1rem;
+        height: 60px;
+    }
+
+    .admin-content {
+        padding: 1.1rem 0.85rem;
+    }
+
+    .page-title {
+        font-size: 1.35rem;
+        line-height: 1.25;
+    }
+
+    .page-subtitle {
+        font-size: 0.8rem;
+        margin-top: 0.2rem;
+    }
+
+    .humora-card {
+        margin-bottom: 1.15rem;
+    }
+
+    .humora-card-header {
+        padding: 0.9rem 1rem;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+    }
+
+    .humora-card-title {
+        font-size: 0.88rem;
+    }
+
+    .humora-card-subtitle {
+        font-size: 0.74rem;
+    }
+
+    .humora-card-body {
+        padding: 1rem;
+    }
+
+    .humora-card-body.p-4 {
+        padding: 1rem !important;
+    }
+
+    .alert-banner-humora {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.85rem 1rem;
+    }
+
+    .alert-banner-humora .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .modal-dialog {
+        margin: 0.75rem auto;
+        max-width: calc(100% - 1.5rem);
+    }
+
+    .modal-content-humora {
+        border-radius: 16px;
+    }
+
+    .modal-header-humora {
+        padding: 1rem 1.15rem;
+    }
+
+    .modal-body-humora {
+        padding: 1.15rem;
+    }
+
+    .modal-footer-humora {
+        padding: 0.85rem 1.15rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .modal-footer-humora .btn {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+}
+
+/* Extra Small Mobile / Smartphones (<= 575.98px) */
+@media (max-width: 575.98px) {
+    .admin-topbar {
+        padding: 0 0.75rem;
+        height: 56px;
+    }
+
+    .topbar-toggle-btn {
+        width: 34px;
+        height: 34px;
+        font-size: 1rem;
+    }
+
+    .notification-btn {
+        width: 34px;
+        height: 34px;
+    }
+
+    .user-avatar-circle {
+        width: 34px;
+        height: 34px;
+        font-size: 0.78rem;
+    }
+
+    .admin-topbar .dropdown-menu {
+        width: min(300px, calc(100vw - 1.25rem)) !important;
+        right: 0 !important;
+        left: auto !important;
+    }
+
+    .dropdown-menu {
+        max-width: calc(100vw - 1.25rem);
+    }
+
+    .admin-content {
+        padding: 0.85rem 0.65rem;
+    }
+
+    .page-title {
+        font-size: 1.22rem;
+    }
+
+    .page-subtitle {
+        font-size: 0.76rem;
+        line-height: 1.4;
+    }
+
+    /* Stat Cards Optimization */
+    .stat-card {
+        padding: 0.85rem 0.75rem;
+        min-height: 105px;
+        border-radius: 12px;
+    }
+
+    .stat-card-top {
+        margin-bottom: 0.35rem;
+    }
+
+    .stat-label {
+        font-size: 0.65rem;
+        letter-spacing: 0.04em;
+    }
+
+    .stat-icon-wrap {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+    }
+
+    .stat-icon-wrap [data-lucide],
+    .stat-icon-wrap svg.lucide {
+        width: 15px !important;
+        height: 15px !important;
+    }
+
+    .stat-value {
+        font-size: clamp(1.1rem, 4.2vw, 1.35rem) !important;
+        word-break: break-word;
+        line-height: 1.15;
+    }
+
+    .stat-trend {
+        font-size: 0.68rem;
+    }
+
+    .stat-subtext {
+        font-size: 0.68rem;
+        line-height: 1.3;
+    }
+
+    /* Filter Pills Mobile Fit */
+    .btn-filter-group {
+        width: 100%;
+        display: flex;
+        justify-content: stretch;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 0.2rem;
+    }
+
+    .btn-filter-pill {
+        flex: 1 1 auto;
+        text-align: center;
+        white-space: nowrap;
+        padding: 0.35rem 0.45rem;
+        font-size: 0.72rem;
+    }
+
+    /* Table Density & Mobile Fluidity */
+    .table-responsive {
+        -webkit-overflow-scrolling: touch;
+        border-radius: 0 0 12px 12px;
+    }
+
+    .table-humora th,
+    .table-humora td {
+        padding: 0.55rem 0.65rem;
+        font-size: 0.78rem;
+    }
+
+    .table-humora th {
+        font-size: 0.68rem;
+        padding-top: 0.65rem;
+        padding-bottom: 0.65rem;
+    }
+
+    .thumbnail-table-thumb {
+        width: 44px;
+        height: 30px;
+        border-radius: 6px;
+    }
+
+    .table-stat-likes {
+        font-size: 0.74rem;
+    }
+
+    .progress-humora {
+        height: 5px;
+    }
+
+    /* Button Groups in Headers */
+    .d-flex.flex-column.flex-md-row > .d-flex.align-items-center.gap-2 {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .d-flex.flex-column.flex-md-row > .d-flex.align-items-center.gap-2 > .btn {
+        flex: 1 1 auto;
+        justify-content: center;
+        font-size: 0.8rem;
+        padding: 0.5rem 0.85rem;
+    }
+
+    /* Auth Page Mobile Scaling */
+    .auth-wrapper {
+        padding: 1.25rem 0.75rem;
+    }
+
+    .auth-card {
+        padding: 1.5rem 1.15rem;
+        border-radius: 20px;
+    }
+
+    .auth-logo-banner {
+        width: 180px;
+        height: 75px;
+        padding: 0.75rem 1rem;
+        border-radius: 16px;
+        margin-bottom: 0.85rem;
+    }
+
+    .auth-logo-banner img {
+        max-height: 48px;
+    }
+
+    .auth-title {
+        font-size: 1.25rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .auth-subtitle {
+        font-size: 0.78rem;
+        margin-bottom: 1.25rem;
+    }
+
+    /* Dropzone & Form Controls on Mobile */
+    .humora-dropzone {
+        padding: 1.5rem 1rem;
+    }
+
+    .humora-dropzone-icon {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 0.35rem;
+    }
+
+    .humora-dropzone-icon [data-lucide],
+    .humora-dropzone-icon svg.lucide {
+        width: 26px !important;
+        height: 26px !important;
+    }
+
+    .form-label-custom {
+        font-size: 0.76rem;
+    }
+
+    .form-control-custom,
+    .form-select-custom {
+        font-size: 0.84rem;
+        padding: 0.55rem 0.85rem;
+    }
+
+    .preset-btn {
+        padding: 0.22rem 0.45rem;
+        font-size: 0.68rem;
+    }
+
+    .access-choice-box {
+        padding: 0.75rem !important;
     }
 }
 
@@ -1156,11 +1513,14 @@ body {
     color: var(--humora-text-muted);
 }
 
-.empty-table-state i {
+.empty-table-state i,
+.empty-table-state svg.lucide {
     font-size: 2.5rem;
+    width: 48px;
+    height: 48px;
     color: #D1D5DB;
     display: block;
-    margin-bottom: 0.5rem;
+    margin: 0 auto 0.5rem auto;
 }
 
 /* Toast container custom position */
@@ -1178,3 +1538,406 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
+
+/* ================= LUCIDE SVG ICONS GENERAL & SIZING ================= */
+[data-lucide],
+svg.lucide {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    vertical-align: -0.125em;
+    stroke-width: 2px;
+    flex-shrink: 0;
+}
+
+/* Sidebar Navigation */
+.nav-humora-link [data-lucide],
+.nav-humora-link svg.lucide {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.2px;
+    color: #6B7280;
+    flex-shrink: 0;
+    transition: color 0.18s ease;
+}
+
+.nav-humora-link:hover [data-lucide],
+.nav-humora-link:hover svg.lucide {
+    color: var(--humora-primary);
+}
+
+.nav-humora-link.active [data-lucide],
+.nav-humora-link.active svg.lucide {
+    color: #ffffff;
+}
+
+body.sidebar-collapsed .nav-humora-link [data-lucide],
+body.sidebar-collapsed .nav-humora-link svg.lucide {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2.2px;
+    margin: 0;
+}
+
+.sidebar-user-role [data-lucide],
+.sidebar-user-role svg.lucide {
+    width: 12px;
+    height: 12px;
+    stroke-width: 2.2px;
+}
+
+.sidebar-profile-card [data-lucide="chevron-right"],
+.sidebar-profile-card svg.lucide-chevron-right {
+    width: 15px;
+    height: 15px;
+    stroke-width: 2px;
+    color: #9CA3AF;
+}
+
+/* Topbar Buttons */
+.topbar-btn [data-lucide],
+.topbar-btn svg.lucide {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2px;
+}
+
+.topbar-action-btn [data-lucide],
+.topbar-action-btn svg.lucide {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2px;
+}
+
+.dropdown-menu [data-lucide],
+.dropdown-menu svg.lucide {
+    width: 15px;
+    height: 15px;
+    stroke-width: 2px;
+    margin-right: 0.5rem;
+    vertical-align: -0.15em;
+}
+
+/* Primary & Secondary Buttons */
+.btn-humora-primary [data-lucide],
+.btn-humora-primary svg.lucide,
+.btn-humora-secondary [data-lucide],
+.btn-humora-secondary svg.lucide {
+    width: 15px;
+    height: 15px;
+    stroke-width: 2.2px;
+}
+
+.btn-humora-primary [data-lucide="plus"],
+.btn-humora-primary svg.lucide-plus {
+    stroke-width: 2.5px;
+}
+
+.btn-humora-icon {
+    width: 30px;
+    height: 30px;
+}
+
+.btn-humora-icon [data-lucide],
+.btn-humora-icon svg.lucide {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2px;
+}
+
+/* Stat Cards */
+.stat-icon-wrap {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stat-icon-wrap [data-lucide],
+.stat-icon-wrap svg.lucide {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.2px;
+}
+
+.stat-trend {
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.stat-trend [data-lucide],
+.stat-trend svg.lucide {
+    width: 13px;
+    height: 13px;
+    stroke-width: 2.5px;
+    vertical-align: middle;
+}
+
+/* Badges & Pills */
+.badge-pill-success,
+.badge-pill-free,
+.badge-pill-premium,
+.badge-pill-warning,
+.badge-pill-danger,
+.badge-pill-gray {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    white-space: nowrap;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.22rem 0.6rem;
+    border-radius: 50rem;
+    line-height: 1.2;
+}
+
+.badge-pill-success [data-lucide],
+.badge-pill-success svg.lucide,
+.badge-pill-warning [data-lucide],
+.badge-pill-warning svg.lucide,
+.badge-pill-danger [data-lucide],
+.badge-pill-danger svg.lucide,
+.badge-pill-free [data-lucide],
+.badge-pill-free svg.lucide,
+.badge-pill-premium [data-lucide],
+.badge-pill-premium svg.lucide,
+.badge-pill-gray [data-lucide],
+.badge-pill-gray svg.lucide {
+    width: 12px !important;
+    height: 12px !important;
+    stroke-width: 2.2px;
+    flex-shrink: 0;
+}
+
+/* Table Stats (e.g. Likes Hearts) */
+.table-stat-likes {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    white-space: nowrap;
+}
+
+.table-stat-likes [data-lucide],
+.table-stat-likes svg.lucide {
+    width: 13px;
+    height: 13px;
+    stroke-width: 2.2px;
+}
+
+/* Activity Items (Aktivitas Terbaru) */
+.stat-icon-wrap[style*="32px"],
+.stat-icon-wrap[style*="32px;"] {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 8px !important;
+}
+
+.stat-icon-wrap[style*="32px"] [data-lucide],
+.stat-icon-wrap[style*="32px"] svg.lucide,
+.stat-icon-wrap[style*="32px;"] [data-lucide],
+.stat-icon-wrap[style*="32px;"] svg.lucide {
+    width: 15px !important;
+    height: 15px !important;
+    stroke-width: 2.2px;
+}
+
+small [data-lucide="calendar"],
+small svg.lucide-calendar {
+    width: 12px;
+    height: 12px;
+    stroke-width: 2px;
+    vertical-align: -0.1em;
+}
+
+/* Links with Arrow */
+a [data-lucide="arrow-up-right"],
+a svg.lucide-arrow-up-right {
+    width: 13px;
+    height: 13px;
+    stroke-width: 2.2px;
+    vertical-align: -0.1em;
+}
+
+/* Search Input */
+.search-input-wrap [data-lucide],
+.search-input-wrap svg.lucide {
+    position: absolute;
+    left: 0.95rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9CA3AF;
+    width: 15px;
+    height: 15px;
+    stroke-width: 2px;
+    pointer-events: none;
+}
+
+/* Dropzone Icons */
+.humora-dropzone-icon [data-lucide],
+.humora-dropzone-icon svg.lucide {
+    width: 38px;
+    height: 38px;
+    stroke-width: 1.8px;
+    margin-bottom: 0.5rem;
+}
+
+/* Empty Table State */
+.empty-table-state [data-lucide],
+.empty-table-state svg.lucide {
+    width: 40px;
+    height: 40px;
+    stroke-width: 1.8px;
+    color: #D1D5DB;
+    display: block;
+    margin: 0 auto 0.5rem auto;
+}
+
+/* Form Input Addons & Password Toggles */
+.input-group-text [data-lucide],
+.input-group-text svg.lucide {
+    width: 15px;
+    height: 15px;
+    stroke-width: 2px;
+}
+
+.password-toggle-btn [data-lucide],
+.password-toggle-btn svg.lucide,
+#togglePassword [data-lucide],
+#togglePassword svg.lucide,
+[onclick*="toggleVisibility"] [data-lucide],
+[onclick*="toggleVisibility"] svg.lucide {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2px;
+}
+
+/* Breadcrumbs & Small Nav Arrows */
+.breadcrumb [data-lucide="chevron-right"],
+.breadcrumb svg.lucide-chevron-right,
+[style*="font-size: 0.65rem"] [data-lucide="chevron-right"],
+[style*="font-size: 0.65rem"] svg.lucide-chevron-right,
+[style*="font-size: 0.8rem"] [data-lucide="chevron-right"],
+[style*="font-size: 0.8rem"] svg.lucide-chevron-right {
+    width: 11px !important;
+    height: 11px !important;
+    stroke-width: 2.2px;
+    vertical-align: middle;
+}
+
+/* Table Pagination Chevrons */
+.page-link [data-lucide],
+.page-link svg.lucide,
+.pagination [data-lucide],
+.pagination svg.lucide {
+    width: 14px !important;
+    height: 14px !important;
+    stroke-width: 2.2px;
+    vertical-align: middle;
+}
+
+/* General Button Icons */
+.btn [data-lucide],
+.btn svg.lucide {
+    width: 15px;
+    height: 15px;
+    stroke-width: 2.2px;
+    vertical-align: -0.125em;
+}
+
+.btn-sm [data-lucide],
+.btn-sm svg.lucide {
+    width: 13px !important;
+    height: 13px !important;
+    stroke-width: 2.2px;
+    vertical-align: -0.1em;
+}
+
+/* Table Cell General Icons */
+.table-humora td [data-lucide],
+.table-humora td svg.lucide {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2px;
+    vertical-align: middle;
+}
+
+.table-humora td [class*="badge-pill"] [data-lucide],
+.table-humora td [class*="badge-pill"] svg.lucide {
+    width: 12px !important;
+    height: 12px !important;
+}
+
+.table-humora td .btn-humora-icon [data-lucide],
+.table-humora td .btn-humora-icon svg.lucide {
+    width: 14px !important;
+    height: 14px !important;
+}
+
+.table-humora td .table-stat-likes [data-lucide],
+.table-humora td .table-stat-likes svg.lucide {
+    width: 13px !important;
+    height: 13px !important;
+}
+
+/* Filter Pills & Presets */
+.btn-filter-pill [data-lucide],
+.btn-filter-pill svg.lucide,
+.preset-btn [data-lucide],
+.preset-btn svg.lucide {
+    width: 13px;
+    height: 13px;
+    stroke-width: 2.2px;
+    vertical-align: -0.1em;
+}
+
+/* Choice Boxes & Checklist Items */
+.access-choice-box [data-lucide],
+.access-choice-box svg.lucide {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2.2px;
+}
+
+#stepTitle [data-lucide],
+#stepTitle svg.lucide,
+#stepFile [data-lucide],
+#stepFile svg.lucide,
+[id*="step"] [data-lucide],
+[id*="step"] svg.lucide {
+    width: 13px !important;
+    height: 13px !important;
+    stroke-width: 2.2px;
+}
+
+/* Modal Headers & Alerts */
+.modal-title-humora [data-lucide],
+.modal-title-humora svg.lucide {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.2px;
+    vertical-align: -0.15em;
+}
+
+.alert [data-lucide],
+.alert svg.lucide {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2.2px;
+    vertical-align: -0.15em;
+}
+
+/* Bootstrap Typography Scale Utilities */
+svg.lucide.fs-1, .fs-1 svg.lucide { width: 2.5rem !important; height: 2.5rem !important; }
+svg.lucide.fs-2, .fs-2 svg.lucide { width: 2rem !important; height: 2rem !important; }
+svg.lucide.fs-3, .fs-3 svg.lucide { width: 1.75rem !important; height: 1.75rem !important; }
+svg.lucide.fs-4, .fs-4 svg.lucide { width: 1.5rem !important; height: 1.5rem !important; }
+svg.lucide.fs-5, .fs-5 svg.lucide { width: 1.25rem !important; height: 1.25rem !important; }
+svg.lucide.fs-6, .fs-6 svg.lucide { width: 1rem !important; height: 1rem !important; }
+
+

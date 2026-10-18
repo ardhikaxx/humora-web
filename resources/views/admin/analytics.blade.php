@@ -6,7 +6,7 @@
 <!-- Breadcrumbs & Header -->
 <div class="mb-2">
     <small class="text-muted" style="font-size: 0.78rem;">
-        <span>Admin</span> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i> <span class="text-dark fw-semibold">Analytics</span>
+        <span>Admin</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i> <span class="text-dark fw-semibold">Analytics</span>
     </small>
 </div>
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
@@ -16,7 +16,7 @@
     </div>
     <div class="btn-filter-group align-self-start align-self-md-auto" id="analyticsPeriodFilter">
         <button class="btn-filter-pill d-inline-flex align-items-center gap-1" data-period="7">
-            <i class="bi bi-calendar3"></i> 7 Hari Terakhir
+            <i data-lucide="calendar"></i> 7 Hari Terakhir
         </button>
         <button class="btn-filter-pill active" data-period="30">30 Hari Terakhir</button>
         <button class="btn-filter-pill" data-period="90">90 Hari Terakhir</button>
@@ -29,7 +29,7 @@
         <x-stat-card 
             label="Total Views" 
             value="65.995" 
-            icon="bi bi-eye" 
+            icon="eye" 
             iconBg="green" 
             trend="14.2%" 
             subtext="vs periode lalu" 
@@ -39,7 +39,7 @@
         <x-stat-card 
             label="Penonton Unik" 
             value="44.877" 
-            icon="bi bi-people" 
+            icon="users" 
             iconBg="purple" 
             subtext="68% dari total views" 
         />
@@ -48,7 +48,7 @@
         <x-stat-card 
             label="Total Watch Time" 
             value="8.014 jam" 
-            icon="bi bi-clock" 
+            icon="clock" 
             iconBg="orange" 
             trend="16%" 
             subtext="vs periode lalu" 
@@ -58,7 +58,7 @@
         <x-stat-card 
             label="Rata-rata Tonton" 
             value="7 menit" 
-            icon="bi bi-graph-up" 
+            icon="trending-up" 
             iconBg="blue" 
             subtext="per penayangan episode" 
         />
@@ -67,7 +67,7 @@
         <x-stat-card 
             label="Subscribers Baru" 
             value="1.282" 
-            icon="bi bi-gem" 
+            icon="gem" 
             iconBg="purple" 
             trend="26.3%" 
             subtext="vs periode lalu" 
@@ -77,7 +77,7 @@
         <x-stat-card 
             label="Total Pendapatan" 
             value="Rp 30.831.402" 
-            icon="bi bi-credit-card" 
+            icon="credit-card" 
             iconBg="green" 
             trend="26.4%" 
             subtext="vs periode lalu" 
@@ -113,7 +113,7 @@
         <div class="humora-card h-100">
             <div class="humora-card-header">
                 <div class="d-flex align-items-center gap-2">
-                    <i class="bi bi-people text-purple" style="color: #43135C;"></i>
+                    <i data-lucide="users" class="text-purple" style="color: #43135C;"></i>
                     <span class="humora-card-title">AUDIENCE INSIGHTS</span>
                 </div>
                 <span class="text-muted" style="font-size: 0.76rem;">Aktivitas Penonton</span>
@@ -159,7 +159,7 @@
         <div class="humora-card h-100">
             <div class="humora-card-header">
                 <div class="d-flex align-items-center gap-2">
-                    <i class="bi bi-gem text-warning"></i>
+                    <i data-lucide="gem" class="text-warning"></i>
                     <span class="humora-card-title">SUBSCRIPTION PERFORMANCE</span>
                 </div>
                 <span class="badge rounded-pill" style="background-color: #ECFDF5; color: #059669; font-size: 0.74rem;">13.2% Conversion Rate</span>
@@ -244,7 +244,7 @@
     </div>
     <div class="p-3 border-bottom bg-light">
         <div class="search-input-wrap">
-            <i class="bi bi-search"></i>
+            <i data-lucide="search"></i>
             <input type="text" id="analyticsSearchInput" class="form-control-custom bg-white" placeholder="Cari judul episode atau nama series...">
         </div>
     </div>
@@ -274,9 +274,9 @@
                             </div>
                         </div>
                     </td>
-                    <td><span class="badge-pill-free"><i class="bi bi-play-circle"></i> Free Preview</span></td>
+                    <td><span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span></td>
                     <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>4.250</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>4.250</span></td>
                     <td class="text-muted">893 jam</td>
                     <td><span class="fw-bold text-success">92%</span></td>
                     <td class="text-end"><a href="{{ url('/admin/videos') }}" class="btn btn-sm btn-link text-decoration-none fw-semibold" style="color: #43135C; font-size: 0.8rem;">Kelola</a></td>
@@ -292,9 +292,9 @@
                             </div>
                         </div>
                     </td>
-                    <td><span class="badge-pill-free"><i class="bi bi-play-circle"></i> Free Preview</span></td>
+                    <td><span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span></td>
                     <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>5.600</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>5.600</span></td>
                     <td class="text-muted">867 jam</td>
                     <td><span class="fw-bold text-success">92%</span></td>
                     <td class="text-end"><a href="{{ url('/admin/videos') }}" class="btn btn-sm btn-link text-decoration-none fw-semibold" style="color: #43135C; font-size: 0.8rem;">Kelola</a></td>
@@ -310,9 +310,9 @@
                             </div>
                         </div>
                     </td>
-                    <td><span class="badge-pill-free"><i class="bi bi-play-circle"></i> Free Preview</span></td>
+                    <td><span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span></td>
                     <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>3.800</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>3.800</span></td>
                     <td class="text-muted">880 jam</td>
                     <td><span class="fw-bold text-success">92%</span></td>
                     <td class="text-end"><a href="{{ url('/admin/videos') }}" class="btn btn-sm btn-link text-decoration-none fw-semibold" style="color: #43135C; font-size: 0.8rem;">Kelola</a></td>
@@ -328,9 +328,9 @@
                             </div>
                         </div>
                     </td>
-                    <td><span class="badge-pill-free"><i class="bi bi-play-circle"></i> Free Preview</span></td>
+                    <td><span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span></td>
                     <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>6.500</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>6.500</span></td>
                     <td class="text-muted">853 jam</td>
                     <td><span class="fw-bold text-success">92%</span></td>
                     <td class="text-end"><a href="{{ url('/admin/videos') }}" class="btn btn-sm btn-link text-decoration-none fw-semibold" style="color: #43135C; font-size: 0.8rem;">Kelola</a></td>
@@ -346,9 +346,9 @@
                             </div>
                         </div>
                     </td>
-                    <td><span class="badge-pill-free"><i class="bi bi-play-circle"></i> Free Preview</span></td>
+                    <td><span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span></td>
                     <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>5.100</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>5.100</span></td>
                     <td class="text-muted">867 jam</td>
                     <td><span class="fw-bold text-success">92%</span></td>
                     <td class="text-end"><a href="{{ url('/admin/videos') }}" class="btn btn-sm btn-link text-decoration-none fw-semibold" style="color: #43135C; font-size: 0.8rem;">Kelola</a></td>
@@ -364,9 +364,9 @@
                             </div>
                         </div>
                     </td>
-                    <td><span class="badge-pill-free"><i class="bi bi-play-circle"></i> Free Preview</span></td>
+                    <td><span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span></td>
                     <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>2.900</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>2.900</span></td>
                     <td class="text-muted">827 jam</td>
                     <td><span class="fw-bold text-success">92%</span></td>
                     <td class="text-end"><a href="{{ url('/admin/videos') }}" class="btn btn-sm btn-link text-decoration-none fw-semibold" style="color: #43135C; font-size: 0.8rem;">Kelola</a></td>
@@ -382,9 +382,9 @@
                             </div>
                         </div>
                     </td>
-                    <td><span class="badge-pill-free"><i class="bi bi-play-circle"></i> Free Preview</span></td>
+                    <td><span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span></td>
                     <td class="fw-bold text-dark">21.000</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>3.820</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>3.820</span></td>
                     <td class="text-muted">688 jam</td>
                     <td><span class="fw-bold text-success">88%</span></td>
                     <td class="text-end"><a href="{{ url('/admin/videos') }}" class="btn btn-sm btn-link text-decoration-none fw-semibold" style="color: #43135C; font-size: 0.8rem;">Kelola</a></td>
@@ -400,9 +400,9 @@
                             </div>
                         </div>
                     </td>
-                    <td><span class="badge-pill-free"><i class="bi bi-play-circle"></i> Free Preview</span></td>
+                    <td><span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span></td>
                     <td class="fw-bold text-dark">21.000</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>4.900</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>4.900</span></td>
                     <td class="text-muted">671 jam</td>
                     <td><span class="fw-bold text-success">88%</span></td>
                     <td class="text-end"><a href="{{ url('/admin/videos') }}" class="btn btn-sm btn-link text-decoration-none fw-semibold" style="color: #43135C; font-size: 0.8rem;">Kelola</a></td>
@@ -418,9 +418,9 @@
                             </div>
                         </div>
                     </td>
-                    <td><span class="badge-pill-free"><i class="bi bi-play-circle"></i> Free Preview</span></td>
+                    <td><span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span></td>
                     <td class="fw-bold text-dark">21.000</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>3.400</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>3.400</span></td>
                     <td class="text-muted">642 jam</td>
                     <td><span class="fw-bold text-success">88%</span></td>
                     <td class="text-end"><a href="{{ url('/admin/videos') }}" class="btn btn-sm btn-link text-decoration-none fw-semibold" style="color: #43135C; font-size: 0.8rem;">Kelola</a></td>
@@ -436,9 +436,9 @@
                             </div>
                         </div>
                     </td>
-                    <td><span class="badge-pill-free"><i class="bi bi-play-circle"></i> Free Preview</span></td>
+                    <td><span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span></td>
                     <td class="fw-bold text-dark">21.000</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>5.800</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>5.800</span></td>
                     <td class="text-muted">788 jam</td>
                     <td><span class="fw-bold text-success">88%</span></td>
                     <td class="text-end"><a href="{{ url('/admin/videos') }}" class="btn btn-sm btn-link text-decoration-none fw-semibold" style="color: #43135C; font-size: 0.8rem;">Kelola</a></td>
@@ -636,7 +636,7 @@
                     emptyRow.className = 'empty-state-row';
                     emptyRow.innerHTML = `
                         <td colspan="8" class="text-center py-4 text-muted">
-                            <i class="bi bi-search fs-4 d-block mb-2 opacity-50"></i>
+                            <i data-lucide="search" class="fs-4 d-block mb-2 opacity-50"></i>
                             Tidak ada episode yang sesuai dengan pencarian "${searchTerm}".
                         </td>
                     `;

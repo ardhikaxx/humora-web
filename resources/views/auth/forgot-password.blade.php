@@ -19,12 +19,12 @@
 
     <button type="submit" class="btn btn-humora-primary w-100 py-2 justify-content-center mb-3">
         <span>Verifikasi Akun</span>
-        <i class="bi bi-arrow-right"></i>
+        <i data-lucide="arrow-right"></i>
     </button>
 
     <div class="text-center">
         <a href="{{ url('/login') }}" class="text-decoration-none d-inline-flex align-items-center gap-1" style="font-size: 0.82rem; font-weight: 600; color: #4B5563;">
-            <i class="bi bi-arrow-left"></i>
+            <i data-lucide="arrow-left"></i>
             <span>Kembali ke Halaman Login</span>
         </a>
     </div>

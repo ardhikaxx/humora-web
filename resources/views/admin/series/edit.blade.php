@@ -6,9 +6,9 @@
 <!-- Breadcrumbs -->
 <div class="mb-2">
     <small class="text-muted" style="font-size: 0.78rem;">
-        <span>Admin</span> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
-        <a href="{{ url('/admin/series') }}" class="text-decoration-none text-muted">Series</a> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
-        <a href="{{ url('/admin/series/1') }}" class="text-decoration-none text-muted">Tipe Pembeli di Toko Kelontong</a> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
+        <span>Admin</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
+        <a href="{{ url('/admin/series') }}" class="text-decoration-none text-muted">Series</a> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
+        <a href="{{ url('/admin/series/1') }}" class="text-decoration-none text-muted">Tipe Pembeli di Toko Kelontong</a> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
         <span class="text-dark fw-semibold">Edit</span>
     </small>
 </div>
@@ -24,11 +24,11 @@
         </div>
         <div class="d-flex align-items-center gap-2">
             <a href="{{ url('/admin/series/1') }}" class="btn btn-humora-secondary">
-                <i class="bi bi-arrow-left"></i>
+                <i data-lucide="arrow-left"></i>
                 <span>Batal</span>
             </a>
             <button type="submit" class="btn btn-humora-primary">
-                <i class="bi bi-floppy"></i>
+                <i data-lucide="save"></i>
                 <span>Simpan Perubahan</span>
             </button>
         </div>
@@ -95,21 +95,21 @@
                         </div>
                         <div class="d-flex align-items-center justify-content-between p-2 bg-white rounded-3 border">
                             <div class="d-flex align-items-center gap-2">
-                                <i class="bi bi-file-earmark-image text-success fs-5"></i>
+                                <i data-lucide="file-image" class="text-success fs-5"></i>
                                 <div>
                                     <div class="fw-bold text-dark" style="font-size: 0.82rem;">tipe-pembeli-di-toko-kelontong.jpg</div>
                                     <small class="text-muted" style="font-size: 0.72rem;">Aset bawaan (16:9)</small>
                                 </div>
                             </div>
                             <button type="button" class="btn btn-sm btn-outline-danger py-1 px-2" id="btnRemoveExistingThumb" title="Ganti foto">
-                                <i class="bi bi-arrow-repeat me-1"></i> Ganti
+                                <i data-lucide="rotate-cw" class="me-1"></i> Ganti
                             </button>
                         </div>
                     </div>
 
                     <div class="humora-dropzone d-none mt-3" id="editDropzone">
                         <div class="humora-dropzone-icon">
-                            <i class="bi bi-cloud-arrow-up"></i>
+                            <i data-lucide="cloud-upload"></i>
                         </div>
                         <div class="fw-bold text-dark mb-1" style="font-size: 0.88rem;">
                             Tarik file baru ke sini, atau <span class="text-decoration-underline" style="color: #43135C;">pilih dari komputer</span>

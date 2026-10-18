@@ -11,11 +11,11 @@
     </div>
     <div class="d-flex align-items-center gap-2">
         <a href="{{ url('/admin/analytics') }}" class="btn btn-humora-secondary">
-            <i class="bi bi-graph-up-arrow"></i>
+            <i data-lucide="trending-up"></i>
             <span>Lihat Analytics</span>
         </a>
         <a href="{{ url('/admin/videos/create') }}" class="btn btn-humora-primary">
-            <i class="bi bi-plus-lg"></i>
+            <i data-lucide="plus"></i>
             <span>Tambah Video</span>
         </a>
     </div>
@@ -27,7 +27,7 @@
         <x-stat-card 
             label="Total Users" 
             value="24.850" 
-            icon="bi bi-people" 
+            icon="users" 
             iconBg="purple" 
             trend="12.4%" 
             subtext="vs bln lalu" 
@@ -37,7 +37,7 @@
         <x-stat-card 
             label="Total Views" 
             value="432.500" 
-            icon="bi bi-eye" 
+            icon="eye" 
             iconBg="green" 
             trend="18.2%" 
             subtext="vs bln lalu" 
@@ -47,7 +47,7 @@
         <x-stat-card 
             label="Watch Time" 
             value="15.960 jam" 
-            icon="bi bi-clock" 
+            icon="clock" 
             iconBg="orange" 
             trend="15.6%" 
             subtext="vs bln lalu" 
@@ -58,7 +58,7 @@
             label="Subscribers" 
             value="3.279" 
             badge="VIP"
-            icon="bi bi-gem" 
+            icon="gem" 
             iconBg="purple" 
             trend="8.5%" 
             subtext="vs bln lalu" 
@@ -68,7 +68,7 @@
         <x-stat-card 
             label="Revenue" 
             value="Rp 48.699.200" 
-            icon="bi bi-credit-card" 
+            icon="credit-card" 
             iconBg="green" 
             trend="14.2%" 
             subtext="vs bln lalu" 
@@ -78,7 +78,7 @@
         <x-stat-card 
             label="Published Ep" 
             value="24" 
-            icon="bi bi-camera-video" 
+            icon="video" 
             iconBg="blue" 
             trend="16.7%" 
             subtext="vs bln lalu" 
@@ -119,7 +119,7 @@
                     </div>
                     <a href="{{ url('/admin/analytics') }}" class="text-decoration-none fw-semibold d-inline-flex align-items-center gap-1" style="color: #43135C; font-size: 0.82rem;">
                         <span>Laporan Mendalam</span>
-                        <i class="bi bi-arrow-up-right"></i>
+                        <i data-lucide="arrow-up-right"></i>
                     </a>
                 </div>
             </div>
@@ -199,7 +199,7 @@
                 <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top" style="font-size: 0.8rem;">
                     <span class="text-muted">Total 186.420 Views</span>
                     <a href="{{ url('/admin/categories') }}" class="text-decoration-none fw-semibold" style="color: #43135C;">
-                        Kelola Kategori <i class="bi bi-arrow-up-right"></i>
+                        Kelola Kategori <i data-lucide="arrow-up-right"></i>
                     </a>
                 </div>
             </div>
@@ -218,7 +218,7 @@
                     <div class="humora-card-subtitle">Paling banyak ditonton dengan completion rate tertinggi</div>
                 </div>
                 <a href="{{ url('/admin/videos') }}" class="text-decoration-none fw-semibold" style="color: #43135C; font-size: 0.82rem;">
-                    Lihat Semua Video <i class="bi bi-arrow-up-right"></i>
+                    Lihat Semua Video <i data-lucide="arrow-up-right"></i>
                 </a>
             </div>
             <div class="table-responsive">
@@ -252,7 +252,7 @@
                             </td>
                             <td class="fw-bold text-dark">24.000</td>
                             <td>
-                                <span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>4.250</span>
+                                <span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>4.250</span>
                             </td>
                             <td style="width: 140px;">
                                 <div class="d-flex align-items-center gap-2">
@@ -263,7 +263,7 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="badge-pill-free"><i class="bi bi-play-circle"></i> Free Preview</span>
+                                <span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span>
                             </td>
                         </tr>
                         <tr>
@@ -283,7 +283,7 @@
                             </td>
                             <td class="fw-bold text-dark">24.000</td>
                             <td>
-                                <span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>5.600</span>
+                                <span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>5.600</span>
                             </td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
@@ -294,7 +294,7 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="badge-pill-free"><i class="bi bi-play-circle"></i> Free Preview</span>
+                                <span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span>
                             </td>
                         </tr>
                         <tr>
@@ -314,7 +314,7 @@
                             </td>
                             <td class="fw-bold text-dark">24.000</td>
                             <td>
-                                <span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>3.800</span>
+                                <span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>3.800</span>
                             </td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
@@ -325,7 +325,7 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="badge-pill-free"><i class="bi bi-play-circle"></i> Free Preview</span>
+                                <span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span>
                             </td>
                         </tr>
                         <tr>
@@ -345,7 +345,7 @@
                             </td>
                             <td class="fw-bold text-dark">24.000</td>
                             <td>
-                                <span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>6.500</span>
+                                <span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>6.500</span>
                             </td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
@@ -356,7 +356,7 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="badge-pill-free"><i class="bi bi-play-circle"></i> Free Preview</span>
+                                <span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span>
                             </td>
                         </tr>
                         <tr>
@@ -376,7 +376,7 @@
                             </td>
                             <td class="fw-bold text-dark">24.000</td>
                             <td>
-                                <span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>5.100</span>
+                                <span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>5.100</span>
                             </td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
@@ -387,7 +387,7 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="badge-pill-free"><i class="bi bi-play-circle"></i> Free Preview</span>
+                                <span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span>
                             </td>
                         </tr>
                         <tr>
@@ -407,7 +407,7 @@
                             </td>
                             <td class="fw-bold text-dark">24.000</td>
                             <td>
-                                <span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>2.900</span>
+                                <span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>2.900</span>
                             </td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
@@ -418,7 +418,7 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="badge-pill-free"><i class="bi bi-play-circle"></i> Free Preview</span>
+                                <span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span>
                             </td>
                         </tr>
                     </tbody>
@@ -445,52 +445,52 @@
                 <div class="d-flex flex-column gap-3">
                     <div class="d-flex align-items-start gap-3">
                         <div class="stat-icon-wrap stat-icon-blue flex-shrink-0 mt-1" style="width: 32px; height: 32px; font-size: 0.95rem;">
-                            <i class="bi bi-camera-video"></i>
+                            <i data-lucide="video"></i>
                         </div>
                         <div>
                             <div class="fw-bold text-dark" style="font-size: 0.84rem;">Video Terbit</div>
                             <div class="text-muted" style="font-size: 0.78rem; line-height: 1.4;">Tipe Penumpang Taxi Online: Video 1 "Tipe Bawel" dipublikasikan.</div>
                             <small class="text-muted d-flex align-items-center gap-1 mt-1" style="font-size: 0.72rem;">
-                                <i class="bi bi-calendar3"></i> 15 Okt 2026, 16:00 WIB
+                                <i data-lucide="calendar"></i> 15 Okt 2026, 16:00 WIB
                             </small>
                         </div>
                     </div>
 
                     <div class="d-flex align-items-start gap-3">
                         <div class="stat-icon-wrap stat-icon-orange flex-shrink-0 mt-1" style="width: 32px; height: 32px; font-size: 0.95rem;">
-                            <i class="bi bi-patch-check"></i>
+                            <i data-lucide="badge-check"></i>
                         </div>
                         <div>
                             <div class="fw-bold text-dark" style="font-size: 0.84rem;">Pembayaran Diverifikasi</div>
                             <div class="text-muted" style="font-size: 0.78rem; line-height: 1.4;">Pembayaran Paket Tahunan oleh Dimas Aditya berhasil diverifikasi.</div>
                             <small class="text-muted d-flex align-items-center gap-1 mt-1" style="font-size: 0.72rem;">
-                                <i class="bi bi-calendar3"></i> 14 Okt 2026, 18:30 WIB
+                                <i data-lucide="calendar"></i> 14 Okt 2026, 18:30 WIB
                             </small>
                         </div>
                     </div>
 
                     <div class="d-flex align-items-start gap-3">
                         <div class="stat-icon-wrap stat-icon-purple flex-shrink-0 mt-1" style="width: 32px; height: 32px; font-size: 0.95rem;">
-                            <i class="bi bi-collection-play"></i>
+                            <i data-lucide="tv"></i>
                         </div>
                         <div>
                             <div class="fw-bold text-dark" style="font-size: 0.84rem;">Judul Konten Baru</div>
                             <div class="text-muted" style="font-size: 0.78rem; line-height: 1.4;">Judul "Cara Deketin Cewek" berhasil ditambahkan ke katalog.</div>
                             <small class="text-muted d-flex align-items-center gap-1 mt-1" style="font-size: 0.72rem;">
-                                <i class="bi bi-calendar3"></i> 12 Okt 2026, 17:00 WIB
+                                <i data-lucide="calendar"></i> 12 Okt 2026, 17:00 WIB
                             </small>
                         </div>
                     </div>
 
                     <div class="d-flex align-items-start gap-3">
                         <div class="stat-icon-wrap stat-icon-green flex-shrink-0 mt-1" style="width: 32px; height: 32px; font-size: 0.95rem;">
-                            <i class="bi bi-sliders"></i>
+                            <i data-lucide="sliders"></i>
                         </div>
                         <div>
                             <div class="fw-bold text-dark" style="font-size: 0.84rem;">Pembaruan Akses Video</div>
                             <div class="text-muted" style="font-size: 0.78rem; line-height: 1.4;">Video 2 Cara Deketin Cewek diubah menjadi Free Preview.</div>
                             <small class="text-muted d-flex align-items-center gap-1 mt-1" style="font-size: 0.72rem;">
-                                <i class="bi bi-calendar3"></i> 10 Okt 2026, 21:15 WIB
+                                <i data-lucide="calendar"></i> 10 Okt 2026, 21:15 WIB
                             </small>
                         </div>
                     </div>

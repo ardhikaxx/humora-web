@@ -6,8 +6,8 @@
 <!-- Breadcrumbs -->
 <div class="mb-2">
     <small class="text-muted" style="font-size: 0.78rem;">
-        <span>Admin</span> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
-        <a href="{{ url('/admin/videos') }}" class="text-decoration-none text-muted">Kelola Video</a> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
+        <span>Admin</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
+        <a href="{{ url('/admin/videos') }}" class="text-decoration-none text-muted">Kelola Video</a> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
         <span class="text-dark fw-semibold">Tambah Video</span>
     </small>
 </div>
@@ -22,14 +22,14 @@
         </div>
         <div class="d-flex align-items-center gap-2">
             <a href="{{ url('/admin/videos') }}" class="btn btn-humora-secondary">
-                <i class="bi bi-arrow-left"></i>
+                <i data-lucide="arrow-left"></i>
                 <span>Batal</span>
             </a>
             <button type="submit" name="status" value="draft" class="btn btn-humora-secondary">
                 <span>Simpan sebagai Draft</span>
             </button>
             <button type="submit" name="status" value="published" class="btn btn-humora-primary">
-                <i class="bi bi-floppy"></i>
+                <i data-lucide="save"></i>
                 <span>Simpan Video</span>
             </button>
         </div>
@@ -70,7 +70,7 @@
                                 Suka duka dan serba-serbi kocak seorang driver taksi online yang tabah saat menghadapi beragam tingkah laku unik penumpang...
                             </small>
                             <div class="d-flex align-items-center gap-2" style="font-size: 0.72rem;">
-                                <span class="text-success fw-bold" id="selectedSeriesNextEp"><i class="bi bi-lightbulb"></i> Nomor berikutnya: Video #5</span>
+                                <span class="text-success fw-bold" id="selectedSeriesNextEp"><i data-lucide="lightbulb"></i> Nomor berikutnya: Video #5</span>
                                 <span class="text-muted">&bull;</span>
                                 <span class="text-muted" id="selectedSeriesGenres">Komedi &bull; Sketsa &bull; Slice of Life</span>
                             </div>
@@ -106,7 +106,7 @@
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <label class="form-label-custom mb-0">Durasi Video (~+2 Menit)</label>
                                 <small class="text-purple fw-semibold d-flex align-items-center gap-1" style="color: #7C3AED; font-size: 0.72rem;">
-                                    <i class="bi bi-clock"></i> Standar HUMORA ~2m
+                                    <i data-lucide="clock"></i> Standar HUMORA ~2m
                                 </small>
                             </div>
                             <div class="row g-2">
@@ -149,7 +149,7 @@
                     <label class="form-label-custom mb-2">File Video (MP4 / WEBM)</label>
                     <div class="humora-dropzone">
                         <div class="humora-dropzone-icon">
-                            <i class="bi bi-cloud-arrow-up"></i>
+                            <i data-lucide="cloud-upload"></i>
                         </div>
                         <div class="fw-bold text-dark mb-1" style="font-size: 0.88rem;">
                             Tarik file ke sini, atau <span class="text-decoration-underline" style="color: #43135C;">pilih dari komputer</span>
@@ -174,7 +174,7 @@
                         <div class="form-check d-flex justify-content-between align-items-start">
                             <div>
                                 <label class="form-check-label fw-bold text-dark d-flex align-items-center gap-1 mb-1" for="accessFree" style="font-size: 0.84rem; cursor: pointer;">
-                                    <i class="bi bi-stars text-success"></i> Free Preview
+                                    <i data-lucide="sparkles" class="text-success"></i> Free Preview
                                 </label>
                                 <small class="text-muted d-block" style="font-size: 0.74rem;">Dapat ditonton secara gratis oleh seluruh pengguna aplikasi tanpa perlu berlangganan.</small>
                             </div>
@@ -187,7 +187,7 @@
                         <div class="form-check d-flex justify-content-between align-items-start">
                             <div>
                                 <label class="form-check-label fw-bold text-purple d-flex align-items-center gap-1 mb-1" for="accessPremium" style="color: #6B21A8; font-size: 0.84rem; cursor: pointer;">
-                                    <i class="bi bi-gem"></i> Premium (Terkunci)
+                                    <i data-lucide="gem"></i> Premium (Terkunci)
                                 </label>
                                 <small class="text-muted d-block" style="font-size: 0.74rem;">Video terkunci dengan ikon gembok. Memerlukan akun berlangganan aktif untuk menonton.</small>
                             </div>
@@ -197,7 +197,7 @@
 
                     <!-- Warning note -->
                     <div class="p-2 rounded-3 border d-flex align-items-center gap-2" style="background-color: #FFFBEB; border-color: #FDE68A !important;">
-                        <i class="bi bi-exclamation-triangle text-warning flex-shrink-0" style="font-size: 1rem;"></i>
+                        <i data-lucide="alert-triangle" class="text-warning flex-shrink-0" style="font-size: 1rem;"></i>
                         <small class="text-muted" style="font-size: 0.72rem; line-height: 1.3;">Pengguna tanpa langganan akan diarahkan ke pop-up paket langganan jika memutar video ini.</small>
                     </div>
                 </div>
@@ -230,19 +230,19 @@
                     </div>
                     <div class="d-flex flex-column gap-2" style="font-size: 0.76rem;">
                         <div class="d-flex align-items-center gap-2 text-dark" id="stepTitle">
-                            <i class="bi bi-circle text-muted"></i>
+                            <i data-lucide="circle" class="text-muted"></i>
                             <span>Judul & nomor video terisi</span>
                         </div>
                         <div class="d-flex align-items-center gap-2 text-dark">
-                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <i data-lucide="check-circle-2" class="text-success"></i>
                             <span>Judul besar terpilih</span>
                         </div>
                         <div class="d-flex align-items-center gap-2 text-dark" id="stepFile">
-                            <i class="bi bi-circle text-muted"></i>
+                            <i data-lucide="circle" class="text-muted"></i>
                             <span>File video siap</span>
                         </div>
                         <div class="d-flex align-items-center gap-2 text-dark">
-                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <i data-lucide="check-circle-2" class="text-success"></i>
                             <span>Thumbnail 16:9 mengikuti judul besar</span>
                         </div>
                     </div>
@@ -280,7 +280,7 @@
             selectedSeriesImg.src = `{{ asset('images/thumbnails') }}/${imgName}`;
             selectedSeriesTitle.innerText = opt.text.split('(')[0].trim();
             selectedSeriesDesc.innerText = desc;
-            selectedSeriesNextEp.innerHTML = `<i class="bi bi-lightbulb"></i> Nomor berikutnya: Video #${ep}`;
+            selectedSeriesNextEp.innerHTML = `<i data-lucide="lightbulb"></i> Nomor berikutnya: Video #${ep}`;
             selectedSeriesGenres.innerHTML = genres;
             epInput.value = ep;
 
@@ -290,9 +290,9 @@
         // Title input progress check
         videoTitleInput.addEventListener('input', function () {
             if (this.value.trim().length > 0) {
-                stepTitle.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i> <span>Judul & nomor video terisi</span>';
+                stepTitle.innerHTML = '<i data-lucide="check-circle-2" class="text-success"></i> <span>Judul & nomor video terisi</span>';
             } else {
-                stepTitle.innerHTML = '<i class="bi bi-circle text-muted"></i> <span>Judul & nomor video terisi</span>';
+                stepTitle.innerHTML = '<i data-lucide="circle" class="text-muted"></i> <span>Judul & nomor video terisi</span>';
             }
             updateProgress();
         });
@@ -302,9 +302,9 @@
         if (videoUpload) {
             videoUpload.addEventListener('change', function () {
                 if (this.files && this.files.length > 0) {
-                    stepFile.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i> <span>File video siap</span>';
+                    stepFile.innerHTML = '<i data-lucide="check-circle-2" class="text-success"></i> <span>File video siap</span>';
                 } else {
-                    stepFile.innerHTML = '<i class="bi bi-circle text-muted"></i> <span>File video siap</span>';
+                    stepFile.innerHTML = '<i data-lucide="circle" class="text-muted"></i> <span>File video siap</span>';
                 }
                 updateProgress();
             });

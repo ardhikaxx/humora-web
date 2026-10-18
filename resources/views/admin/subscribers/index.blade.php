@@ -6,7 +6,7 @@
 <!-- Breadcrumbs -->
 <div class="mb-2">
     <small class="text-muted" style="font-size: 0.78rem;">
-        <span>Admin</span> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
+        <span>Admin</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
         <span class="text-dark fw-semibold">Pelanggan Premium</span>
     </small>
 </div>
@@ -23,7 +23,7 @@
         <x-stat-card 
             label="Subscriber Aktif" 
             value="3.279" 
-            icon="bi bi-gem" 
+            icon="gem" 
             iconBg="purple" 
             trend="8.5%" 
             subtext="vs bln lalu" 
@@ -33,7 +33,7 @@
         <x-stat-card 
             label="Subscriber Kedaluwarsa" 
             value="411" 
-            icon="bi bi-clock" 
+            icon="clock" 
             iconBg="orange" 
             subtext="Perlu pengingat perpanjangan" 
         />
@@ -42,7 +42,7 @@
         <x-stat-card 
             label="Paket Terfavorit" 
             value="Paket 3 Bulan" 
-            icon="bi bi-stars" 
+            icon="sparkles" 
             iconBg="yellow" 
             subtext="57% dari seluruh subscriber" 
         />
@@ -51,7 +51,7 @@
         <x-stat-card 
             label="Rata-rata Nilai" 
             value="Rp56.400" 
-            icon="bi bi-credit-card" 
+            icon="credit-card" 
             iconBg="green" 
             subtext="per transaksi langganan" 
         />
@@ -63,7 +63,7 @@
     <div class="row g-2 align-items-center">
         <div class="col-12 col-md-6 col-lg-8">
             <div class="search-input-wrap">
-                <i class="bi bi-search"></i>
+                <i data-lucide="search"></i>
                 <input type="text" id="subscriberSearchInput" class="form-control-custom bg-light" placeholder="Cari nama atau email pelanggan...">
             </div>
         </div>
@@ -127,12 +127,12 @@
                     <td><span class="badge-pill-tag">Paket 3 Bulan</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">15 Agu 2026</td>
                     <td class="fw-semibold text-dark" style="font-size: 0.8rem;">15 Nov 2026</td>
-                    <td><span class="badge-pill-premium"><i class="bi bi-gem"></i> Premium Aktif</span></td>
+                    <td><span class="badge-pill-premium"><i data-lucide="gem"></i> Premium Aktif</span></td>
                     <td class="text-muted" style="font-size: 0.82rem;">QRIS</td>
                     <td class="fw-bold text-dark">Rp 98.000</td>
                     <td class="text-end">
                         <button class="btn btn-sm btn-humora-secondary py-1 px-2 btn-open-sub-detail" style="font-size: 0.76rem;">
-                            <i class="bi bi-eye"></i> Detail
+                            <i data-lucide="eye"></i> Detail
                         </button>
                     </td>
                 </tr>
@@ -162,12 +162,12 @@
                     <td><span class="badge-pill-tag">Paket Tahunan</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">1 Mar 2026</td>
                     <td class="fw-semibold text-dark" style="font-size: 0.8rem;">1 Mar 2027</td>
-                    <td><span class="badge-pill-premium"><i class="bi bi-gem"></i> Premium Aktif</span></td>
+                    <td><span class="badge-pill-premium"><i data-lucide="gem"></i> Premium Aktif</span></td>
                     <td class="text-muted" style="font-size: 0.82rem;">BCA Virtual Account</td>
                     <td class="fw-bold text-dark">Rp 179.000</td>
                     <td class="text-end">
                         <button class="btn btn-sm btn-humora-secondary py-1 px-2 btn-open-sub-detail" style="font-size: 0.76rem;">
-                            <i class="bi bi-eye"></i> Detail
+                            <i data-lucide="eye"></i> Detail
                         </button>
                     </td>
                 </tr>
@@ -197,12 +197,12 @@
                     <td><span class="badge-pill-tag">Paket Bulanan</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">10 Agu 2026</td>
                     <td class="fw-semibold text-dark" style="font-size: 0.8rem;">10 Sep 2026</td>
-                    <td><span class="badge-pill-warning"><i class="bi bi-clock-history"></i> Kedaluwarsa</span></td>
+                    <td><span class="badge-pill-warning"><i data-lucide="history"></i> Kedaluwarsa</span></td>
                     <td class="text-muted" style="font-size: 0.82rem;">GoPay</td>
                     <td class="fw-bold text-dark">Rp 38.000</td>
                     <td class="text-end">
                         <button class="btn btn-sm btn-humora-secondary py-1 px-2 btn-open-sub-detail" style="font-size: 0.76rem;">
-                            <i class="bi bi-eye"></i> Detail
+                            <i data-lucide="eye"></i> Detail
                         </button>
                     </td>
                 </tr>
@@ -232,12 +232,12 @@
                     <td><span class="badge-pill-tag">Paket 3 Bulan</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">1 Sep 2026</td>
                     <td class="fw-semibold text-dark" style="font-size: 0.8rem;">1 Des 2026</td>
-                    <td><span class="badge-pill-premium"><i class="bi bi-gem"></i> Premium Aktif</span></td>
+                    <td><span class="badge-pill-premium"><i data-lucide="gem"></i> Premium Aktif</span></td>
                     <td class="text-muted" style="font-size: 0.82rem;">ShopeePay</td>
                     <td class="fw-bold text-dark">Rp 49.000</td>
                     <td class="text-end">
                         <button class="btn btn-sm btn-humora-secondary py-1 px-2 btn-open-sub-detail" style="font-size: 0.76rem;">
-                            <i class="bi bi-eye"></i> Detail
+                            <i data-lucide="eye"></i> Detail
                         </button>
                     </td>
                 </tr>
@@ -267,12 +267,12 @@
                     <td><span class="badge-pill-tag">Paket Bulanan</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">14 Sep 2026</td>
                     <td class="fw-semibold text-dark" style="font-size: 0.8rem;">14 Okt 2026</td>
-                    <td><span class="badge-pill-warning"><i class="bi bi-clock-history"></i> Kedaluwarsa</span></td>
+                    <td><span class="badge-pill-warning"><i data-lucide="history"></i> Kedaluwarsa</span></td>
                     <td class="text-muted" style="font-size: 0.82rem;">Mandiri VA</td>
                     <td class="fw-bold text-dark">Rp 19.000</td>
                     <td class="text-end">
                         <button class="btn btn-sm btn-humora-secondary py-1 px-2 btn-open-sub-detail" style="font-size: 0.76rem;">
-                            <i class="bi bi-eye"></i> Detail
+                            <i data-lucide="eye"></i> Detail
                         </button>
                     </td>
                 </tr>
@@ -295,9 +295,9 @@
         </div>
         <nav aria-label="Page navigation">
             <ul class="pagination pagination-sm mb-0">
-                <li class="page-item disabled"><a class="page-link" href="#"><i class="bi bi-chevron-left"></i></a></li>
+                <li class="page-item disabled"><a class="page-link" href="#"><i data-lucide="chevron-left"></i></a></li>
                 <li class="page-item active"><a class="page-link" href="#" style="background-color: #43135C; border-color: #43135C;">1</a></li>
-                <li class="page-item disabled"><a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a></li>
+                <li class="page-item disabled"><a class="page-link" href="#"><i data-lucide="chevron-right"></i></a></li>
             </ul>
         </nav>
     </div>
@@ -344,7 +344,7 @@
             </div>
             <div class="modal-footer modal-footer-humora justify-content-between">
                 <button type="button" class="btn btn-outline-primary btn-sm" id="btnSendRenewalReminder">
-                    <i class="bi bi-bell me-1"></i> Kirim Notifikasi Perpanjangan
+                    <i data-lucide="bell" class="me-1"></i> Kirim Notifikasi Perpanjangan
                 </button>
                 <button type="button" class="btn btn-humora-secondary" data-bs-dismiss="modal">Tutup</button>
             </div>

@@ -6,8 +6,8 @@
 <!-- Breadcrumbs -->
 <div class="mb-2">
     <small class="text-muted" style="font-size: 0.78rem;">
-        <span>Admin</span> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
-        <span class="text-muted">Sistem</span> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
+        <span>Admin</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
+        <span class="text-muted">Sistem</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
         <span class="text-dark fw-semibold">Kelola Admin</span>
     </small>
 </div>
@@ -19,7 +19,7 @@
         <p class="page-subtitle mb-0">Kelola akun administrator HUMORA. Data yang dikelola meliputi Nama Lengkap, Email, Password, dan Nomor Telfon.</p>
     </div>
     <button type="button" class="btn btn-humora-primary" data-bs-toggle="modal" data-bs-target="#addAdminModal">
-        <i class="bi bi-person-plus"></i>
+        <i data-lucide="user-plus"></i>
         <span>Tambah Admin Baru</span>
     </button>
 </div>
@@ -31,7 +31,7 @@
             id="cardTotalAdmin"
             label="Total Admin" 
             value="3" 
-            icon="bi bi-people" 
+            icon="users" 
             iconBg="purple" 
             subtext="Seluruh akun terdaftar" 
         />
@@ -40,7 +40,7 @@
         <x-stat-card 
             label="Admin Pertama (Utama)" 
             value="1" 
-            icon="bi bi-shield-check" 
+            icon="shield-check" 
             iconBg="green" 
             subtext="Akun pengelola pertama" 
         />
@@ -50,7 +50,7 @@
             id="cardAdditionalAdmin"
             label="Admin Tambahan" 
             value="2" 
-            icon="bi bi-person-plus" 
+            icon="user-plus" 
             iconBg="blue" 
             subtext="Admin baru yang ditambahkan" 
         />
@@ -60,7 +60,7 @@
 <!-- Search Bar -->
 <div class="humora-card mb-4 p-3">
     <div class="search-input-wrap">
-        <i class="bi bi-search"></i>
+        <i data-lucide="search"></i>
         <input type="text" id="adminSearchInput" class="form-control-custom bg-light" placeholder="Cari berdasarkan nama lengkap, email, atau nomor telfon...">
     </div>
 </div>
@@ -98,20 +98,20 @@
                     </td>
                     <td>
                         <div class="d-flex align-items-center gap-2 text-muted">
-                            <i class="bi bi-envelope"></i>
+                            <i data-lucide="mail"></i>
                             <span class="admin-email">admin@humora.id</span>
                         </div>
                     </td>
                     <td>
                         <div class="d-flex align-items-center gap-2 text-muted">
-                            <i class="bi bi-telephone"></i>
+                            <i data-lucide="phone"></i>
                             <span class="admin-phone">0812-8899-7711</span>
                         </div>
                     </td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <button class="btn-humora-icon btn-edit-admin" title="Edit"><i class="bi bi-pencil"></i></button>
-                            <button class="btn-humora-icon" disabled style="opacity: 0.3;" title="Admin utama tidak dapat dihapus"><i class="bi bi-trash"></i></button>
+                            <button class="btn-humora-icon btn-edit-admin" title="Edit"><i data-lucide="pencil"></i></button>
+                            <button class="btn-humora-icon" disabled style="opacity: 0.3;" title="Admin utama tidak dapat dihapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -133,20 +133,20 @@
                     </td>
                     <td>
                         <div class="d-flex align-items-center gap-2 text-muted">
-                            <i class="bi bi-envelope"></i>
+                            <i data-lucide="mail"></i>
                             <span class="admin-email">sarah.w@humora.id</span>
                         </div>
                     </td>
                     <td>
                         <div class="d-flex align-items-center gap-2 text-muted">
-                            <i class="bi bi-telephone"></i>
+                            <i data-lucide="phone"></i>
                             <span class="admin-phone">0813-7722-1144</span>
                         </div>
                     </td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <button class="btn-humora-icon btn-edit-admin" title="Edit"><i class="bi bi-pencil"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Admin Sarah Wijaya" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <button class="btn-humora-icon btn-edit-admin" title="Edit"><i data-lucide="pencil"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Admin Sarah Wijaya" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -168,20 +168,20 @@
                     </td>
                     <td>
                         <div class="d-flex align-items-center gap-2 text-muted">
-                            <i class="bi bi-envelope"></i>
+                            <i data-lucide="mail"></i>
                             <span class="admin-email">rian.p@humora.id</span>
                         </div>
                     </td>
                     <td>
                         <div class="d-flex align-items-center gap-2 text-muted">
-                            <i class="bi bi-telephone"></i>
+                            <i data-lucide="phone"></i>
                             <span class="admin-phone">0818-5544-2200</span>
                         </div>
                     </td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <button class="btn-humora-icon btn-edit-admin" title="Edit"><i class="bi bi-pencil"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Admin Rian Pratama" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <button class="btn-humora-icon btn-edit-admin" title="Edit"><i data-lucide="pencil"></i></button>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Admin Rian Pratama" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -222,11 +222,11 @@
                 </div>
                 <div class="modal-footer modal-footer-humora">
                     <button type="button" class="btn btn-humora-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-lg"></i>
+                        <i data-lucide="x"></i>
                         <span>Batal</span>
                     </button>
                     <button type="submit" class="btn btn-humora-primary">
-                        <i class="bi bi-person-plus"></i>
+                        <i data-lucide="user-plus"></i>
                         <span>Simpan Admin</span>
                     </button>
                 </div>
@@ -261,11 +261,11 @@
                 </div>
                 <div class="modal-footer modal-footer-humora">
                     <button type="button" class="btn btn-humora-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-lg"></i>
+                        <i data-lucide="x"></i>
                         <span>Batal</span>
                     </button>
                     <button type="submit" class="btn btn-humora-primary">
-                        <i class="bi bi-floppy"></i>
+                        <i data-lucide="save"></i>
                         <span>Simpan Perubahan</span>
                     </button>
                 </div>
@@ -343,20 +343,20 @@
                 </td>
                 <td>
                     <div class="d-flex align-items-center gap-2 text-muted">
-                        <i class="bi bi-envelope"></i>
+                        <i data-lucide="mail"></i>
                         <span class="admin-email">${email}</span>
                     </div>
                 </td>
                 <td>
                     <div class="d-flex align-items-center gap-2 text-muted">
-                        <i class="bi bi-telephone"></i>
+                        <i data-lucide="phone"></i>
                         <span class="admin-phone">${phone}</span>
                     </div>
                 </td>
                 <td class="text-end">
                     <div class="d-flex justify-content-end gap-1">
-                        <button class="btn-humora-icon btn-edit-admin" title="Edit"><i class="bi bi-pencil"></i></button>
-                        <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Admin ${name}" title="Hapus"><i class="bi bi-trash"></i></button>
+                        <button class="btn-humora-icon btn-edit-admin" title="Edit"><i data-lucide="pencil"></i></button>
+                        <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Admin ${name}" title="Hapus"><i data-lucide="trash-2"></i></button>
                     </div>
                 </td>
             `;

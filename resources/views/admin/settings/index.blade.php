@@ -6,8 +6,8 @@
 <!-- Breadcrumbs -->
 <div class="mb-2">
     <small class="text-muted" style="font-size: 0.78rem;">
-        <span>Admin</span> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
-        <span class="text-muted">Sistem</span> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
+        <span>Admin</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
+        <span class="text-muted">Sistem</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
         <span class="text-dark fw-semibold">Pengaturan</span>
     </small>
 </div>
@@ -27,7 +27,7 @@
                     <div class="humora-card-title">KONFIGURASI AKSES & MONETISASI</div>
                     <div class="humora-card-subtitle">Aturan pembatasan tontonan gratis dan langganan subscriber.</div>
                 </div>
-                <div class="text-muted"><i class="bi bi-sliders fs-5"></i></div>
+                <div class="text-muted"><i data-lucide="sliders" class="fs-5"></i></div>
             </div>
             <div class="humora-card-body p-4">
                 <form id="formSettings" action="{{ url('/admin/settings') }}" method="POST">
@@ -72,7 +72,7 @@
 
                     <div class="text-end">
                         <button type="submit" class="btn btn-humora-primary">
-                            <i class="bi bi-floppy"></i>
+                            <i data-lucide="save"></i>
                             <span>Simpan Preferensi</span>
                         </button>
                     </div>
@@ -89,7 +89,7 @@
                     <div class="humora-card-title">STATUS PLATFORM</div>
                     <div class="humora-card-subtitle">Informasi sistem dan pemeliharaan server.</div>
                 </div>
-                <div class="text-muted"><i class="bi bi-hdd-network fs-5"></i></div>
+                <div class="text-muted"><i data-lucide="server" class="fs-5"></i></div>
             </div>
             <div class="humora-card-body p-4">
                 <div class="d-flex align-items-center justify-content-between p-3 rounded-3 bg-light mb-3">
@@ -97,7 +97,7 @@
                         <div class="fw-bold text-dark" style="font-size: 0.85rem;">Versi Aplikasi</div>
                         <small class="text-muted">HUMORA Web Portal v1.0.4 (Production)</small>
                     </div>
-                    <span class="badge-pill-success"><i class="bi bi-check-circle"></i> Stable</span>
+                    <span class="badge-pill-success"><i data-lucide="check-circle"></i> Stable</span>
                 </div>
 
                 <div class="d-flex align-items-center justify-content-between p-3 rounded-3 bg-light mb-4">

@@ -6,8 +6,8 @@
 <!-- Breadcrumbs -->
 <div class="mb-2">
     <small class="text-muted" style="font-size: 0.78rem;">
-        <span>Admin</span> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
-        <a href="{{ url('/admin/series') }}" class="text-decoration-none text-muted">Series</a> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
+        <span>Admin</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
+        <a href="{{ url('/admin/series') }}" class="text-decoration-none text-muted">Series</a> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
         <span class="text-dark fw-semibold">Tipe Pembeli di Toko Kelontong</span>
     </small>
 </div>
@@ -16,25 +16,25 @@
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
     <div class="d-flex align-items-center gap-3">
         <h1 class="page-title mb-0">Tipe Pembeli di Toko Kelontong</h1>
-        <span class="badge-pill-success" id="showStatusBadge"><i class="bi bi-check-circle"></i> Terpublikasi</span>
+        <span class="badge-pill-success" id="showStatusBadge"><i data-lucide="check-circle"></i> Terpublikasi</span>
     </div>
     <div class="d-flex align-items-center gap-2">
         <a href="{{ url('/admin/series') }}" class="btn btn-humora-icon" title="Kembali">
-            <i class="bi bi-arrow-left"></i>
+            <i data-lucide="arrow-left"></i>
         </a>
         <button class="btn btn-humora-secondary" id="btnToggleShowStatus">
-            <i class="bi bi-check2-circle text-success" id="btnToggleStatusIcon"></i>
+            <i data-lucide="check-circle" class="text-success" id="btnToggleStatusIcon"></i>
             <span id="btnToggleStatusText">Ubah ke Draft</span>
         </button>
         <a href="{{ url('/admin/series/1/edit') }}" class="btn btn-humora-secondary">
-            <i class="bi bi-pencil"></i>
+            <i data-lucide="pencil"></i>
             <span>Edit Series</span>
         </a>
         <button class="btn-humora-icon danger" id="btnDeleteSeries" data-confirm-delete data-item-name="Series Tipe Pembeli di Toko Kelontong" title="Hapus Series">
-            <i class="bi bi-trash"></i>
+            <i data-lucide="trash-2"></i>
         </button>
         <a href="{{ url('/admin/videos/create') }}" class="btn btn-humora-primary">
-            <i class="bi bi-plus-lg"></i>
+            <i data-lucide="plus"></i>
             <span>Tambah Video</span>
         </a>
     </div>
@@ -53,7 +53,7 @@
                     <span class="badge-pill-tag">Slice of Life</span>
                     <span class="badge-pill-tag">Sketsa</span>
                     <span class="text-muted" style="font-size: 0.8rem;">&bull; 2026</span>
-                    <span class="text-danger fw-semibold" style="font-size: 0.8rem;"><i class="bi bi-heart-fill me-1"></i>9.6rb suka (9.600)</span>
+                    <span class="text-danger fw-semibold table-stat-likes" style="font-size: 0.8rem;"><i data-lucide="heart"></i> 9.6rb suka (9.600)</span>
                 </div>
                 <h2 class="fw-bold text-dark mb-1" style="font-size: 1.45rem;">Tipe Pembeli di Toko Kelontong</h2>
                 <div class="text-muted mb-3" style="font-size: 0.82rem;">Slug: <code>/tipe-pembeli-di-toko-kelontong</code></div>
@@ -61,7 +61,7 @@
                     Toko kelontong Madura buka 24 jam jadi saksi bisu berbagai keajaiban dan tingkah nyeleneh para pelanggan setia di tengah malam.
                 </p>
                 <div class="d-flex align-items-center gap-3 text-muted" style="font-size: 0.78rem;">
-                    <span><i class="bi bi-calendar-event me-1"></i> Dibuat: 18 Feb 2026</span>
+                    <span><i data-lucide="calendar" class="me-1"></i> Dibuat: 18 Feb 2026</span>
                     <span>&bull;</span>
                     <span>Diperbarui: 1 Mar 2026</span>
                 </div>
@@ -77,7 +77,7 @@
             id="cardShowTotalEp"
             label="Total Episode" 
             value="4" 
-            icon="bi bi-play-circle" 
+            icon="play-circle" 
             iconBg="purple" 
             subtext="Tercatat dalam series" 
         />
@@ -87,7 +87,7 @@
             id="cardShowFreeEp"
             label="Episode Gratis" 
             value="2 Episode" 
-            icon="bi bi-stars" 
+            icon="sparkles" 
             iconBg="green" 
             subtext="Free Preview untuk umum" 
         />
@@ -97,7 +97,7 @@
             id="cardShowPremiumEp"
             label="Episode Premium" 
             value="2 Episode" 
-            icon="bi bi-gem" 
+            icon="gem" 
             iconBg="purple" 
             subtext="Khusus langganan aktif" 
         />
@@ -106,7 +106,7 @@
         <x-stat-card 
             label="Total Views Series" 
             value="69.750" 
-            icon="bi bi-eye" 
+            icon="eye" 
             iconBg="orange" 
             subtext="2.415 jam ditonton" 
         />
@@ -121,7 +121,7 @@
             <div class="humora-card-subtitle">Atur status akses Free Preview dan publikasi untuk setiap episode serial ini.</div>
         </div>
         <a href="{{ url('/admin/videos/create') }}" class="btn btn-sm btn-humora-primary">
-            <i class="bi bi-plus-lg"></i>
+            <i data-lucide="plus"></i>
             <span>Tambah Episode</span>
         </a>
     </div>
@@ -155,16 +155,16 @@
                     </td>
                     <td class="fw-medium text-dark">2m 04s</td>
                     <td>
-                        <span class="badge-pill-free badge-interactive" title="Klik untuk ubah tipe akses"><i class="bi bi-play-circle"></i> Free Preview</span>
+                        <span class="badge-pill-free badge-interactive" title="Klik untuk ubah tipe akses"><i data-lucide="play-circle"></i> Free Preview</span>
                     </td>
-                    <td><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
                     <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>2.900</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>2.900</span></td>
                     <td><span class="fw-bold text-success">92%</span></td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Episode 1: Tipe Nawar Nggak Masuk Akal" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Episode 1: Tipe Nawar Nggak Masuk Akal" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -183,16 +183,16 @@
                     </td>
                     <td class="fw-medium text-dark">2m 10s</td>
                     <td>
-                        <span class="badge-pill-free badge-interactive" title="Klik untuk ubah tipe akses"><i class="bi bi-play-circle"></i> Free Preview</span>
+                        <span class="badge-pill-free badge-interactive" title="Klik untuk ubah tipe akses"><i data-lucide="play-circle"></i> Free Preview</span>
                     </td>
-                    <td><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
                     <td class="fw-bold text-dark">21.000</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>2.500</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>2.500</span></td>
                     <td><span class="fw-bold text-success">89%</span></td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Episode 2: Tipe Salah Masuk Toko" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Episode 2: Tipe Salah Masuk Toko" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -211,16 +211,16 @@
                     </td>
                     <td class="fw-medium text-dark">2m 22s</td>
                     <td>
-                        <span class="badge-pill-premium badge-interactive" title="Klik untuk ubah tipe akses"><i class="bi bi-gem"></i> Premium</span>
+                        <span class="badge-pill-premium badge-interactive" title="Klik untuk ubah tipe akses"><i data-lucide="gem"></i> Premium</span>
                     </td>
-                    <td><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
                     <td class="fw-bold text-dark">13.500</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>2.200</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>2.200</span></td>
                     <td><span class="fw-bold text-success">84%</span></td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Episode 3: Tipe Curhat Panjang Lebar" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Episode 3: Tipe Curhat Panjang Lebar" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -239,16 +239,16 @@
                     </td>
                     <td class="fw-medium text-dark">2m 16s</td>
                     <td>
-                        <span class="badge-pill-premium badge-interactive" title="Klik untuk ubah tipe akses"><i class="bi bi-gem"></i> Premium</span>
+                        <span class="badge-pill-premium badge-interactive" title="Klik untuk ubah tipe akses"><i data-lucide="gem"></i> Premium</span>
                     </td>
-                    <td><span class="badge-pill-success"><i class="bi bi-check-circle"></i> Terpublikasi</span></td>
+                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
                     <td class="fw-bold text-dark">11.250</td>
-                    <td><span class="text-danger fw-semibold"><i class="bi bi-heart-fill me-1"></i>2.000</span></td>
+                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>2.000</span></td>
                     <td><span class="fw-bold text-success">80%</span></td>
                     <td class="text-end">
                         <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Episode 4: Tipe Ngutang Dulu" title="Hapus"><i class="bi bi-trash"></i></button>
+                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
+                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Episode 4: Tipe Ngutang Dulu" title="Hapus"><i data-lucide="trash-2"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -271,17 +271,22 @@
             if (isPublished) {
                 isPublished = false;
                 statusBadge.className = 'badge-pill-warning';
-                statusBadge.innerHTML = '<i class="bi bi-clock"></i> Draft';
+                statusBadge.innerHTML = '<i data-lucide="clock"></i> Draft';
                 btnText.innerText = 'Terbitkan Series';
-                btnIcon.className = 'bi bi-check-circle text-success';
+                btnIcon.setAttribute('data-lucide', 'check-circle');
+                btnIcon.className = 'text-success';
                 window.showHumoraToast('Series diubah menjadi Draft.', 'warning');
             } else {
                 isPublished = true;
                 statusBadge.className = 'badge-pill-success';
-                statusBadge.innerHTML = '<i class="bi bi-check-circle"></i> Terpublikasi';
+                statusBadge.innerHTML = '<i data-lucide="check-circle"></i> Terpublikasi';
                 btnText.innerText = 'Ubah ke Draft';
-                btnIcon.className = 'bi bi-clock text-warning';
+                btnIcon.setAttribute('data-lucide', 'clock');
+                btnIcon.className = 'text-warning';
                 window.showHumoraToast('Series berhasil dipublikasikan!', 'success');
+            }
+            if (window.lucide) {
+                window.lucide.createIcons();
             }
         });
     });

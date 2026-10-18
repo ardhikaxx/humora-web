@@ -6,8 +6,8 @@
 <!-- Breadcrumbs -->
 <div class="mb-2">
     <small class="text-muted" style="font-size: 0.78rem;">
-        <span>Admin</span> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
-        <a href="{{ url('/admin/series') }}" class="text-decoration-none text-muted">Judul Konten</a> <i class="bi bi-chevron-right mx-1" style="font-size: 0.65rem;"></i>
+        <span>Admin</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
+        <a href="{{ url('/admin/series') }}" class="text-decoration-none text-muted">Judul Konten</a> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
         <span class="text-dark fw-semibold">Buat Baru</span>
     </small>
 </div>
@@ -22,14 +22,14 @@
         </div>
         <div class="d-flex align-items-center gap-2">
             <a href="{{ url('/admin/series') }}" class="btn btn-humora-secondary">
-                <i class="bi bi-arrow-left"></i>
+                <i data-lucide="arrow-left"></i>
                 <span>Batal</span>
             </a>
             <button type="submit" name="status" value="draft" class="btn btn-humora-secondary btn-submit-draft">
                 <span>Simpan sebagai Draft</span>
             </button>
             <button type="submit" name="status" value="published" class="btn btn-humora-primary btn-submit-publish">
-                <i class="bi bi-floppy"></i>
+                <i data-lucide="save"></i>
                 <span>Simpan & Terbitkan</span>
             </button>
         </div>
@@ -100,7 +100,7 @@
                     <label class="form-label-custom">Thumbnail Utama (16:9)</label>
                     <div class="humora-dropzone">
                         <div class="humora-dropzone-icon">
-                            <i class="bi bi-cloud-arrow-up"></i>
+                            <i data-lucide="cloud-upload"></i>
                         </div>
                         <div class="fw-bold text-dark mb-1" style="font-size: 0.88rem;">
                             Tarik file ke sini, atau <span class="text-decoration-underline" style="color: #43135C;">pilih dari komputer</span>
@@ -133,15 +133,15 @@
             <div class="humora-card mb-0">
                 <div class="humora-card-header">
                     <span class="humora-card-title" style="font-size: 0.82rem; text-transform: uppercase;">PRATINJAU KARTU 16:9</span>
-                    <i class="bi bi-stars text-warning"></i>
+                    <i data-lucide="sparkles" class="text-warning"></i>
                 </div>
                 <div class="humora-card-body p-3">
                     <div class="rounded-3 p-4 text-center mb-3 position-relative d-flex flex-column align-items-center justify-content-center overflow-hidden" id="previewImgWrap" style="background-color: #F8FAFC; border: 1px solid #E2E8F0; aspect-ratio: 16/9;">
                         <span class="badge-pill-success position-absolute top-0 start-0 m-2" id="previewStatusBadge" style="font-size: 0.68rem; z-index: 2;">
-                            <i class="bi bi-check-circle"></i> Terpublikasi
+                            <i data-lucide="check-circle"></i> Terpublikasi
                         </span>
                         <div id="previewEmptyIcon">
-                            <i class="bi bi-image text-muted fs-3 mb-1"></i>
+                            <i data-lucide="image" class="text-muted fs-3 mb-1"></i>
                             <small class="text-muted d-block" style="font-size: 0.75rem;">Belum ada thumbnail</small>
                         </div>
                         <img id="previewImageTag" src="" alt="Thumbnail Preview" class="w-100 h-100 object-fit-cover position-absolute top-0 start-0 d-none">
@@ -200,10 +200,10 @@
             radio.addEventListener('change', function () {
                 if (this.value === 'published') {
                     previewStatusBadge.className = 'badge-pill-success position-absolute top-0 start-0 m-2';
-                    previewStatusBadge.innerHTML = '<i class="bi bi-check-circle"></i> Terpublikasi';
+                    previewStatusBadge.innerHTML = '<i data-lucide="check-circle"></i> Terpublikasi';
                 } else {
                     previewStatusBadge.className = 'badge-pill-warning position-absolute top-0 start-0 m-2';
-                    previewStatusBadge.innerHTML = '<i class="bi bi-clock"></i> Draft';
+                    previewStatusBadge.innerHTML = '<i data-lucide="clock"></i> Draft';
                 }
             });
         });
