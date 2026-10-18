@@ -143,7 +143,9 @@ body {
 .sidebar-logo-expanded {
     display: block;
     width: 100%;
+    max-width: 185px;
     height: auto;
+    margin: 0 auto;
     object-fit: contain;
     border-radius: 12px;
     box-shadow: 0 3px 10px rgba(253, 214, 40, 0.22);
