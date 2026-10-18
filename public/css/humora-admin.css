@@ -143,7 +143,7 @@ body {
 .sidebar-logo-expanded {
     display: block;
     width: 100%;
-    max-width: 185px;
+    max-width: 150px;
     height: auto;
     margin: 0 auto;
     object-fit: contain;
