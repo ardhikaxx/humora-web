@@ -1,41 +1,50 @@
 @extends('layouts.admin')
 
-@section('title', 'Detail Series - Tipe Pembeli di Toko Kelontong - HUMORA')
+@section('title', 'Detail Series: ' . $series->title . ' - HUMORA')
 
 @section('content')
 <!-- Breadcrumbs -->
 <div class="mb-2">
     <small class="text-muted" style="font-size: 0.78rem;">
         <span>Admin</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
-        <a href="{{ url('/admin/series') }}" class="text-decoration-none text-muted">Series</a> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
-        <span class="text-dark fw-semibold">Tipe Pembeli di Toko Kelontong</span>
+        <a href="{{ route('admin.series.index') }}" class="text-decoration-none text-muted">Series</a> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
+        <span class="text-dark fw-semibold">{{ $series->title }}</span>
     </small>
 </div>
 
 <!-- Header & Action Buttons -->
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
     <div class="d-flex align-items-center gap-3">
-        <h1 class="page-title mb-0">Tipe Pembeli di Toko Kelontong</h1>
-        <span class="badge-pill-success" id="showStatusBadge"><i data-lucide="check-circle"></i> Terpublikasi</span>
+        <h1 class="page-title mb-0">{{ $series->title }}</h1>
+        @if ($series->status === 'published')
+            <span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span>
+        @else
+            <span class="badge bg-secondary-subtle text-secondary px-2 py-1 rounded-pill" style="font-size: 0.75rem;">Draf</span>
+        @endif
+        @if ($series->is_featured)
+            <span class="badge bg-warning text-dark px-2 py-1 rounded-pill" style="font-size: 0.75rem;">
+                <i data-lucide="sparkles" class="me-1"></i>Featured
+            </span>
+        @endif
     </div>
     <div class="d-flex align-items-center gap-2">
-        <a href="{{ url('/admin/series') }}" class="btn btn-humora-icon" title="Kembali">
+        <a href="{{ route('admin.series.index') }}" class="btn btn-humora-icon" title="Kembali ke Daftar">
             <i data-lucide="arrow-left"></i>
         </a>
-        <button class="btn btn-humora-secondary" id="btnToggleShowStatus">
-            <i data-lucide="check-circle" class="text-success" id="btnToggleStatusIcon"></i>
-            <span id="btnToggleStatusText">Ubah ke Draft</span>
-        </button>
-        <a href="{{ url('/admin/series/1/edit') }}" class="btn btn-humora-secondary">
+        <a href="{{ route('admin.series.edit', $series->id) }}" class="btn btn-humora-secondary">
             <i data-lucide="pencil"></i>
             <span>Edit Series</span>
         </a>
-        <button class="btn-humora-icon danger" id="btnDeleteSeries" data-confirm-delete data-item-name="Series Tipe Pembeli di Toko Kelontong" title="Hapus Series">
+        <button type="button" class="btn btn-humora-icon danger" title="Hapus Series" onclick="confirmDeleteSeries()">
             <i data-lucide="trash-2"></i>
         </button>
-        <a href="{{ url('/admin/videos/create') }}" class="btn btn-humora-primary">
+        <form id="deleteSeriesForm" action="{{ route('admin.series.destroy', $series->id) }}" method="POST" class="d-none">
+            @csrf
+            @method('DELETE')
+        </form>
+        <a href="{{ route('admin.videos.create', ['series_id' => $series->id]) }}" class="btn btn-humora-primary">
             <i data-lucide="plus"></i>
-            <span>Tambah Video</span>
+            <span>Tambah Episode</span>
         </a>
     </div>
 </div>
@@ -45,250 +54,186 @@
     <div class="humora-card-body p-4">
         <div class="row g-4 align-items-center">
             <div class="col-12 col-md-5 col-lg-4">
-                <img src="{{ asset('images/thumbnails/tipe-pembeli-di-toko-kelontong.jpg') }}" alt="Tipe Pembeli" class="img-fluid rounded-4 shadow-sm w-100" style="object-fit: cover; max-height: 220px;">
+                <img src="{{ $series->thumbnail_url }}" alt="{{ $series->title }}" class="img-fluid rounded-4 shadow-sm w-100 object-fit-cover" style="aspect-ratio: 16/9;" onerror="this.src='{{ asset('images/logo-humora.png') }}'">
             </div>
             <div class="col-12 col-md-7 col-lg-8">
                 <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-                    <span class="badge-pill-tag">Komedi</span>
-                    <span class="badge-pill-tag">Slice of Life</span>
-                    <span class="badge-pill-tag">Sketsa</span>
-                    <span class="text-muted" style="font-size: 0.8rem;">&bull; 2026</span>
-                    <span class="text-danger fw-semibold table-stat-likes" style="font-size: 0.8rem;"><i data-lucide="heart"></i> 9.6rb suka (9.600)</span>
+                    @foreach ($series->categories as $c)
+                        <span class="badge-pill-tag">{{ $c->name }}</span>
+                    @endforeach
+                    <span class="text-muted" style="font-size: 0.8rem;">&bull; Tahun {{ $series->release_year }}</span>
+                    <span class="text-danger fw-semibold table-stat-likes" style="font-size: 0.8rem;">
+                        <i data-lucide="heart"></i> {{ number_format($series->likes_count, 0, ',', '.') }} Suka
+                    </span>
                 </div>
-                <h2 class="fw-bold text-dark mb-1" style="font-size: 1.45rem;">Tipe Pembeli di Toko Kelontong</h2>
-                <div class="text-muted mb-3" style="font-size: 0.82rem;">Slug: <code>/tipe-pembeli-di-toko-kelontong</code></div>
+                <h2 class="fw-bold text-dark mb-1" style="font-size: 1.4rem;">{{ $series->title }}</h2>
+                <div class="text-muted mb-3" style="font-size: 0.82rem;">Slug URL: <code>/series/{{ $series->slug }}</code></div>
                 <p class="text-muted mb-4" style="font-size: 0.88rem; line-height: 1.6;">
-                    Toko kelontong Madura buka 24 jam jadi saksi bisu berbagai keajaiban dan tingkah nyeleneh para pelanggan setia di tengah malam.
+                    {{ $series->synopsis }}
                 </p>
-                <div class="d-flex align-items-center gap-3 text-muted" style="font-size: 0.78rem;">
-                    <span><i data-lucide="calendar" class="me-1"></i> Dibuat: 18 Feb 2026</span>
-                    <span>&bull;</span>
-                    <span>Diperbarui: 1 Mar 2026</span>
+
+                <div class="row g-2">
+                    <div class="col-6 col-sm-3">
+                        <div class="p-2 border rounded-3 bg-light text-center">
+                            <small class="text-muted d-block" style="font-size: 0.72rem;">Total Episode</small>
+                            <span class="fw-bold text-dark fs-6">{{ $series->episodes->count() }}</span>
+                        </div>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <div class="p-2 border rounded-3 bg-light text-center">
+                            <small class="text-muted d-block" style="font-size: 0.72rem;">Episode Free</small>
+                            <span class="fw-bold text-success fs-6">{{ $series->episodes->where('access_type', 'free')->count() }}</span>
+                        </div>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <div class="p-2 border rounded-3 bg-light text-center">
+                            <small class="text-muted d-block" style="font-size: 0.72rem;">Episode VIP</small>
+                            <span class="fw-bold text-warning-emphasis fs-6">{{ $series->episodes->where('access_type', 'premium')->count() }}</span>
+                        </div>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <div class="p-2 border rounded-3 bg-light text-center">
+                            <small class="text-muted d-block" style="font-size: 0.72rem;">Urutan Katalog</small>
+                            <span class="fw-bold text-dark fs-6">#{{ $series->catalog_order }}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 4 Stat Cards -->
-<div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
-        <x-stat-card 
-            id="cardShowTotalEp"
-            label="Total Episode" 
-            value="4" 
-            icon="play-circle" 
-            iconBg="purple" 
-            subtext="Tercatat dalam series" 
-        />
-    </div>
-    <div class="col-6 col-md-3">
-        <x-stat-card 
-            id="cardShowFreeEp"
-            label="Episode Gratis" 
-            value="2 Episode" 
-            icon="sparkles" 
-            iconBg="green" 
-            subtext="Free Preview untuk umum" 
-        />
-    </div>
-    <div class="col-6 col-md-3">
-        <x-stat-card 
-            id="cardShowPremiumEp"
-            label="Episode Premium" 
-            value="2 Episode" 
-            icon="gem" 
-            iconBg="purple" 
-            subtext="Khusus langganan aktif" 
-        />
-    </div>
-    <div class="col-6 col-md-3">
-        <x-stat-card 
-            label="Total Views Series" 
-            value="69.750" 
-            icon="eye" 
-            iconBg="orange" 
-            subtext="2.415 jam ditonton" 
-        />
-    </div>
-</div>
-
-<!-- Episode Table Card -->
-<div class="humora-card mb-0">
-    <div class="humora-card-header">
+<!-- Episode List in this Series -->
+<div class="humora-card">
+    <div class="humora-card-header d-flex justify-content-between align-items-center">
         <div>
-            <div class="humora-card-title" id="showEpisodeTitle">DAFTAR EPISODE (4)</div>
-            <div class="humora-card-subtitle">Atur status akses Free Preview dan publikasi untuk setiap episode serial ini.</div>
+            <div class="humora-card-title">DAFTAR EPISODE DALAM SERIES INI</div>
+            <div class="humora-card-subtitle">Episode 1 & 2 adalah preview gratis. Episode 3+ memerlukan langganan VIP aktif.</div>
         </div>
-        <a href="{{ url('/admin/videos/create') }}" class="btn btn-sm btn-humora-primary">
+        <a href="{{ route('admin.videos.create', ['series_id' => $series->id]) }}" class="btn btn-sm btn-humora-primary">
             <i data-lucide="plus"></i>
-            <span>Tambah Episode</span>
+            <span>Tambah Episode Baru</span>
         </a>
     </div>
-    <div class="table-responsive">
-        <table class="table-humora" id="showEpisodesTable">
-            <thead>
-                <tr>
-                    <th style="width: 40px;">EP #</th>
-                    <th>Judul Episode</th>
-                    <th>Durasi</th>
-                    <th>Tipe Akses (Klik Toggle)</th>
-                    <th>Publikasi</th>
-                    <th>Views</th>
-                    <th>Jumlah Suka</th>
-                    <th>Completion</th>
-                    <th class="text-end">Tindakan</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Ep 1 -->
-                <tr class="episode-row" data-title="Tipe Nawar Nggak Masuk Akal" data-access="free">
-                    <td class="text-muted fw-bold">1</td>
-                    <td>
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="{{ asset('images/thumbnails/tipe-pembeli-di-toko-kelontong.jpg') }}" alt="Ep 1" class="thumbnail-table-thumb" style="width: 52px; height: 52px;">
-                            <div>
-                                <div class="fw-bold text-dark">Tipe Nawar Nggak Masuk Akal</div>
-                                <small class="text-muted text-truncate d-inline-block" style="max-width: 320px;">Beli mie instan sebungkus minta diskon grosir, rokok eceran minta korek gratisan</small>
+    <div class="humora-card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-custom align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 70px;">No Ep</th>
+                        <th>Judul Episode</th>
+                        <th>Durasi</th>
+                        <th>Hak Akses</th>
+                        <th>Status</th>
+                        <th>Berkas Video</th>
+                        <th class="text-end">Tindakan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($series->episodes as $ep)
+                    <tr>
+                        <td class="fw-bold text-center">
+                            <span class="badge bg-light text-dark border px-2 py-1 fs-6">#{{ $ep->episode_number }}</span>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-dark" style="font-size: 0.85rem;">{{ $ep->title }}</div>
+                            <small class="text-muted text-truncate d-block" style="max-width: 300px; font-size: 0.74rem;">{{ $ep->synopsis ?? 'Tidak ada sinopsis' }}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border" style="font-size: 0.75rem;">
+                                <i data-lucide="clock" class="me-1" style="width: 12px; height: 12px;"></i>{{ $ep->duration }}
+                            </span>
+                        </td>
+                        <td>
+                            @if ($ep->is_free)
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill" style="font-size: 0.72rem;">
+                                    <i data-lucide="unlock" class="me-1" style="width: 12px; height: 12px;"></i>Gratis
+                                </span>
+                            @else
+                                <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-2 py-1 rounded-pill" style="font-size: 0.72rem;">
+                                    <i data-lucide="lock" class="me-1" style="width: 12px; height: 12px;"></i>Premium VIP
+                                </span>
+                            @endif
+                        </td>
+                        <td>
+                            @if ($ep->status === 'published')
+                                <span class="badge-pill-success" style="font-size: 0.72rem;">Terpublikasi</span>
+                            @else
+                                <span class="badge bg-secondary-subtle text-secondary px-2 py-1 rounded-pill" style="font-size: 0.72rem;">Draf</span>
+                            @endif
+                        </td>
+                        <td>
+                            <small class="text-muted d-block font-monospace" style="font-size: 0.72rem;">
+                                {{ $ep->video_file ?? 'sample-skit.mp4' }}
+                            </small>
+                        </td>
+                        <td class="text-end">
+                            <div class="d-flex justify-content-end gap-1">
+                                <a href="{{ route('admin.videos.edit', $ep->id) }}" class="btn-humora-icon" title="Edit Episode">
+                                    <i data-lucide="pencil"></i>
+                                </a>
+                                <button type="button" class="btn-humora-icon danger" title="Hapus Episode" onclick="confirmDeleteEpisode({{ $ep->id }}, {{ $ep->episode_number }}, '{{ addslashes($ep->title) }}')">
+                                    <i data-lucide="trash-2"></i>
+                                </button>
+                                <form id="delete-ep-{{ $ep->id }}" action="{{ route('admin.videos.destroy', $ep->id) }}" method="POST" class="d-none">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
                             </div>
-                        </div>
-                    </td>
-                    <td class="fw-medium text-dark">2m 04s</td>
-                    <td>
-                        <span class="badge-pill-free badge-interactive" title="Klik untuk ubah tipe akses"><i data-lucide="play-circle"></i> Free Preview</span>
-                    </td>
-                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>2.900</span></td>
-                    <td><span class="fw-bold text-success">92%</span></td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Episode 1: Tipe Nawar Nggak Masuk Akal" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- Ep 2 -->
-                <tr class="episode-row" data-title="Tipe Salah Masuk Toko" data-access="free">
-                    <td class="text-muted fw-bold">2</td>
-                    <td>
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="{{ asset('images/thumbnails/tipe-pembeli-di-toko-kelontong.jpg') }}" alt="Ep 2" class="thumbnail-table-thumb" style="width: 52px; height: 52px;">
-                            <div>
-                                <div class="fw-bold text-dark">Tipe Salah Masuk Toko</div>
-                                <small class="text-muted text-truncate d-inline-block" style="max-width: 320px;">Niatnya nyari minimarket ber-AC buat ngadem, pas sadar malah nongkrong di warung Madura</small>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="fw-medium text-dark">2m 10s</td>
-                    <td>
-                        <span class="badge-pill-free badge-interactive" title="Klik untuk ubah tipe akses"><i data-lucide="play-circle"></i> Free Preview</span>
-                    </td>
-                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td class="fw-bold text-dark">21.000</td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>2.500</span></td>
-                    <td><span class="fw-bold text-success">89%</span></td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Episode 2: Tipe Salah Masuk Toko" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- Ep 3 -->
-                <tr class="episode-row" data-title="Tipe Curhat Panjang Lebar" data-access="premium">
-                    <td class="text-muted fw-bold">3</td>
-                    <td>
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="{{ asset('images/thumbnails/tipe-pembeli-di-toko-kelontong.jpg') }}" alt="Ep 3" class="thumbnail-table-thumb" style="width: 52px; height: 52px;">
-                            <div>
-                                <div class="fw-bold text-dark">Tipe Curhat Panjang Lebar</div>
-                                <small class="text-muted text-truncate d-inline-block" style="max-width: 320px;">Tujuan awal cuma beli obat nyamuk bakar, tapi malah curhat masalah rumah tangga dan tetangga ke penjaga warung</small>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="fw-medium text-dark">2m 22s</td>
-                    <td>
-                        <span class="badge-pill-premium badge-interactive" title="Klik untuk ubah tipe akses"><i data-lucide="gem"></i> Premium</span>
-                    </td>
-                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td class="fw-bold text-dark">13.500</td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>2.200</span></td>
-                    <td><span class="fw-bold text-success">84%</span></td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Episode 3: Tipe Curhat Panjang Lebar" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- Ep 4 -->
-                <tr class="episode-row" data-title="Tipe Ngutang Dulu" data-access="premium">
-                    <td class="text-muted fw-bold">4</td>
-                    <td>
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="{{ asset('images/thumbnails/tipe-pembeli-di-toko-kelontong.jpg') }}" alt="Ep 4" class="thumbnail-table-thumb" style="width: 52px; height: 52px;">
-                            <div>
-                                <div class="fw-bold text-dark">Tipe Ngutang Dulu</div>
-                                <small class="text-muted text-truncate d-inline-block" style="max-width: 320px;">Sudah selesai ditotal di kalkulator, tiba-tiba pasang tampang memelas sambil bilang "Catet di buku dulu ya bang, besok"</small>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="fw-medium text-dark">2m 16s</td>
-                    <td>
-                        <span class="badge-pill-premium badge-interactive" title="Klik untuk ubah tipe akses"><i data-lucide="gem"></i> Premium</span>
-                    </td>
-                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td class="fw-bold text-dark">11.250</td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>2.000</span></td>
-                    <td><span class="fw-bold text-success">80%</span></td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Episode 4: Tipe Ngutang Dulu" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                        </td>
+                    </tr>
+                    @empty
+                    <x-empty-state 
+                        colspan="7"
+                        icon="video"
+                        title="Belum Ada Episode di Series Ini"
+                        subtitle="Series sketsa komedi ini belum memiliki daftar video episode. Mulai unggah episode pertama sekarang."
+                        :actionUrl="route('admin.videos.create', ['series_id' => $series->id])"
+                        actionText="Tambah Episode Baru"
+                        actionIcon="plus"
+                    />
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 @endsection
 
 @section('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        let isPublished = true;
-        const statusBadge = document.getElementById('showStatusBadge');
-        const btnToggleStatus = document.getElementById('btnToggleShowStatus');
-        const btnText = document.getElementById('btnToggleStatusText');
-        const btnIcon = document.getElementById('btnToggleStatusIcon');
-
-        btnToggleStatus.addEventListener('click', function () {
-            if (isPublished) {
-                isPublished = false;
-                statusBadge.className = 'badge-pill-warning';
-                statusBadge.innerHTML = '<i data-lucide="clock"></i> Draft';
-                btnText.innerText = 'Terbitkan Series';
-                btnIcon.setAttribute('data-lucide', 'check-circle');
-                btnIcon.className = 'text-success';
-                window.showHumoraToast('Series diubah menjadi Draft.', 'warning');
-            } else {
-                isPublished = true;
-                statusBadge.className = 'badge-pill-success';
-                statusBadge.innerHTML = '<i data-lucide="check-circle"></i> Terpublikasi';
-                btnText.innerText = 'Ubah ke Draft';
-                btnIcon.setAttribute('data-lucide', 'clock');
-                btnIcon.className = 'text-warning';
-                window.showHumoraToast('Series berhasil dipublikasikan!', 'success');
-            }
-            if (window.lucide) {
-                window.lucide.createIcons();
-            }
-        });
+function confirmDeleteSeries() {
+    Swal.fire({
+        title: 'Hapus Series?',
+        text: 'Apakah Anda yakin ingin menghapus series ini secara permanen? Seluruh data episode di dalamnya akan ikut dihapus.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#DC2626',
+        cancelButtonColor: '#64748B',
+        confirmButtonText: 'Ya, Hapus Series',
+        cancelButtonText: 'Batal'
+    }).then((res) => {
+        if (res.isConfirmed) {
+            document.getElementById('deleteSeriesForm').submit();
+        }
     });
+}
+
+function confirmDeleteEpisode(id, epNumber, title) {
+    Swal.fire({
+        title: `Hapus Episode #${epNumber}?`,
+        text: `Apakah Anda yakin ingin menghapus episode '${title}'? File video terkait akan dibersihkan.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#DC2626',
+        cancelButtonColor: '#64748B',
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal'
+    }).then((res) => {
+        if (res.isConfirmed) {
+            document.getElementById(`delete-ep-${id}`).submit();
+        }
+    });
+}
 </script>
 @endsection
