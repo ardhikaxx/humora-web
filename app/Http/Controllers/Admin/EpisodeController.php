@@ -22,7 +22,7 @@ class EpisodeController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Episode::with('series')->orderBy('series_id')->orderBy('episode_number');
+        $query = Episode::with('series')->withCount('likes')->orderBy('series_id')->orderBy('episode_number');
 
         if ($seriesId = $request->input('series_id')) {
             $query->where('series_id', $seriesId);
