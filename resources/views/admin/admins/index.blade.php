@@ -12,11 +12,11 @@
     </small>
 </div>
 
-<!-- Header & Top Action Button -->
+<!-- Header & Action Button -->
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
     <div>
-        <h1 class="page-title">Kelola Tim Admin</h1>
-        <p class="page-subtitle mb-0">Kelola akun administrator HUMORA. Data yang dikelola meliputi Nama Lengkap, Email, Password, dan Nomor Telfon.</p>
+        <h1 class="page-title">Kelola Administrator HUMORA</h1>
+        <p class="page-subtitle mb-0">Kelola akun pengelola platform: Super Admin, Content Admin, dan Finance Admin.</p>
     </div>
     <button type="button" class="btn btn-humora-primary" data-bs-toggle="modal" data-bs-target="#addAdminModal">
         <i data-lucide="user-plus"></i>
@@ -24,376 +24,319 @@
     </button>
 </div>
 
-<!-- 3 Stat Cards -->
+<!-- 3 Real Stat Cards -->
+@php
+    $totalAdmins = \App\Models\Admin::count();
+    $superAdmins = \App\Models\Admin::where('role', 'super_admin')->where('is_active', true)->count();
+    $activeStaff = \App\Models\Admin::where('role', '!=', 'super_admin')->where('is_active', true)->count();
+@endphp
 <div class="row g-3 mb-4">
     <div class="col-12 col-md-4">
         <x-stat-card 
-            id="cardTotalAdmin"
-            label="Total Admin" 
-            value="3" 
+            label="Total Administrator" 
+            :value="$totalAdmins" 
             icon="users" 
             iconBg="purple" 
-            subtext="Seluruh akun terdaftar" 
+            subtext="Seluruh pengelola terdaftar" 
         />
     </div>
     <div class="col-12 col-md-4">
         <x-stat-card 
-            label="Admin Pertama (Utama)" 
-            value="1" 
+            label="Super Admin Aktif" 
+            :value="$superAdmins" 
             icon="shield-check" 
             iconBg="green" 
-            subtext="Akun pengelola pertama" 
+            subtext="Akses kontrol penuh" 
         />
     </div>
     <div class="col-12 col-md-4">
         <x-stat-card 
-            id="cardAdditionalAdmin"
-            label="Admin Tambahan" 
-            value="2" 
-            icon="user-plus" 
+            label="Staf Operasional (Konten/Keuangan)" 
+            :value="$activeStaff" 
+            icon="user-check" 
             iconBg="blue" 
-            subtext="Admin baru yang ditambahkan" 
+            subtext="Role spesifik terpartisi" 
         />
     </div>
 </div>
 
-<!-- Search Bar -->
-<div class="humora-card mb-4 p-3">
-    <div class="search-input-wrap">
-        <i data-lucide="search"></i>
-        <input type="text" id="adminSearchInput" class="form-control-custom bg-light" placeholder="Cari berdasarkan nama lengkap, email, atau nomor telfon...">
+<!-- Table Card -->
+<div class="humora-card">
+    <div class="humora-card-header d-flex justify-content-between align-items-center">
+        <div>
+            <div class="humora-card-title">DAFTAR AKUN ADMINISTRATOR</div>
+            <div class="humora-card-subtitle">Identitas visual menggunakan inisial nama otomatis tanpa upload foto.</div>
+        </div>
     </div>
+    <div class="humora-card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-custom align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Administrator & Inisial</th>
+                        <th>Email & Kontak</th>
+                        <th>Role Akses</th>
+                        <th>Status</th>
+                        <th>Terdaftar</th>
+                        <th class="text-end">Tindakan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($admins as $adm)
+                    @php
+                        $isSelf = Auth::guard('admin')->id() === $adm->id;
+                    @endphp
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="sidebar-avatar-circle" style="width: 36px; height: 36px; font-size: 0.85rem;">
+                                    {{ $adm->initials }}
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark" style="font-size: 0.85rem;">
+                                        {{ $adm->name }}
+                                        @if ($isSelf)
+                                            <span class="badge bg-purple-subtle text-purple ms-1" style="font-size: 0.65rem;">Akun Anda</span>
+                                        @endif
+                                    </div>
+                                    <small class="text-muted" style="font-size: 0.72rem;">ID #{{ $adm->id }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-size: 0.8rem;">
+                                <div class="text-dark">{{ $adm->email }}</div>
+                                <small class="text-muted">{{ $adm->phone ?: 'Tidak ada no telepon' }}</small>
+                            </div>
+                        </td>
+                        <td>
+                            @if ($adm->role === 'super_admin')
+                                <span class="badge bg-purple-subtle text-purple border border-purple-subtle px-2 py-1 rounded-pill" style="font-size: 0.72rem;">
+                                    <i data-lucide="shield" style="width: 11px; height: 11px;" class="me-1"></i>Super Admin
+                                </span>
+                            @elseif ($adm->role === 'content_admin')
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 rounded-pill" style="font-size: 0.72rem;">
+                                    <i data-lucide="tv" style="width: 11px; height: 11px;" class="me-1"></i>Content Admin
+                                </span>
+                            @else
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill" style="font-size: 0.72rem;">
+                                    <i data-lucide="banknote" style="width: 11px; height: 11px;" class="me-1"></i>Finance Admin
+                                </span>
+                            @endif
+                        </td>
+                        <td>
+                            @if ($adm->is_active)
+                                <span class="badge-pill-success" style="font-size: 0.72rem;">Aktif</span>
+                            @else
+                                <span class="badge bg-secondary text-white px-2 py-1 rounded-pill" style="font-size: 0.72rem;">Nonaktif</span>
+                            @endif
+                        </td>
+                        <td>
+                            <small class="text-muted" style="font-size: 0.78rem;">{{ $adm->created_at?->format('d M Y') }}</small>
+                        </td>
+                        <td class="text-end">
+                            <div class="d-flex justify-content-end gap-1">
+                                <button type="button" class="btn-humora-icon" title="Edit Admin" onclick="openEditAdminModal({{ json_encode([
+                                    'id' => $adm->id,
+                                    'name' => $adm->name,
+                                    'email' => $adm->email,
+                                    'phone' => $adm->phone ?? '',
+                                    'role' => $adm->role,
+                                    'is_active' => $adm->is_active,
+                                    'is_self' => $isSelf
+                                ]) }})">
+                                    <i data-lucide="pencil"></i>
+                                </button>
+                                @if (!$isSelf)
+                                <button type="button" class="btn-humora-icon danger" title="Hapus Admin" onclick="confirmDeleteAdmin({{ $adm->id }}, '{{ addslashes($adm->name) }}')">
+                                    <i data-lucide="trash-2"></i>
+                                </button>
+                                <form id="del-admin-{{ $adm->id }}" action="{{ route('admin.admins.destroy', $adm->id) }}" method="POST" class="d-none">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <x-empty-state 
+                        colspan="6"
+                        icon="shield"
+                        title="Belum Ada Administrator Lain"
+                        subtitle="Belum ada administrator atau staf pengelola lain yang terdaftar dalam sistem HUMORA."
+                        actionTarget="#addAdminModal"
+                        actionText="Tambah Administrator"
+                        actionIcon="plus"
+                        :resetUrl="request()->hasAny(['search', 'role']) ? route('admin.admins.index') : null"
+                        resetText="Reset Filter"
+                    />
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @if ($admins->hasPages())
+    <div class="p-3 border-top d-flex justify-content-end">
+        {{ $admins->links() }}
+    </div>
+    @endif
 </div>
 
-<!-- Admins Table Card -->
-<div class="humora-card mb-0">
-    <div class="table-responsive">
-        <table class="table-humora" id="adminsTable">
-            <thead>
-                <tr>
-                    <th>Nama Lengkap</th>
-                    <th>Email</th>
-                    <th>Nomor Telfon</th>
-                    <th class="text-end">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Admin 1 (Admin Utama) -->
-                <tr class="admin-row"
-                    data-name="Admin HUMORA"
-                    data-email="admin@humora.id"
-                    data-phone="0812-8899-7711"
-                    data-initials="AH"
-                    data-is-main="1">
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="sidebar-avatar-circle" style="width: 36px; height: 36px;">
-                                AH
-                            </div>
-                            <div>
-                                <span class="fw-bold text-dark me-2 admin-name">Admin HUMORA</span>
-                                <span class="badge-pill-tag">Admin Pertama</span>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex align-items-center gap-2 text-muted">
-                            <i data-lucide="mail"></i>
-                            <span class="admin-email">admin@humora.id</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex align-items-center gap-2 text-muted">
-                            <i data-lucide="phone"></i>
-                            <span class="admin-phone">0812-8899-7711</span>
-                        </div>
-                    </td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <button class="btn-humora-icon btn-edit-admin" title="Edit"><i data-lucide="pencil"></i></button>
-                            <button class="btn-humora-icon" disabled style="opacity: 0.3;" title="Admin utama tidak dapat dihapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- Admin 2 -->
-                <tr class="admin-row"
-                    data-name="Sarah Wijaya"
-                    data-email="sarah.w@humora.id"
-                    data-phone="0813-7722-1144"
-                    data-initials="SW"
-                    data-is-main="0">
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="sidebar-avatar-circle" style="width: 36px; height: 36px; background-color: #6366F1;">
-                                SW
-                            </div>
-                            <span class="fw-bold text-dark admin-name">Sarah Wijaya</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex align-items-center gap-2 text-muted">
-                            <i data-lucide="mail"></i>
-                            <span class="admin-email">sarah.w@humora.id</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex align-items-center gap-2 text-muted">
-                            <i data-lucide="phone"></i>
-                            <span class="admin-phone">0813-7722-1144</span>
-                        </div>
-                    </td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <button class="btn-humora-icon btn-edit-admin" title="Edit"><i data-lucide="pencil"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Admin Sarah Wijaya" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- Admin 3 -->
-                <tr class="admin-row"
-                    data-name="Rian Pratama"
-                    data-email="rian.p@humora.id"
-                    data-phone="0818-5544-2200"
-                    data-initials="RP"
-                    data-is-main="0">
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="sidebar-avatar-circle" style="width: 36px; height: 36px; background-color: #8B5CF6;">
-                                RP
-                            </div>
-                            <span class="fw-bold text-dark admin-name">Rian Pratama</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex align-items-center gap-2 text-muted">
-                            <i data-lucide="mail"></i>
-                            <span class="admin-email">rian.p@humora.id</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex align-items-center gap-2 text-muted">
-                            <i data-lucide="phone"></i>
-                            <span class="admin-phone">0818-5544-2200</span>
-                        </div>
-                    </td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <button class="btn-humora-icon btn-edit-admin" title="Edit"><i data-lucide="pencil"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Admin Rian Pratama" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-@endsection
-
-@section('modals')
-<!-- Modal Tambah Admin Baru -->
+<!-- Modal Tambah Admin -->
 <div class="modal fade" id="addAdminModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content modal-content-humora">
+        <form action="{{ route('admin.admins.store') }}" method="POST" class="modal-content modal-content-humora">
+            @csrf
             <div class="modal-header modal-header-humora">
-                <h5 class="modal-title-humora mb-0">Tambah Admin Baru</h5>
+                <h5 class="modal-title-humora">Tambah Administrator Baru</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="formAddAdmin" action="{{ url('/admin/admins') }}" method="POST">
-                @csrf
-                <div class="modal-body modal-body-humora">
-                    <div class="mb-3">
-                        <label for="admin_name" class="form-label-custom">Nama Lengkap <span class="text-danger">*</span></label>
-                        <input type="text" id="admin_name" name="name" class="form-control-custom" placeholder="Nama Lengkap Administrator" required>
+            <div class="modal-body modal-body-humora">
+                <div class="mb-3">
+                    <label class="form-label-custom">Nama Lengkap <span class="text-danger">*</span></label>
+                    <input type="text" name="name" class="form-control-custom" placeholder="Misal: Budi Pratama" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-custom">Email Resmi <span class="text-danger">*</span></label>
+                    <input type="email" name="email" class="form-control-custom" placeholder="budi@humora.id" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-custom">Nomor Telepon</label>
+                    <input type="text" name="phone" class="form-control-custom" placeholder="0812-xxxx-xxxx">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-custom">Role Hak Akses <span class="text-danger">*</span></label>
+                    <select name="role" class="form-select-custom" required>
+                        <option value="content_admin">Content Admin (Kelola Konten & Analytics)</option>
+                        <option value="finance_admin">Finance Admin (Verifikasi Pembayaran & Finansial)</option>
+                        <option value="super_admin">Super Admin (Akses Penuh Seluruh Sistem)</option>
+                    </select>
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="form-label-custom">Password <span class="text-danger">*</span></label>
+                        <input type="password" name="password" class="form-control-custom" placeholder="Min. 8 karakter" required minlength="8">
                     </div>
-                    <div class="mb-3">
-                        <label for="admin_email" class="form-label-custom">Email <span class="text-danger">*</span></label>
-                        <input type="email" id="admin_email" name="email" class="form-control-custom" placeholder="nama@humora.id" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="admin_phone" class="form-label-custom">Nomor Telfon <span class="text-danger">*</span></label>
-                        <input type="text" id="admin_phone" name="phone" class="form-control-custom" placeholder="+62 812-xxxx-xxxx" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="admin_pass" class="form-label-custom">Password Sementara <span class="text-danger">*</span></label>
-                        <input type="password" id="admin_pass" name="password" class="form-control-custom" placeholder="••••••••" required>
+                    <div class="col-6">
+                        <label class="form-label-custom">Konfirmasi Password <span class="text-danger">*</span></label>
+                        <input type="password" name="password_confirmation" class="form-control-custom" placeholder="Ketik ulang" required minlength="8">
                     </div>
                 </div>
-                <div class="modal-footer modal-footer-humora">
-                    <button type="button" class="btn btn-humora-secondary" data-bs-dismiss="modal">
-                        <i data-lucide="x"></i>
-                        <span>Batal</span>
-                    </button>
-                    <button type="submit" class="btn btn-humora-primary">
-                        <i data-lucide="user-plus"></i>
-                        <span>Simpan Admin</span>
-                    </button>
+                <div class="form-check form-switch mt-2">
+                    <input class="form-check-input" type="checkbox" name="is_active" value="1" id="addAdminActive" checked style="cursor: pointer;">
+                    <label class="form-check-label fw-bold text-dark" for="addAdminActive" style="font-size: 0.85rem; cursor: pointer;">
+                        Akun Aktif (Dapat Login)
+                    </label>
                 </div>
-            </form>
-        </div>
+            </div>
+            <div class="modal-footer modal-footer-humora">
+                <button type="button" class="btn btn-sm btn-humora-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-sm btn-humora-primary">Simpan Admin</button>
+            </div>
+        </form>
     </div>
 </div>
 
 <!-- Modal Edit Admin -->
 <div class="modal fade" id="editAdminModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content modal-content-humora">
+        <form id="editAdminForm" action="" method="POST" class="modal-content modal-content-humora">
+            @csrf
+            @method('PUT')
             <div class="modal-header modal-header-humora">
-                <h5 class="modal-title-humora mb-0">Edit Informasi Admin</h5>
+                <h5 class="modal-title-humora">Edit Administrator</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="formEditAdmin" action="{{ url('/admin/admins') }}" method="POST">
-                @csrf
-                <div class="modal-body modal-body-humora">
-                    <div class="mb-3">
-                        <label for="edit_admin_name" class="form-label-custom">Nama Lengkap</label>
-                        <input type="text" id="edit_admin_name" name="name" class="form-control-custom" value="Admin HUMORA" required>
+            <div class="modal-body modal-body-humora">
+                <div class="mb-3">
+                    <label class="form-label-custom">Nama Lengkap <span class="text-danger">*</span></label>
+                    <input type="text" id="editAdminName" name="name" class="form-control-custom" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-custom">Email Resmi <span class="text-danger">*</span></label>
+                    <input type="email" id="editAdminEmail" name="email" class="form-control-custom" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-custom">Nomor Telepon</label>
+                    <input type="text" id="editAdminPhone" name="phone" class="form-control-custom">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-custom">Role Hak Akses <span class="text-danger">*</span></label>
+                    <select id="editAdminRole" name="role" class="form-select-custom" required>
+                        <option value="content_admin">Content Admin (Kelola Konten & Analytics)</option>
+                        <option value="finance_admin">Finance Admin (Verifikasi Pembayaran & Finansial)</option>
+                        <option value="super_admin">Super Admin (Akses Penuh Seluruh Sistem)</option>
+                    </select>
+                    <small id="selfRoleNotice" class="text-muted mt-1 d-block" style="display: none; font-size: 0.72rem;">Anda tidak dapat mengubah role akun Anda sendiri.</small>
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="form-label-custom">Password Baru (Opsional)</label>
+                        <input type="password" name="password" class="form-control-custom" placeholder="Kosongkan jika tetap" minlength="8">
                     </div>
-                    <div class="mb-3">
-                        <label for="edit_admin_email" class="form-label-custom">Email</label>
-                        <input type="email" id="edit_admin_email" name="email" class="form-control-custom" value="admin@humora.id" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit_admin_phone" class="form-label-custom">Nomor Telfon</label>
-                        <input type="text" id="edit_admin_phone" name="phone" class="form-control-custom" value="+62 812-8899-7711" required>
+                    <div class="col-6">
+                        <label class="form-label-custom">Konfirmasi Password</label>
+                        <input type="password" name="password_confirmation" class="form-control-custom" placeholder="Ketik ulang" minlength="8">
                     </div>
                 </div>
-                <div class="modal-footer modal-footer-humora">
-                    <button type="button" class="btn btn-humora-secondary" data-bs-dismiss="modal">
-                        <i data-lucide="x"></i>
-                        <span>Batal</span>
-                    </button>
-                    <button type="submit" class="btn btn-humora-primary">
-                        <i data-lucide="save"></i>
-                        <span>Simpan Perubahan</span>
-                    </button>
+                <div class="form-check form-switch mt-2">
+                    <input class="form-check-input" type="checkbox" name="is_active" value="1" id="editAdminActive" style="cursor: pointer;">
+                    <label class="form-check-label fw-bold text-dark" for="editAdminActive" style="font-size: 0.85rem; cursor: pointer;">
+                        Akun Aktif (Dapat Login)
+                    </label>
                 </div>
-            </form>
-        </div>
+            </div>
+            <div class="modal-footer modal-footer-humora">
+                <button type="button" class="btn btn-sm btn-humora-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-sm btn-humora-primary">Simpan Perubahan</button>
+            </div>
+        </form>
     </div>
 </div>
 @endsection
 
 @section('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        let activeEditAdminRow = null;
-        let totalAdmins = 3;
-        let additionalAdmins = 2;
+function openEditAdminModal(admin) {
+    const form = document.getElementById('editAdminForm');
+    form.action = `/admin/admins/${admin.id}`;
+    document.getElementById('editAdminName').value = admin.name;
+    document.getElementById('editAdminEmail').value = admin.email;
+    document.getElementById('editAdminPhone').value = admin.phone || '';
+    document.getElementById('editAdminRole').value = admin.role;
+    document.getElementById('editAdminActive').checked = admin.is_active;
 
-        const addAdminModalEl = document.getElementById('addAdminModal');
-        const editAdminModalEl = document.getElementById('editAdminModal');
-        const bsAddAdminModal = new bootstrap.Modal(addAdminModalEl);
-        const bsEditAdminModal = new bootstrap.Modal(editAdminModalEl);
+    const roleNotice = document.getElementById('selfRoleNotice');
+    if (admin.is_self) {
+        document.getElementById('editAdminRole').disabled = true;
+        document.getElementById('editAdminActive').disabled = true;
+        if (roleNotice) roleNotice.style.display = 'block';
+    } else {
+        document.getElementById('editAdminRole').disabled = false;
+        document.getElementById('editAdminActive').disabled = false;
+        if (roleNotice) roleNotice.style.display = 'none';
+    }
 
-        const editNameInput = document.getElementById('edit_admin_name');
-        const editEmailInput = document.getElementById('edit_admin_email');
-        const editPhoneInput = document.getElementById('edit_admin_phone');
+    const modal = new bootstrap.Modal(document.getElementById('editAdminModal'));
+    modal.show();
+}
 
-        const cardTotalAdmin = document.querySelector('#cardTotalAdmin .stat-value');
-        const cardAdditionalAdmin = document.querySelector('#cardAdditionalAdmin .stat-value');
-        const adminsTableBody = document.querySelector('#adminsTable tbody');
-
-        // Edit Admin Click
-        document.addEventListener('click', function (e) {
-            const btn = e.target.closest('.btn-edit-admin');
-            if (btn) {
-                e.preventDefault();
-                activeEditAdminRow = btn.closest('tr');
-                if (!activeEditAdminRow) return;
-
-                editNameInput.value = activeEditAdminRow.dataset.name;
-                editEmailInput.value = activeEditAdminRow.dataset.email;
-                editPhoneInput.value = activeEditAdminRow.dataset.phone;
-
-                bsEditAdminModal.show();
-            }
-        });
-
-        // Add Admin Submit
-        document.getElementById('formAddAdmin').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const name = document.getElementById('admin_name').value.trim();
-            const email = document.getElementById('admin_email').value.trim();
-            const phone = document.getElementById('admin_phone').value.trim();
-
-            const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-
-            totalAdmins += 1;
-            additionalAdmins += 1;
-            if (cardTotalAdmin) cardTotalAdmin.innerText = totalAdmins;
-            if (cardAdditionalAdmin) cardAdditionalAdmin.innerText = additionalAdmins;
-
-            const tr = document.createElement('tr');
-            tr.className = 'admin-row';
-            tr.dataset.name = name;
-            tr.dataset.email = email;
-            tr.dataset.phone = phone;
-            tr.dataset.initials = initials;
-            tr.dataset.isMain = '0';
-            tr.innerHTML = `
-                <td>
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="sidebar-avatar-circle" style="width: 36px; height: 36px; background-color: #059669;">
-                            ${initials}
-                        </div>
-                        <span class="fw-bold text-dark admin-name">${name}</span>
-                    </div>
-                </td>
-                <td>
-                    <div class="d-flex align-items-center gap-2 text-muted">
-                        <i data-lucide="mail"></i>
-                        <span class="admin-email">${email}</span>
-                    </div>
-                </td>
-                <td>
-                    <div class="d-flex align-items-center gap-2 text-muted">
-                        <i data-lucide="phone"></i>
-                        <span class="admin-phone">${phone}</span>
-                    </div>
-                </td>
-                <td class="text-end">
-                    <div class="d-flex justify-content-end gap-1">
-                        <button class="btn-humora-icon btn-edit-admin" title="Edit"><i data-lucide="pencil"></i></button>
-                        <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Admin ${name}" title="Hapus"><i data-lucide="trash-2"></i></button>
-                    </div>
-                </td>
-            `;
-            adminsTableBody.appendChild(tr);
-
-            // Reset and close
-            this.reset();
-            bsAddAdminModal.hide();
-            window.showHumoraToast(`Admin "${name}" berhasil ditambahkan!`);
-        });
-
-        // Edit Admin Submit
-        document.getElementById('formEditAdmin').addEventListener('submit', function (e) {
-            e.preventDefault();
-            if (!activeEditAdminRow) return;
-
-            const name = editNameInput.value.trim();
-            const email = editEmailInput.value.trim();
-            const phone = editPhoneInput.value.trim();
-
-            activeEditAdminRow.dataset.name = name;
-            activeEditAdminRow.dataset.email = email;
-            activeEditAdminRow.dataset.phone = phone;
-
-            const nameEl = activeEditAdminRow.querySelector('.admin-name');
-            const emailEl = activeEditAdminRow.querySelector('.admin-email');
-            const phoneEl = activeEditAdminRow.querySelector('.admin-phone');
-            const delBtn = activeEditAdminRow.querySelector('[data-confirm-delete]');
-
-            if (nameEl) nameEl.innerText = name;
-            if (emailEl) emailEl.innerText = email;
-            if (phoneEl) phoneEl.innerText = phone;
-            if (delBtn) delBtn.setAttribute('data-item-name', `Admin ${name}`);
-
-            bsEditAdminModal.hide();
-            window.showHumoraToast(`Data admin "${name}" berhasil diperbarui!`);
-        });
+function confirmDeleteAdmin(id, name) {
+    Swal.fire({
+        title: 'Hapus Administrator?',
+        text: `Apakah Anda yakin ingin menghapus akun admin '${name}'?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#DC2626',
+        cancelButtonColor: '#64748B',
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal'
+    }).then((res) => {
+        if (res.isConfirmed) {
+            document.getElementById(`del-admin-${id}`).submit();
+        }
     });
+}
 </script>
 @endsection
