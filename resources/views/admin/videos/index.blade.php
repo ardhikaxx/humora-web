@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Kelola Video Konten - HUMORA Portal Admin')
+@section('title', 'Kelola Video Episode - HUMORA Portal Admin')
 
 @section('content')
 <!-- Breadcrumbs & Header -->
@@ -11,604 +11,213 @@
 </div>
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
     <div>
-        <h1 class="page-title">Kelola Video Konten</h1>
-        <p class="page-subtitle mb-0">Kelola seluruh video sketsa (~+2 menit) berdasarkan judul besar, aturan akses Free Preview vs Premium, serta status publikasi.</p>
+        <h1 class="page-title">Kelola Video Episode</h1>
+        <p class="page-subtitle mb-0">Kelola episode sketsa komedi (~2 menit), file master video, durasi presisi, dan aturan akses preview vs VIP.</p>
     </div>
-    <a href="{{ url('/admin/videos/create') }}" class="btn btn-humora-primary">
+    <a href="{{ route('admin.videos.create') }}" class="btn btn-humora-primary">
         <i data-lucide="plus"></i>
-        <span>Tambah Video Baru</span>
+        <span>Tambah Episode Baru</span>
     </a>
 </div>
 
-<!-- 4 Stat Cards -->
+<!-- 4 Real Database Stat Cards -->
+@php
+    $totalVid = \App\Models\Episode::count();
+    $freeVid = \App\Models\Episode::where('access_type', 'free')->count();
+    $premVid = \App\Models\Episode::where('access_type', 'premium')->count();
+    $pubVid = \App\Models\Episode::where('status', 'published')->count();
+@endphp
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
         <x-stat-card 
-            id="cardTotalVideos"
-            label="Total Video" 
-            value="24" 
+            label="Total Episode" 
+            :value="$totalVid" 
             icon="video" 
             iconBg="purple" 
-            subtext="Seluruh video terdaftar" 
+            subtext="Seluruh episode terdaftar" 
         />
     </div>
     <div class="col-6 col-md-3">
         <x-stat-card 
-            id="cardFreeVideos"
             label="Free Preview" 
-            value="12 Video" 
+            :value="$freeVid" 
             icon="sparkles" 
             iconBg="green" 
-            subtext="Gratis tanpa langganan" 
+            subtext="Ep 1 & 2 (Bebas tonton)" 
         />
     </div>
     <div class="col-6 col-md-3">
         <x-stat-card 
-            id="cardPremiumVideos"
             label="Episode Premium" 
-            value="12 Ep" 
+            :value="$premVid" 
+            badge="VIP"
             icon="gem" 
             iconBg="purple" 
-            subtext="Terkunci untuk subscriber" 
+            subtext="Ep 3+ (Khusus Subscriber)" 
         />
     </div>
     <div class="col-6 col-md-3">
         <x-stat-card 
-            id="cardPublishedVideos"
-            label="Status Terbit" 
-            value="24 Terbit" 
+            label="Status Terpublikasi" 
+            :value="$pubVid" 
             icon="check-circle" 
-            iconBg="blue" 
-            subtext="0 masih draf" 
+            iconBg="yellow" 
+            subtext="Tampil di katalog mobile" 
         />
     </div>
 </div>
 
-<!-- Search & Filters -->
-<div class="humora-card mb-4 p-3">
-    <div class="row g-2 align-items-center">
-        <div class="col-12 col-md-4 col-lg-5">
-            <div class="search-input-wrap">
-                <i data-lucide="search"></i>
-                <input type="text" id="videoSearchInput" class="form-control-custom bg-light" placeholder="Cari judul episode atau nama series...">
+<!-- Filter Card -->
+<div class="humora-card mb-4">
+    <div class="humora-card-body p-3">
+        <form method="GET" action="{{ route('admin.videos.index') }}" class="row g-2 align-items-center">
+            <div class="col-12 col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i data-lucide="search" style="width: 16px; height: 16px;"></i></span>
+                    <input type="text" name="search" class="form-control-custom border-start-0" placeholder="Cari judul episode..." value="{{ request('search') }}">
+                </div>
             </div>
-        </div>
-        <div class="col-6 col-md-2 col-lg-2">
-            <select class="form-select-custom" id="videoSeriesFilter">
-                <option selected>Semua Series</option>
-                <option>Tipe Penumpang Taxi Online</option>
-                <option>Cara Deketin Cewek</option>
-                <option>Tipe-Tipe Teman Sekantor</option>
-                <option>Drama Warga Grup RT</option>
-                <option>Momen Canggung Kencan Pertama</option>
-                <option>Tipe Pembeli di Toko Kelontong</option>
-            </select>
-        </div>
-        <div class="col-6 col-md-2 col-lg-2">
-            <select class="form-select-custom" id="videoAccessFilter">
-                <option selected>Semua Akses</option>
-                <option>Free Preview</option>
-                <option>Premium</option>
-            </select>
-        </div>
-        <div class="col-6 col-md-2 col-lg-1">
-            <select class="form-select-custom" id="videoPubFilter">
-                <option selected>Semua Publikasi</option>
-                <option>Terpublikasi</option>
-                <option>Draft</option>
-            </select>
-        </div>
-        <div class="col-6 col-md-2 col-lg-2">
-            <select class="form-select-custom" id="videoSortFilter">
-                <option value="views" selected>Views Terbanyak</option>
-                <option value="newest">Terbaru</option>
-                <option value="likes">Paling Disukai</option>
-            </select>
-        </div>
+            <div class="col-6 col-md-4">
+                <select name="series_id" class="form-select-custom">
+                    <option value="">Semua Series Induk</option>
+                    @foreach ($seriesList as $s)
+                        <option value="{{ $s->id }}" {{ request('series_id') == $s->id ? 'selected' : '' }}>{{ $s->title }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-6 col-md-2">
+                <select name="access_type" class="form-select-custom">
+                    <option value="">Semua Akses</option>
+                    <option value="free" {{ request('access_type') === 'free' ? 'selected' : '' }}>Gratis (Ep 1 & 2)</option>
+                    <option value="premium" {{ request('access_type') === 'premium' ? 'selected' : '' }}>Premium VIP (Ep 3+)</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-humora-primary w-100 justify-content-center">
+                    <span>Filter</span>
+                </button>
+                @if (request()->hasAny(['search', 'series_id', 'access_type']))
+                <a href="{{ route('admin.videos.index') }}" class="btn btn-outline-secondary px-2" title="Reset">
+                    <i data-lucide="rotate-ccw" style="width: 16px; height: 16px;"></i>
+                </a>
+                @endif
+            </div>
+        </form>
     </div>
 </div>
 
-<!-- Videos Table Card -->
-<div class="humora-card mb-0">
-    <div class="table-responsive">
-        <table class="table-humora" id="videosTable">
-            <thead>
-                <tr>
-                    <th>Episode & Series</th>
-                    <th>No.</th>
-                    <th>Durasi</th>
-                    <th>Tipe Akses (Klik Toggle)</th>
-                    <th>Status Publikasi</th>
-                    <th>Penayangan</th>
-                    <th>Jumlah Suka</th>
-                    <th>Completion</th>
-                    <th class="text-end">Tindakan</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- 1 -->
-                <tr class="video-row"
-                    data-title="Tipe Bawel"
-                    data-series="Tipe Penumpang Taxi Online"
-                    data-access="free"
-                    data-pub="Terpublikasi"
-                    data-views="24000"
-                    data-likes="4250"
-                    data-date="2026-02-10">
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <img src="{{ asset('images/thumbnails/tipe-penumpang-taxi-online.jpg') }}" alt="Ep 1" class="thumbnail-table-thumb">
-                            <div>
-                                <div class="fw-bold text-dark video-title">Tipe Bawel</div>
-                                <small class="text-muted video-series">Tipe Penumpang Taxi Online</small>
+<!-- Table Card -->
+<div class="humora-card">
+    <div class="humora-card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-custom align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">No Ep</th>
+                        <th>Series Induk</th>
+                        <th>Judul Episode</th>
+                        <th>Durasi</th>
+                        <th>Tipe Akses</th>
+                        <th>Status</th>
+                        <th class="text-end">Tindakan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($episodes as $ep)
+                    <tr>
+                        <td class="text-center">
+                            <span class="badge bg-light text-dark border px-2 py-1 fs-6">#{{ $ep->episode_number }}</span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2" style="max-width: 220px;">
+                                <img src="{{ $ep->series?->thumbnail_url }}" alt="" class="rounded object-fit-cover shadow-sm" style="width: 44px; height: 26px; aspect-ratio: 16/9;" onerror="this.src='{{ asset('images/logo-humora.png') }}'">
+                                <span class="fw-semibold text-dark text-truncate d-block" style="font-size: 0.82rem;">{{ $ep->series?->title ?? '-' }}</span>
                             </div>
-                        </div>
-                    </td>
-                    <td class="text-muted fw-bold">#1</td>
-                    <td class="fw-medium text-dark">2m 14s</td>
-                    <td class="access-cell">
-                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="play-circle"></i> Free Preview</span>
-                    </td>
-                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>4.250</span></td>
-                    <td><span class="fw-bold text-success">92%</span></td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Tipe Bawel" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- 2 -->
-                <tr class="video-row"
-                    data-title="Pake Hadiah"
-                    data-series="Cara Deketin Cewek"
-                    data-access="free"
-                    data-pub="Terpublikasi"
-                    data-views="24000"
-                    data-likes="5600"
-                    data-date="2026-02-12">
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <img src="{{ asset('images/thumbnails/cara-deketin-cewek.jpg') }}" alt="Ep 1" class="thumbnail-table-thumb">
-                            <div>
-                                <div class="fw-bold text-dark video-title">Pake Hadiah</div>
-                                <small class="text-muted video-series">Cara Deketin Cewek</small>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-dark text-truncate" style="max-width: 250px; font-size: 0.85rem;">{{ $ep->title }}</div>
+                            <small class="text-muted text-truncate d-block" style="max-width: 250px; font-size: 0.72rem;">{{ $ep->synopsis ?? 'Tidak ada sinopsis' }}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border" style="font-size: 0.74rem;">
+                                <i data-lucide="clock" class="me-1" style="width: 11px; height: 11px;"></i>{{ $ep->duration }}
+                            </span>
+                        </td>
+                        <td>
+                            @if ($ep->is_free)
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill" style="font-size: 0.72rem;">
+                                    <i data-lucide="unlock" class="me-1" style="width: 11px; height: 11px;"></i>Gratis
+                                </span>
+                            @else
+                                <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-2 py-1 rounded-pill" style="font-size: 0.72rem;">
+                                    <i data-lucide="lock" class="me-1" style="width: 11px; height: 11px;"></i>Premium VIP
+                                </span>
+                            @endif
+                        </td>
+                        <td>
+                            @if ($ep->status === 'published')
+                                <span class="badge-pill-success" style="font-size: 0.72rem;">Terpublikasi</span>
+                            @else
+                                <span class="badge bg-secondary-subtle text-secondary px-2 py-1 rounded-pill" style="font-size: 0.72rem;">Draf</span>
+                            @endif
+                        </td>
+                        <td class="text-end">
+                            <div class="d-flex justify-content-end gap-1">
+                                <a href="{{ route('admin.videos.edit', $ep->id) }}" class="btn-humora-icon" title="Edit Episode">
+                                    <i data-lucide="pencil"></i>
+                                </a>
+                                <button type="button" class="btn-humora-icon danger" title="Hapus Episode" onclick="confirmDeleteEp({{ $ep->id }}, {{ $ep->episode_number }}, '{{ addslashes($ep->title) }}')">
+                                    <i data-lucide="trash-2"></i>
+                                </button>
+                                <form id="del-ep-{{ $ep->id }}" action="{{ route('admin.videos.destroy', $ep->id) }}" method="POST" class="d-none">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
                             </div>
-                        </div>
-                    </td>
-                    <td class="text-muted fw-bold">#1</td>
-                    <td class="fw-medium text-dark">2m 10s</td>
-                    <td class="access-cell">
-                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="play-circle"></i> Free Preview</span>
-                    </td>
-                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>5.600</span></td>
-                    <td><span class="fw-bold text-success">92%</span></td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Pake Hadiah" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- 3 -->
-                <tr class="video-row"
-                    data-title="Tipe Cari Muka"
-                    data-series="Tipe-Tipe Teman Sekantor"
-                    data-access="free"
-                    data-pub="Terpublikasi"
-                    data-views="24000"
-                    data-likes="3800"
-                    data-date="2026-02-14">
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <img src="{{ asset('images/thumbnails/tipe-tipe-teman-sekantor.jpg') }}" alt="Ep 1" class="thumbnail-table-thumb">
-                            <div>
-                                <div class="fw-bold text-dark video-title">Tipe Cari Muka</div>
-                                <small class="text-muted video-series">Tipe-Tipe Teman Sekantor</small>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="text-muted fw-bold">#1</td>
-                    <td class="fw-medium text-dark">2m 12s</td>
-                    <td class="access-cell">
-                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="play-circle"></i> Free Preview</span>
-                    </td>
-                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>3.800</span></td>
-                    <td><span class="fw-bold text-success">92%</span></td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Tipe Cari Muka" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- 4 -->
-                <tr class="video-row"
-                    data-title="Iuran Sampah Naik 5 Ribu"
-                    data-series="Drama Warga Grup RT"
-                    data-access="free"
-                    data-pub="Terpublikasi"
-                    data-views="24000"
-                    data-likes="6100"
-                    data-date="2026-02-15">
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <img src="{{ asset('images/thumbnails/drama-warga-grup-rt.jpg') }}" alt="Ep 1" class="thumbnail-table-thumb">
-                            <div>
-                                <div class="fw-bold text-dark video-title">Iuran Sampah Naik 5 Ribu</div>
-                                <small class="text-muted video-series">Drama Warga Grup RT</small>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="text-muted fw-bold">#1</td>
-                    <td class="fw-medium text-dark">2m 08s</td>
-                    <td class="access-cell">
-                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="play-circle"></i> Free Preview</span>
-                    </td>
-                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>6.100</span></td>
-                    <td><span class="fw-bold text-success">92%</span></td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Iuran Sampah Naik 5 Ribu" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- 5 -->
-                <tr class="video-row"
-                    data-title="Salah Sebut Nama Teman Kencan"
-                    data-series="Momen Canggung Kencan Pertama"
-                    data-access="free"
-                    data-pub="Terpublikasi"
-                    data-views="24000"
-                    data-likes="4900"
-                    data-date="2026-02-16">
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <img src="{{ asset('images/thumbnails/momen-canggung-kencan-pertama.jpg') }}" alt="Ep 1" class="thumbnail-table-thumb">
-                            <div>
-                                <div class="fw-bold text-dark video-title">Salah Sebut Nama Teman Kencan</div>
-                                <small class="text-muted video-series">Momen Canggung Kencan Pertama</small>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="text-muted fw-bold">#1</td>
-                    <td class="fw-medium text-dark">2m 11s</td>
-                    <td class="access-cell">
-                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="play-circle"></i> Free Preview</span>
-                    </td>
-                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>4.900</span></td>
-                    <td><span class="fw-bold text-success">92%</span></td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Salah Sebut Nama Teman Kencan" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- 6 -->
-                <tr class="video-row"
-                    data-title="Tipe Nawar Nggak Masuk Akal"
-                    data-series="Tipe Pembeli di Toko Kelontong"
-                    data-access="free"
-                    data-pub="Terpublikasi"
-                    data-views="24000"
-                    data-likes="2900"
-                    data-date="2026-02-18">
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <img src="{{ asset('images/thumbnails/tipe-pembeli-di-toko-kelontong.jpg') }}" alt="Ep 1" class="thumbnail-table-thumb">
-                            <div>
-                                <div class="fw-bold text-dark video-title">Tipe Nawar Nggak Masuk Akal</div>
-                                <small class="text-muted video-series">Tipe Pembeli di Toko Kelontong</small>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="text-muted fw-bold">#1</td>
-                    <td class="fw-medium text-dark">2m 04s</td>
-                    <td class="access-cell">
-                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="play-circle"></i> Free Preview</span>
-                    </td>
-                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td class="fw-bold text-dark">24.000</td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>2.900</span></td>
-                    <td><span class="fw-bold text-success">92%</span></td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Tipe Nawar Nggak Masuk Akal" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- 7 -->
-                <tr class="video-row"
-                    data-title="Tipe Navigator Handal"
-                    data-series="Tipe Penumpang Taxi Online"
-                    data-access="premium"
-                    data-pub="Terpublikasi"
-                    data-views="22500"
-                    data-likes="3900"
-                    data-date="2026-02-20">
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <img src="{{ asset('images/thumbnails/tipe-penumpang-taxi-online.jpg') }}" alt="Ep 2" class="thumbnail-table-thumb">
-                            <div>
-                                <div class="fw-bold text-dark video-title">Tipe Navigator Handal</div>
-                                <small class="text-muted video-series">Tipe Penumpang Taxi Online</small>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="text-muted fw-bold">#2</td>
-                    <td class="fw-medium text-dark">2m 18s</td>
-                    <td class="access-cell">
-                        <span class="badge-pill-premium badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="gem"></i> Premium</span>
-                    </td>
-                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td class="fw-bold text-dark">22.500</td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>3.900</span></td>
-                    <td><span class="fw-bold text-success">90%</span></td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Tipe Navigator Handal" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- 8 -->
-                <tr class="video-row"
-                    data-title="Curhat ke Driver"
-                    data-series="Tipe Penumpang Taxi Online"
-                    data-access="premium"
-                    data-pub="Terpublikasi"
-                    data-views="19800"
-                    data-likes="3100"
-                    data-date="2026-02-22">
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <img src="{{ asset('images/thumbnails/tipe-penumpang-taxi-online.jpg') }}" alt="Ep 3" class="thumbnail-table-thumb">
-                            <div>
-                                <div class="fw-bold text-dark video-title">Curhat ke Driver</div>
-                                <small class="text-muted video-series">Tipe Penumpang Taxi Online</small>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="text-muted fw-bold">#3</td>
-                    <td class="fw-medium text-dark">2m 25s</td>
-                    <td class="access-cell">
-                        <span class="badge-pill-premium badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="gem"></i> Premium</span>
-                    </td>
-                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td class="fw-bold text-dark">19.800</td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>3.100</span></td>
-                    <td><span class="fw-bold text-success">86%</span></td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Curhat ke Driver" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- 9 -->
-                <tr class="video-row"
-                    data-title="Gombalan Klasik"
-                    data-series="Cara Deketin Cewek"
-                    data-access="premium"
-                    data-pub="Terpublikasi"
-                    data-views="23100"
-                    data-likes="5200"
-                    data-date="2026-02-24">
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <img src="{{ asset('images/thumbnails/cara-deketin-cewek.jpg') }}" alt="Ep 2" class="thumbnail-table-thumb">
-                            <div>
-                                <div class="fw-bold text-dark video-title">Gombalan Klasik</div>
-                                <small class="text-muted video-series">Cara Deketin Cewek</small>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="text-muted fw-bold">#2</td>
-                    <td class="fw-medium text-dark">2m 05s</td>
-                    <td class="access-cell">
-                        <span class="badge-pill-premium badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="gem"></i> Premium</span>
-                    </td>
-                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td class="fw-bold text-dark">23.100</td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>5.200</span></td>
-                    <td><span class="fw-bold text-success">91%</span></td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Gombalan Klasik" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- 10 -->
-                <tr class="video-row"
-                    data-title="Parkir Depan Pagar Tetangga"
-                    data-series="Drama Warga Grup RT"
-                    data-access="free"
-                    data-pub="Terpublikasi"
-                    data-views="21000"
-                    data-likes="5800"
-                    data-date="2026-02-26">
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <img src="{{ asset('images/thumbnails/drama-warga-grup-rt.jpg') }}" alt="Ep 2" class="thumbnail-table-thumb">
-                            <div>
-                                <div class="fw-bold text-dark video-title">Parkir Depan Pagar Tetangga</div>
-                                <small class="text-muted video-series">Drama Warga Grup RT</small>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="text-muted fw-bold">#2</td>
-                    <td class="fw-medium text-dark">2m 15s</td>
-                    <td class="access-cell">
-                        <span class="badge-pill-free badge-interactive btn-toggle-video-access" title="Klik untuk ubah akses"><i data-lucide="play-circle"></i> Free Preview</span>
-                    </td>
-                    <td><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td class="fw-bold text-dark">21.000</td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>5.800</span></td>
-                    <td><span class="fw-bold text-success">88%</span></td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/videos/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon btn-duplicate-video" title="Duplikasi"><i data-lucide="copy"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Video Parkir Depan Pagar Tetangga" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Pagination Footer -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center p-3 border-top gap-2">
-        <div class="d-flex align-items-center gap-2">
-            <small class="text-muted" id="videoPaginationCounter" style="font-size: 0.8rem;">Menampilkan <strong>1 - 10</strong> dari <strong>24</strong> data</small>
-            <div class="d-flex align-items-center gap-1 ms-3">
-                <small class="text-muted" style="font-size: 0.8rem;">Baris:</small>
-                <select class="form-select-custom py-1 px-2" style="width: 70px; font-size: 0.78rem;">
-                    <option selected>10</option>
-                    <option>20</option>
-                    <option>50</option>
-                </select>
-            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <x-empty-state 
+                        colspan="7"
+                        icon="video"
+                        title="Belum Ada Episode Video"
+                        subtitle="Belum ada berkas video sketsa yang diunggah ke katalog series HUMORA atau sesuai dengan filter pencarian."
+                        :actionUrl="route('admin.videos.create')"
+                        actionText="Tambah Episode Baru"
+                        actionIcon="plus"
+                        :resetUrl="request()->hasAny(['search', 'series_id', 'status', 'is_free']) ? route('admin.videos.index') : null"
+                        resetText="Reset Filter"
+                    />
+                    @endforelse
+                </tbody>
+            </table>
         </div>
-        <nav aria-label="Page navigation">
-            <ul class="pagination pagination-sm mb-0">
-                <li class="page-item disabled"><a class="page-link" href="#"><i data-lucide="chevron-left"></i></a></li>
-                <li class="page-item active"><a class="page-link" href="#" style="background-color: #43135C; border-color: #43135C;">1</a></li>
-                <li class="page-item"><a class="page-link text-dark" href="#">2</a></li>
-                <li class="page-item"><a class="page-link text-dark" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#"><i data-lucide="chevron-right"></i></a></li>
-            </ul>
-        </nav>
     </div>
+    @if ($episodes->hasPages())
+    <div class="p-3 border-top d-flex justify-content-end">
+        {{ $episodes->links() }}
+    </div>
+    @endif
 </div>
 @endsection
 
 @section('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        let totalVideos = 24;
-        let freeVideos = 12;
-        let premiumVideos = 12;
-
-        const cardTotal = document.querySelector('#cardTotalVideos .stat-value');
-        const cardFree = document.querySelector('#cardFreeVideos .stat-value');
-        const cardPremium = document.querySelector('#cardPremiumVideos .stat-value');
-
-        const sortFilter = document.getElementById('videoSortFilter');
-        const tableBody = document.querySelector('#videosTable tbody');
-
-        // Toggle Video Access (Free <-> Premium)
-        document.addEventListener('click', function (e) {
-            const btn = e.target.closest('.btn-toggle-video-access');
-            if (btn) {
-                e.preventDefault();
-                const row = btn.closest('tr');
-                if (!row) return;
-
-                const currentAccess = row.dataset.access;
-                const title = row.dataset.title;
-
-                if (currentAccess === 'free') {
-                    row.dataset.access = 'premium';
-                    btn.className = 'badge-pill-premium badge-interactive btn-toggle-video-access';
-                    btn.innerHTML = '<i data-lucide="gem"></i> Premium';
-                    freeVideos = Math.max(0, freeVideos - 1);
-                    premiumVideos += 1;
-                    window.showHumoraToast(`Akses video "${title}" diubah: Premium (Terkunci)`);
-                } else {
-                    row.dataset.access = 'free';
-                    btn.className = 'badge-pill-free badge-interactive btn-toggle-video-access';
-                    btn.innerHTML = '<i data-lucide="play-circle"></i> Free Preview';
-                    freeVideos += 1;
-                    premiumVideos = Math.max(0, premiumVideos - 1);
-                    window.showHumoraToast(`Akses video "${title}" diubah: Free Preview (Gratis)`);
-                }
-
-                if (cardFree) cardFree.innerText = `${freeVideos} Video`;
-                if (cardPremium) cardPremium.innerText = `${premiumVideos} Ep`;
-            }
-        });
-
-        // Duplicate Video row
-        document.addEventListener('click', function (e) {
-            const dupBtn = e.target.closest('.btn-duplicate-video');
-            if (dupBtn) {
-                e.preventDefault();
-                const row = dupBtn.closest('tr');
-                if (!row) return;
-
-                const clone = row.cloneNode(true);
-                const titleEl = clone.querySelector('.video-title');
-                const originalTitle = row.dataset.title;
-                const newTitle = `${originalTitle} (Salinan)`;
-
-                clone.dataset.title = newTitle;
-                if (titleEl) titleEl.innerText = newTitle;
-
-                const delBtn = clone.querySelector('[data-confirm-delete]');
-                if (delBtn) delBtn.setAttribute('data-item-name', `Video ${newTitle}`);
-
-                tableBody.insertBefore(clone, row.nextSibling);
-
-                totalVideos += 1;
-                if (cardTotal) cardTotal.innerText = totalVideos;
-
-                window.showHumoraToast(`Video "${originalTitle}" berhasil diduplikasi!`);
-            }
-        });
-
-        // Sorting handler
-        if (sortFilter && tableBody) {
-            sortFilter.addEventListener('change', function () {
-                const sortType = this.value;
-                const rows = Array.from(tableBody.querySelectorAll('tr.video-row'));
-
-                rows.sort((a, b) => {
-                    if (sortType === 'views') {
-                        return parseInt(b.dataset.views || 0) - parseInt(a.dataset.views || 0);
-                    } else if (sortType === 'likes') {
-                        return parseInt(b.dataset.likes || 0) - parseInt(a.dataset.likes || 0);
-                    } else { // newest
-                        return (b.dataset.date || '').localeCompare(a.dataset.date || '');
-                    }
-                });
-
-                rows.forEach(r => tableBody.appendChild(r));
-                window.showHumoraToast(`Urutan diubah: ${this.options[this.selectedIndex].text}`);
-            });
+function confirmDeleteEp(id, num, title) {
+    Swal.fire({
+        title: `Hapus Episode #${num}?`,
+        text: `Apakah Anda yakin ingin menghapus episode '${title}'? Berkas video terkait akan dibersihkan.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#DC2626',
+        cancelButtonColor: '#64748B',
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById(`del-ep-${id}`).submit();
         }
     });
+}
 </script>
 @endsection
