@@ -1,23 +1,47 @@
 <?php
 
-test('all frontend pages render successfully', function (string $url) {
-    $response = $this->get($url);
+use App\Models\Admin;
 
-    $response->assertStatus(200);
+test('unauthenticated visitors are redirected to login when accessing admin portal', function (string $url) {
+    $response = $this->get($url);
+    $response->assertStatus(302);
+    $response->assertRedirect(route('admin.login'));
 })->with([
-    '/',
-    '/login',
-    '/forgot-password',
-    '/reset-password',
     '/admin/dashboard',
     '/admin/analytics',
     '/admin/series',
     '/admin/series/create',
-    '/admin/series/1',
-    '/admin/series/1/edit',
     '/admin/videos',
     '/admin/videos/create',
-    '/admin/videos/1/edit',
+    '/admin/categories',
+    '/admin/users',
+    '/admin/subscribers',
+    '/admin/transactions',
+    '/admin/admins',
+    '/admin/profile',
+    '/admin/settings',
+]);
+
+test('public auth pages render successfully', function (string $url) {
+    $response = $this->get($url);
+    $response->assertStatus(200);
+})->with([
+    '/login',
+    '/admin/login',
+]);
+
+test('authenticated super admin can access all admin portal pages', function (string $url) {
+    $admin = Admin::where('role', 'super_admin')->first() ?? Admin::factory()->create(['role' => 'super_admin', 'is_active' => true]);
+
+    $response = $this->actingAs($admin, 'admin')->get($url);
+    $response->assertStatus(200);
+})->with([
+    '/admin/dashboard',
+    '/admin/analytics',
+    '/admin/series',
+    '/admin/series/create',
+    '/admin/videos',
+    '/admin/videos/create',
     '/admin/categories',
     '/admin/users',
     '/admin/subscribers',
