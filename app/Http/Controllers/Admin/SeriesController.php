@@ -24,7 +24,7 @@ class SeriesController extends Controller
     public function index(Request $request): View
     {
         $query = Series::with(['categories'])
-            ->withCount(['episodes', 'publishedEpisodes'])
+            ->withCount(['episodes', 'publishedEpisodes', 'likes'])
             ->orderBy('catalog_order')
             ->orderByDesc('id');
 
@@ -123,7 +123,9 @@ class SeriesController extends Controller
      */
     public function show(int $id): View
     {
-        $series = Series::with(['categories', 'episodes'])->findOrFail($id);
+        $series = Series::with(['categories', 'episodes' => function ($q) {
+            $q->withCount('likes');
+        }])->withCount('likes')->findOrFail($id);
         return view('admin.series.show', compact('series'));
     }
 
