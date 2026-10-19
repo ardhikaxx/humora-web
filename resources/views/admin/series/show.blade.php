@@ -124,6 +124,7 @@
                         <th>Judul Episode</th>
                         <th>Durasi</th>
                         <th>Hak Akses</th>
+                        <th>Jumlah Suka</th>
                         <th>Status</th>
                         <th>Berkas Video</th>
                         <th class="text-end">Tindakan</th>
@@ -156,6 +157,11 @@
                             @endif
                         </td>
                         <td>
+                            <span class="text-danger fw-semibold" style="font-size: 0.78rem;">
+                                <i data-lucide="heart" style="width: 12px; height: 12px;" class="me-1"></i>{{ number_format($ep->likes_count ?? 0, 0, ',', '.') }} Suka
+                            </span>
+                        </td>
+                        <td>
                             @if ($ep->status === 'published')
                                 <span class="badge-pill-success" style="font-size: 0.72rem;">Terpublikasi</span>
                             @else
@@ -184,7 +190,7 @@
                     </tr>
                     @empty
                     <x-empty-state 
-                        colspan="7"
+                        colspan="8"
                         icon="video"
                         title="Belum Ada Episode di Series Ini"
                         subtitle="Series sketsa komedi ini belum memiliki daftar video episode. Mulai unggah episode pertama sekarang."
