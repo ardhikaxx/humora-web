@@ -112,6 +112,7 @@ class SeriesController extends Controller
                 'watch_progress' => 0.0,
                 'last_position' => 0,
                 'thumbnail_url' => $series->thumbnail_url,
+                'likes_count' => $ep->likes_count,
                 'stream_url' => $isAccessible ? url('/api/v1/files/stream/' . $ep->id) : null,
             ];
         });
@@ -178,6 +179,7 @@ class SeriesController extends Controller
                 'watch_progress' => $history ? ($history->progress_percent / 100.0) : 0.0,
                 'last_position' => $history ? $history->last_position : 0,
                 'thumbnail_url' => $series->thumbnail_url,
+                'likes_count' => $ep->likes_count,
                 // Only provide stream URL if accessible
                 'stream_url' => $isAccessible ? url('/api/v1/files/stream/' . $ep->id) : null,
             ];
