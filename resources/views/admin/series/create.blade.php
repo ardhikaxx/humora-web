@@ -7,28 +7,28 @@
 <div class="mb-2">
     <small class="text-muted" style="font-size: 0.78rem;">
         <span>Admin</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
-        <a href="{{ url('/admin/series') }}" class="text-decoration-none text-muted">Judul Konten</a> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
+        <a href="{{ route('admin.series.index') }}" class="text-decoration-none text-muted">Judul Konten</a> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
         <span class="text-dark fw-semibold">Buat Baru</span>
     </small>
 </div>
 
-<!-- Header & Top Action Buttons -->
-<form id="formCreateSeries" action="{{ url('/admin/series') }}" method="POST" enctype="multipart/form-data">
+<!-- Header & Form -->
+<form id="formCreateSeries" action="{{ route('admin.series.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
         <div>
             <h1 class="page-title mb-1">Tambah Judul Konten Baru</h1>
-            <p class="page-subtitle mb-0">Buat judul besar baru untuk menampung video sketsa pendek di aplikasi mobile HUMORA.</p>
+            <p class="page-subtitle mb-0">Buat judul series baru untuk menampung episode sketsa komedi di aplikasi mobile HUMORA.</p>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <a href="{{ url('/admin/series') }}" class="btn btn-humora-secondary">
+            <a href="{{ route('admin.series.index') }}" class="btn btn-humora-secondary">
                 <i data-lucide="arrow-left"></i>
                 <span>Batal</span>
             </a>
-            <button type="submit" name="status" value="draft" class="btn btn-humora-secondary btn-submit-draft">
-                <span>Simpan sebagai Draft</span>
+            <button type="submit" name="status" value="draft" class="btn btn-outline-secondary">
+                <span>Simpan Draf</span>
             </button>
-            <button type="submit" name="status" value="published" class="btn btn-humora-primary btn-submit-publish">
+            <button type="submit" name="status" value="published" class="btn btn-humora-primary">
                 <i data-lucide="save"></i>
                 <span>Simpan & Terbitkan</span>
             </button>
@@ -44,46 +44,62 @@
                     <h5 class="fw-bold text-dark mb-4" style="font-size: 0.95rem;">1. INFORMASI JUDUL KONTEN</h5>
 
                     <div class="mb-3">
-                        <label for="title" class="form-label-custom">Judul Besar <span class="text-danger">*</span></label>
-                        <input type="text" id="title" name="title" class="form-control-custom" placeholder="Misal: Tipe Penumpang Taxi Online" required>
+                        <label for="title" class="form-label-custom">Judul Series <span class="text-danger">*</span></label>
+                        <input type="text" id="title" name="title" class="form-control-custom @error('title') is-invalid @enderror" placeholder="Misal: Tipe Penumpang Taxi Online" value="{{ old('title') }}" required>
+                        @error('title')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
-                        <label for="slug" class="form-label-custom">Slug Identifikasi <span class="text-danger">*</span></label>
+                        <label for="slug" class="form-label-custom">Slug URL (Opsional, otomatis dibuat jika kosong)</label>
                         <div class="input-group">
-                            <span class="input-group-text bg-light text-muted border-end-0" style="font-size: 0.85rem; border-radius: 10px 0 0 10px;">humora.id/watch/</span>
-                            <input type="text" id="slug" name="slug" class="form-control-custom border-start-0" placeholder="tipe-penumpang-taxi-online" style="border-radius: 0 10px 10px 0;" required>
+                            <span class="input-group-text bg-light text-muted border-end-0" style="font-size: 0.85rem; border-radius: 10px 0 0 10px;">/series/</span>
+                            <input type="text" id="slug" name="slug" class="form-control-custom border-start-0 @error('slug') is-invalid @enderror" placeholder="tipe-penumpang-taxi-online" value="{{ old('slug') }}" style="border-radius: 0 10px 10px 0;">
                         </div>
+                        @error('slug')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-4">
                         <label for="synopsis" class="form-label-custom">Sinopsis & Ringkasan Konten <span class="text-danger">*</span></label>
-                        <textarea id="synopsis" name="synopsis" rows="4" class="form-control-custom" placeholder="Ceritakan tema besar, latar belakang, dan daya tarik utama video sketsa ini..."></textarea>
+                        <textarea id="synopsis" name="synopsis" rows="4" class="form-control-custom @error('synopsis') is-invalid @enderror" placeholder="Ceritakan tema besar, latar belakang komedi, dan daya tarik utama series ini..." required>{{ old('synopsis') }}</textarea>
+                        @error('synopsis')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label-custom">Pilih Genre / Kategori <span class="text-danger">*</span></label>
-                        <input type="hidden" name="genre" id="selectedGenreInput" value="Komedi">
-                        <div class="d-flex flex-wrap gap-2" id="genreBtnContainer">
-                            <button type="button" class="btn btn-sm btn-humora-primary rounded-pill px-3 genre-tag" data-genre="Komedi">Komedi</button>
-                            <button type="button" class="btn btn-sm btn-light border rounded-pill px-3 text-muted genre-tag" data-genre="Romantis">Romantis</button>
-                            <button type="button" class="btn btn-sm btn-light border rounded-pill px-3 text-muted genre-tag" data-genre="Drama">Drama</button>
-                            <button type="button" class="btn btn-sm btn-light border rounded-pill px-3 text-muted genre-tag" data-genre="Slice of Life">Slice of Life</button>
-                            <button type="button" class="btn btn-sm btn-light border rounded-pill px-3 text-muted genre-tag" data-genre="Workplace">Workplace</button>
-                            <button type="button" class="btn btn-sm btn-light border rounded-pill px-3 text-muted genre-tag" data-genre="Sketsa">Sketsa</button>
-                            <button type="button" class="btn btn-sm btn-light border rounded-pill px-3 text-muted genre-tag" data-genre="Keluarga">Keluarga</button>
+                        <label class="form-label-custom">Kategori / Genre (Minimal 1) <span class="text-danger">*</span></label>
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach ($categories as $cat)
+                            <div class="form-check form-check-inline border rounded-pill px-3 py-1 bg-light">
+                                <input class="form-check-input" type="checkbox" name="categories[]" id="cat_{{ $cat->id }}" value="{{ $cat->id }}" {{ in_array($cat->id, old('categories', [])) ? 'checked' : '' }}>
+                                <label class="form-check-label text-dark fw-medium" for="cat_{{ $cat->id }}" style="font-size: 0.85rem; cursor: pointer;">{{ $cat->name }}</label>
+                            </div>
+                            @endforeach
                         </div>
+                        @error('categories')
+                            <div class="text-danger mt-1" style="font-size: 0.8rem;">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="row g-3">
                         <div class="col-12 col-md-6">
-                            <label for="release_year" class="form-label-custom">Tahun Rilis</label>
-                            <input type="text" id="release_year" name="release_year" class="form-control-custom" value="2026">
+                            <label for="release_year" class="form-label-custom">Tahun Rilis <span class="text-danger">*</span></label>
+                            <input type="text" id="release_year" name="release_year" class="form-control-custom @error('release_year') is-invalid @enderror" value="{{ old('release_year', date('Y')) }}" required>
+                            @error('release_year')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-12 col-md-6">
-                            <label for="catalog_order" class="form-label-custom">Urutan Tampil di Katalog</label>
-                            <input type="number" id="catalog_order" name="catalog_order" class="form-control-custom" value="7">
-                            <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Terisi otomatis berdasarkan jumlah judul konten.</small>
+                            <label for="catalog_order" class="form-label-custom">Urutan Katalog</label>
+                            <input type="number" id="catalog_order" name="catalog_order" class="form-control-custom @error('catalog_order') is-invalid @enderror" value="{{ old('catalog_order', 0) }}" min="0">
+                            <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Semakin kecil angka, semakin awal muncul di katalog.</small>
+                            @error('catalog_order')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                 </div>
@@ -94,62 +110,60 @@
                 <div class="humora-card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="fw-bold text-dark mb-0" style="font-size: 0.95rem;">2. THUMBNAIL KONTEN (16:9)</h5>
-                        <small class="text-muted" style="font-size: 0.76rem;">Format rasio 16:9 terpadu</small>
+                        <span class="badge py-1 px-2" style="background: rgba(67, 19, 92, 0.1); color: #43135C; font-size: 0.75rem;">Auto-Kompres & WebP</span>
                     </div>
 
-                    <label class="form-label-custom">Thumbnail Utama (16:9)</label>
-                    <div class="humora-dropzone">
-                        <div class="humora-dropzone-icon">
-                            <i data-lucide="cloud-upload"></i>
-                        </div>
-                        <div class="fw-bold text-dark mb-1" style="font-size: 0.88rem;">
-                            Tarik file ke sini, atau <span class="text-decoration-underline" style="color: #43135C;">pilih dari komputer</span>
-                        </div>
-                        <small class="text-muted" style="font-size: 0.76rem;">Gambar sampul utama untuk beranda, daftar putar, dan katalog mobile</small>
-                        <input type="file" name="thumbnail" class="d-none" id="thumbnailUpload" accept="image/*">
-                    </div>
+                    <label class="form-label-custom">Unggah File Thumbnail <span class="text-danger">*</span></label>
+                    <input type="file" name="thumbnail" id="thumbnailUpload" class="form-control-custom @error('thumbnail') is-invalid @enderror" accept="image/jpeg,image/png,image/webp" required>
+                    <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">
+                        <i data-lucide="zap" class="text-warning me-1" style="width: 13px; height: 13px;"></i>
+                        Otomatis dikompresi dan dikonversi ke format <strong>WebP (.webp)</strong> berkualitas tinggi agar berukuran sangat ringan dan super cepat dimuat di aplikasi mobile.
+                    </small>
+                    @error('thumbnail')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
         </div>
 
-        <!-- Sidebar Options & Live Preview -->
+        <!-- Sidebar Options -->
         <div class="col-12 col-lg-4">
-            <!-- Pengaturan Publikasi -->
+            <!-- Pengaturan Status & Unggulan -->
             <div class="humora-card mb-4">
-                <div class="humora-card-body p-3">
-                    <h6 class="fw-bold text-dark mb-3" style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;">Pengaturan Publikasi</h6>
-                    <label class="form-label-custom">Status Publikasi</label>
-                    <div class="btn-group w-100" role="group">
-                        <input type="radio" class="btn-check" name="status_radio" id="status1" value="published" checked>
-                        <label class="btn btn-outline-info text-dark fw-semibold py-2" for="status1" style="background-color: #E0F2FE; border-color: #BAE6FD; font-size: 0.82rem;">Terpublikasi</label>
-
-                        <input type="radio" class="btn-check" name="status_radio" id="status2" value="draft">
-                        <label class="btn btn-outline-secondary py-2" for="status2" style="font-size: 0.82rem;">Draft</label>
+                <div class="humora-card-body p-4">
+                    <h6 class="fw-bold text-dark mb-3" style="font-size: 0.85rem; text-transform: uppercase;">Pengaturan Publikasi</h6>
+                    
+                    <div class="mb-3">
+                        <label class="form-label-custom">Status</label>
+                        <select name="status" class="form-select-custom">
+                            <option value="published" {{ old('status', 'published') === 'published' ? 'selected' : '' }}>Terpublikasi (Tampil di App)</option>
+                            <option value="draft" {{ old('status') === 'draft' ? 'selected' : '' }}>Draf (Hanya Admin)</option>
+                        </select>
                     </div>
+
+                    <div class="form-check form-switch mt-3">
+                        <input class="form-check-input" type="checkbox" name="is_featured" value="1" id="is_featured" {{ old('is_featured') ? 'checked' : '' }} style="cursor: pointer;">
+                        <label class="form-check-label fw-bold text-dark" for="is_featured" style="font-size: 0.85rem; cursor: pointer;">
+                            Jadikan Series Unggulan (Spotlight Hero)
+                        </label>
+                    </div>
+                    <small class="text-muted d-block ps-4" style="font-size: 0.75rem;">Tampil di carousel spotlight beranda aplikasi mobile.</small>
                 </div>
             </div>
 
-            <!-- Pratinjau Kartu 16:9 -->
+            <!-- Pratinjau Thumbnail 16:9 -->
             <div class="humora-card mb-0">
                 <div class="humora-card-header">
                     <span class="humora-card-title" style="font-size: 0.82rem; text-transform: uppercase;">PRATINJAU KARTU 16:9</span>
-                    <i data-lucide="sparkles" class="text-warning"></i>
+                    <i data-lucide="image" class="text-purple"></i>
                 </div>
                 <div class="humora-card-body p-3">
-                    <div class="rounded-3 p-4 text-center mb-3 position-relative d-flex flex-column align-items-center justify-content-center overflow-hidden" id="previewImgWrap" style="background-color: #F8FAFC; border: 1px solid #E2E8F0; aspect-ratio: 16/9;">
-                        <span class="badge-pill-success position-absolute top-0 start-0 m-2" id="previewStatusBadge" style="font-size: 0.68rem; z-index: 2;">
-                            <i data-lucide="check-circle"></i> Terpublikasi
-                        </span>
-                        <div id="previewEmptyIcon">
-                            <i data-lucide="image" class="text-muted fs-3 mb-1"></i>
-                            <small class="text-muted d-block" style="font-size: 0.75rem;">Belum ada thumbnail</small>
+                    <div class="rounded-3 p-2 text-center mb-2 position-relative d-flex flex-column align-items-center justify-content-center overflow-hidden bg-light" style="aspect-ratio: 16/9; border: 1px dashed #CBD5E1;">
+                        <img id="imagePreview" src="{{ asset('images/logo-humora.png') }}" alt="Preview" class="w-100 h-100 object-fit-cover rounded" style="display: none;">
+                        <div id="placeholderText" class="text-muted" style="font-size: 0.78rem;">
+                            <i data-lucide="image" class="mb-1" style="width: 24px; height: 24px;"></i>
+                            <div>Pilih gambar untuk melihat pratinjau rasio 16:9</div>
                         </div>
-                        <img id="previewImageTag" src="" alt="Thumbnail Preview" class="w-100 h-100 object-fit-cover position-absolute top-0 start-0 d-none">
-                    </div>
-                    <div>
-                        <h6 class="fw-bold text-dark mb-1" id="previewTitle" style="font-size: 0.92rem;">Judul Konten Anda</h6>
-                        <p class="text-muted mb-2" id="previewSynopsis" style="font-size: 0.78rem; line-height: 1.4;">Sinopsis judul konten akan tampil di sini saat penonton membuka katalog mobile.</p>
-                        <span class="badge-pill-tag" id="previewBadge">Komedi</span>
                     </div>
                 </div>
             </div>
@@ -160,68 +174,43 @@
 
 @section('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const titleInput = document.getElementById('title');
-        const slugInput = document.getElementById('slug');
-        const synopsisInput = document.getElementById('synopsis');
-        const previewTitle = document.getElementById('previewTitle');
-        const previewSynopsis = document.getElementById('previewSynopsis');
-        const previewBadge = document.getElementById('previewBadge');
-        const previewStatusBadge = document.getElementById('previewStatusBadge');
-        const genreInput = document.getElementById('selectedGenreInput');
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('thumbnailUpload');
+    const preview = document.getElementById('imagePreview');
+    const placeholder = document.getElementById('placeholderText');
 
-        titleInput.addEventListener('input', function () {
-            previewTitle.innerText = this.value || 'Judul Konten Anda';
-            slugInput.value = this.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-        });
-
-        synopsisInput.addEventListener('input', function () {
-            previewSynopsis.innerText = this.value || 'Sinopsis judul konten akan tampil di sini saat penonton membuka katalog mobile.';
-        });
-
-        // Genre buttons
-        document.querySelectorAll('.genre-tag').forEach(btn => {
-            btn.addEventListener('click', function () {
-                document.querySelectorAll('.genre-tag').forEach(b => {
-                    b.classList.remove('btn-humora-primary');
-                    b.classList.add('btn-light', 'border', 'text-muted');
-                });
-                this.classList.remove('btn-light', 'border', 'text-muted');
-                this.classList.add('btn-humora-primary');
-                previewBadge.innerText = this.dataset.genre;
-                if (genreInput) {
-                    genreInput.value = this.dataset.genre;
-                }
-            });
-        });
-
-        // Status radio change
-        document.querySelectorAll('input[name="status_radio"]').forEach(radio => {
-            radio.addEventListener('change', function () {
-                if (this.value === 'published') {
-                    previewStatusBadge.className = 'badge-pill-success position-absolute top-0 start-0 m-2';
-                    previewStatusBadge.innerHTML = '<i data-lucide="check-circle"></i> Terpublikasi';
-                } else {
-                    previewStatusBadge.className = 'badge-pill-warning position-absolute top-0 start-0 m-2';
-                    previewStatusBadge.innerHTML = '<i data-lucide="clock"></i> Draft';
-                }
-            });
-        });
-
-        // Form submit handler with validation and toast
-        document.getElementById('formCreateSeries').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const title = titleInput.value.trim();
-            if (!title) {
-                window.showHumoraToast('Judul series wajib diisi!', 'danger');
-                titleInput.focus();
-                return;
+    if (input) {
+        input.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (evt) {
+                    preview.src = evt.target.result;
+                    preview.style.display = 'block';
+                    placeholder.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
             }
-            window.showHumoraToast(`Series "${title}" berhasil disimpan!`);
-            setTimeout(() => {
-                window.location.href = "{{ url('/admin/series') }}";
-            }, 1200);
         });
-    });
+    }
+
+    // Auto slug from title if slug field is empty
+    const titleInput = document.getElementById('title');
+    const slugInput = document.getElementById('slug');
+    if (titleInput && slugInput) {
+        titleInput.addEventListener('input', function () {
+            if (!slugInput.dataset.manual) {
+                slugInput.value = titleInput.value
+                    .toLowerCase()
+                    .replace(/[^\w\s-]/g, '')
+                    .replace(/[\s_-]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+            }
+        });
+        slugInput.addEventListener('input', function () {
+            slugInput.dataset.manual = 'true';
+        });
+    }
+});
 </script>
 @endsection
