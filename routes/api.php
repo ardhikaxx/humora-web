@@ -22,6 +22,8 @@ Route::prefix('v1')->group(function () {
     // 1. Authentication (Public)
     Route::post('/auth/register', [AuthController::class, 'register']);
     Route::post('/auth/login', [AuthController::class, 'login']);
+    Route::post('/auth/forgot-password', [AuthController::class, 'forgotPasswordVerify']);
+    Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
 
     // 2. Catalog & Discovery (Public / Guest Allowed)
     Route::get('/series', [SeriesController::class, 'index']);
