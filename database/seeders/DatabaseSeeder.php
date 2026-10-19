@@ -22,14 +22,14 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // 1. Single Administrator
-        Admin::where('email', '!=', 'admin@humora.id')->delete();
+        Admin::where('email', '!=', 'admin@gmail.com')->delete();
 
         Admin::updateOrCreate(
-            ['email' => 'admin@humora.id'],
+            ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Admin Humora',
                 'phone' => '081234567890',
-                'password' => Hash::make('admin123'),
+                'password' => Hash::make('password'),
                 'role' => 'super_admin',
                 'is_active' => true,
             ]
