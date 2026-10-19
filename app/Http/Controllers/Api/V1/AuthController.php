@@ -225,6 +225,82 @@ class AuthController extends Controller
     }
 
     /**
+     * Verify user email for mobile forgot password flow
+     */
+    public function forgotPasswordVerify(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'email' => ['required', 'email'],
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+        ]);
+
+        $user = User::where('email', $validated['email'])->first();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Alamat email tidak terdaftar dalam basis data sistem.',
+                'errors' => [
+                    'email' => ['Alamat email tidak terdaftar dalam sistem kami.'],
+                ],
+            ], 404);
+        }
+
+        if ($user->status !== 'active') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Akun pengguna ini berstatus non-aktif. Silakan hubungi admin.',
+            ], 403);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Email pengguna berhasil diverifikasi.',
+            'data' => [
+                'email' => $user->email,
+                'name' => $user->name,
+            ],
+        ]);
+    }
+
+    /**
+     * Reset mobile user password with new credentials
+     */
+    public function resetPassword(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Kata sandi baru wajib diisi.',
+            'password.min' => 'Kata sandi baru minimal terdiri dari 6 karakter.',
+            'password.confirmed' => 'Konfirmasi kata sandi baru tidak cocok.',
+        ]);
+
+        $user = User::where('email', $validated['email'])->first();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pengguna dengan email tersebut tidak ditemukan.',
+            ], 404);
+        }
+
+        $user->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Kata sandi baru berhasil disimpan! Silakan masuk kembali dengan kata sandi baru Anda.',
+        ]);
+    }
+
+    /**
      * Format consistent user data dictionary
      */
     protected function formatUserData(User $user): array
