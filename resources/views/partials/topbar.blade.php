@@ -2,7 +2,7 @@
     $currentAdmin = Auth::guard('admin')->user();
     $initials = $currentAdmin?->initials ?? 'AH';
     $name = $currentAdmin?->name ?? 'Admin HUMORA';
-    $email = $currentAdmin?->email ?? 'admin@humora.id';
+    $email = $currentAdmin?->email ?? 'admin@gmail.com';
     $pendingTrxCount = \App\Models\Transaction::where('status', 'pending')->count();
 @endphp
 
