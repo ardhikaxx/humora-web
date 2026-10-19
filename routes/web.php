@@ -32,6 +32,12 @@ Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name(
 Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
 Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
+// Forgot & Reset Password Routes (Admin)
+Route::get('/forgot-password', [AdminAuthController::class, 'showForgotPasswordForm'])->name('admin.password.request');
+Route::post('/forgot-password', [AdminAuthController::class, 'verifyForgotPasswordEmail'])->name('admin.password.email');
+Route::get('/reset-password', [AdminAuthController::class, 'showResetPasswordForm'])->name('admin.password.reset');
+Route::post('/reset-password', [AdminAuthController::class, 'resetPassword'])->name('admin.password.update');
+
 // Admin Portal Routes (Requires Admin Authentication & RBAC)
 Route::prefix('admin')->name('admin.')->middleware(['admin.role'])->group(function () {
     // 1. Overview (Accessible by all admin roles)
