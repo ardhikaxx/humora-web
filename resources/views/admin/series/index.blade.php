@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Judul Konten & Video - HUMORA Portal Admin')
+@section('title', 'Judul Konten & Series - HUMORA Portal Admin')
 
 @section('content')
 <!-- Breadcrumbs & Header -->
@@ -11,22 +11,27 @@
 </div>
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
     <div>
-        <h1 class="page-title">Judul Konten & Video</h1>
-        <p class="page-subtitle mb-0">Kelola seluruh judul konten besar dan video yang tampil dalam katalog mobile HUMORA.</p>
+        <h1 class="page-title">Judul Konten & Series</h1>
+        <p class="page-subtitle mb-0">Kelola seluruh judul konten sketsa komedi dan episode yang tampil di aplikasi mobile HUMORA.</p>
     </div>
-    <a href="{{ url('/admin/series/create') }}" class="btn btn-humora-primary">
+    <a href="{{ route('admin.series.create') }}" class="btn btn-humora-primary">
         <i data-lucide="plus"></i>
         <span>Tambah Judul Baru</span>
     </a>
 </div>
 
-<!-- 4 Stat Cards -->
+<!-- 4 Real Stat Cards -->
+@php
+    $totalCount = \App\Models\Series::count();
+    $publishedCount = \App\Models\Series::where('status', 'published')->count();
+    $draftCount = \App\Models\Series::where('status', 'draft')->count();
+    $featuredCount = \App\Models\Series::where('is_featured', true)->count();
+@endphp
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
         <x-stat-card 
-            id="cardTotalSeries"
             label="Total Judul" 
-            value="6" 
+            :value="$totalCount" 
             icon="tv" 
             iconBg="purple" 
             subtext="Seluruh katalog lokal" 
@@ -34,9 +39,8 @@
     </div>
     <div class="col-6 col-md-3">
         <x-stat-card 
-            id="cardPublishedSeries"
             label="Judul Terbit" 
-            value="6" 
+            :value="$publishedCount" 
             icon="check-circle" 
             iconBg="green" 
             subtext="Tampil di mobile app" 
@@ -44,9 +48,8 @@
     </div>
     <div class="col-6 col-md-3">
         <x-stat-card 
-            id="cardDraftSeries"
             label="Series Draf" 
-            value="0" 
+            :value="$draftCount" 
             icon="clock" 
             iconBg="orange" 
             subtext="Belum dipublikasikan" 
@@ -55,421 +58,177 @@
     <div class="col-6 col-md-3">
         <x-stat-card 
             label="Series Unggulan" 
-            value="1" 
+            :value="$featuredCount" 
             icon="sparkles" 
             iconBg="yellow" 
-            subtext="Spotlight hero banner" 
+            subtext="Banner spotlight mobile" 
         />
     </div>
 </div>
 
-<!-- Filter & Search Bar -->
-<div class="humora-card mb-4 p-3">
-    <div class="row g-2 align-items-center">
-        <div class="col-12 col-md-6 col-lg-7">
-            <div class="search-input-wrap">
-                <i data-lucide="search"></i>
-                <input type="text" id="seriesSearchInput" class="form-control-custom bg-light" placeholder="Cari judul series atau sinopsis...">
+<!-- Search & Filter Card -->
+<div class="humora-card mb-4">
+    <div class="humora-card-body p-3">
+        <form method="GET" action="{{ route('admin.series.index') }}" class="row g-2 align-items-center">
+            <div class="col-12 col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i data-lucide="search" style="width: 16px; height: 16px;"></i></span>
+                    <input type="text" name="search" class="form-control-custom border-start-0" placeholder="Cari judul series atau sinopsis..." value="{{ request('search') }}">
+                </div>
             </div>
-        </div>
-        <div class="col-6 col-md-2 col-lg-2">
-            <select class="form-select-custom" id="seriesGenreFilter">
-                <option selected>Semua Genre</option>
-                <option>Komedi</option>
-                <option>Romantis</option>
-                <option>Drama</option>
-                <option>Slice of Life</option>
-                <option>Workplace</option>
-            </select>
-        </div>
-        <div class="col-6 col-md-2 col-lg-1">
-            <select class="form-select-custom" id="seriesStatusFilter">
-                <option selected>Semua Status</option>
-                <option>Terpublikasi</option>
-                <option>Draft</option>
-            </select>
-        </div>
-        <div class="col-12 col-md-2 col-lg-2">
-            <select class="form-select-custom" id="seriesSortFilter">
-                <option value="newest" selected>Terbaru</option>
-                <option value="oldest">Terlama</option>
-                <option value="likes">Suka Terbanyak</option>
-            </select>
-        </div>
+            <div class="col-6 col-md-3">
+                <select name="category_id" class="form-select-custom">
+                    <option value="">Semua Kategori</option>
+                    @foreach ($categories as $cat)
+                        <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-6 col-md-2">
+                <select name="status" class="form-select-custom">
+                    <option value="">Semua Status</option>
+                    <option value="published" {{ request('status') === 'published' ? 'selected' : '' }}>Terpublikasi</option>
+                    <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draf</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-humora-primary w-100 justify-content-center">
+                    <span>Filter</span>
+                </button>
+                @if (request()->hasAny(['search', 'category_id', 'status']))
+                <a href="{{ route('admin.series.index') }}" class="btn btn-outline-secondary px-2" title="Reset Filter">
+                    <i data-lucide="rotate-ccw" style="width: 16px; height: 16px;"></i>
+                </a>
+                @endif
+            </div>
+        </form>
     </div>
 </div>
 
-<!-- Series Table Card -->
-<div class="humora-card mb-0">
-    <div class="table-responsive">
-        <table class="table-humora" id="seriesTable">
-            <thead>
-                <tr>
-                    <th>Series</th>
-                    <th>Genre / Kategori</th>
-                    <th>Total Episode</th>
-                    <th>Akses Episode</th>
-                    <th>Status</th>
-                    <th>Jumlah Suka</th>
-                    <th>Diperbarui</th>
-                    <th class="text-end">Tindakan</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Row 1 -->
-                <tr class="series-row"
-                    data-title="Tipe Pembeli di Toko Kelontong"
-                    data-genre="Komedi, Slice of Life, Sketsa"
-                    data-status="Terpublikasi"
-                    data-likes="9600"
-                    data-date="2026-03-01">
-                    <td>
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="{{ asset('images/thumbnails/tipe-pembeli-di-toko-kelontong.jpg') }}" alt="Tipe Pembeli" class="thumbnail-table-thumb" style="width: 54px; height: 54px;">
-                            <div>
-                                <a href="{{ url('/admin/series/1') }}" class="text-decoration-none fw-bold text-dark d-block series-title-link">Tipe Pembeli di Toko Kelont...</a>
-                                <small class="text-muted">/tipe-pembeli-di-toko-kelontong</small>
+<!-- Table Card -->
+<div class="humora-card">
+    <div class="humora-card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-custom align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Judul & Thumbnail (16:9)</th>
+                        <th>Kategori</th>
+                        <th>Total Episode</th>
+                        <th>Status</th>
+                        <th>Unggulan</th>
+                        <th>Jumlah Suka</th>
+                        <th class="text-end">Tindakan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($seriesList as $series)
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="{{ $series->thumbnail_url }}" alt="{{ $series->title }}" class="rounded object-fit-cover shadow-sm" style="width: 72px; height: 40px; aspect-ratio: 16/9;" onerror="this.src='{{ asset('images/logo-humora.png') }}'">
+                                <div class="overflow-hidden" style="max-width: 260px;">
+                                    <a href="{{ route('admin.series.show', $series->id) }}" class="text-decoration-none fw-bold text-dark d-block text-truncate">
+                                        {{ $series->title }}
+                                    </a>
+                                    <small class="text-muted text-truncate d-block" style="font-size: 0.72rem;">/{{ $series->slug }} &bull; Thn {{ $series->release_year }}</small>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex flex-wrap gap-1">
-                            <span class="badge-pill-tag">Komedi</span>
-                            <span class="badge-pill-tag">Slice of Life</span>
-                            <span class="badge-pill-tag">Sketsa</span>
-                        </div>
-                    </td>
-                    <td><span class="fw-bold text-dark">4 Ep</span></td>
-                    <td>
-                        <div class="d-flex gap-1">
-                            <span class="badge-pill-free" style="font-size: 0.7rem;">2 Free</span>
-                            <span class="badge-pill-premium" style="font-size: 0.7rem;">2 Premium</span>
-                        </div>
-                    </td>
-                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>9.600</span></td>
-                    <td class="text-muted" style="font-size: 0.8rem;">1 Mar 2026</td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/series/1') }}" class="btn-humora-icon" title="Lihat Detail"><i data-lucide="eye"></i></a>
-                            <a href="{{ url('/admin/series/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon btn-toggle-series-status" title="Toggle Status (Terpublikasi/Draft)"><i data-lucide="check-circle"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Series Tipe Pembeli di Toko Kelontong" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- Row 2 -->
-                <tr class="series-row"
-                    data-title="Momen Canggung Kencan Pertama"
-                    data-genre="Romantis, Komedi, Sketsa"
-                    data-status="Terpublikasi"
-                    data-likes="16700"
-                    data-date="2026-03-04">
-                    <td>
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="{{ asset('images/thumbnails/momen-canggung-kencan-pertama.jpg') }}" alt="Momen Canggung" class="thumbnail-table-thumb" style="width: 54px; height: 54px;">
-                            <div>
-                                <a href="{{ url('/admin/series/1') }}" class="text-decoration-none fw-bold text-dark d-block series-title-link">Momen Canggung Kencan P...</a>
-                                <small class="text-muted">/momen-canggung-kencan-pertama</small>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-1" style="max-width: 180px;">
+                                @forelse ($series->categories as $c)
+                                    <span class="badge-pill-tag">{{ $c->name }}</span>
+                                @empty
+                                    <span class="text-muted" style="font-size: 0.75rem;">-</span>
+                                @endforelse
                             </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex flex-wrap gap-1">
-                            <span class="badge-pill-tag">Romantis</span>
-                            <span class="badge-pill-tag">Komedi</span>
-                            <span class="badge-pill-tag">Sketsa</span>
-                        </div>
-                    </td>
-                    <td><span class="fw-bold text-dark">4 Ep</span></td>
-                    <td>
-                        <div class="d-flex gap-1">
-                            <span class="badge-pill-free" style="font-size: 0.7rem;">2 Free</span>
-                            <span class="badge-pill-premium" style="font-size: 0.7rem;">2 Premium</span>
-                        </div>
-                    </td>
-                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>16.700</span></td>
-                    <td class="text-muted" style="font-size: 0.8rem;">4 Mar 2026</td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/series/1') }}" class="btn-humora-icon" title="Lihat Detail"><i data-lucide="eye"></i></a>
-                            <a href="{{ url('/admin/series/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon btn-toggle-series-status" title="Toggle Status (Terpublikasi/Draft)"><i data-lucide="check-circle"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Series Momen Canggung Kencan Pertama" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- Row 3 -->
-                <tr class="series-row"
-                    data-title="Drama Warga Grup RT"
-                    data-genre="Komedi, Slice of Life, Sketsa"
-                    data-status="Terpublikasi"
-                    data-likes="18900"
-                    data-date="2026-03-03">
-                    <td>
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="{{ asset('images/thumbnails/drama-warga-grup-rt.jpg') }}" alt="Drama Warga" class="thumbnail-table-thumb" style="width: 54px; height: 54px;">
-                            <div>
-                                <a href="{{ url('/admin/series/1') }}" class="text-decoration-none fw-bold text-dark d-block series-title-link">Drama Warga Grup RT</a>
-                                <small class="text-muted">/drama-warga-grup-rt</small>
+                        </td>
+                        <td>
+                            <span class="fw-bold text-dark">{{ $series->episodes_count }} Ep</span>
+                            <small class="d-block text-muted" style="font-size: 0.72rem;">{{ $series->published_episodes_count }} Terbit</small>
+                        </td>
+                        <td>
+                            @if ($series->status === 'published')
+                                <span class="badge-pill-success"><i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> Terpublikasi</span>
+                            @else
+                                <span class="badge bg-secondary-subtle text-secondary px-2 py-1 rounded-pill" style="font-size: 0.72rem;">Draf</span>
+                            @endif
+                        </td>
+                        <td>
+                            @if ($series->is_featured)
+                                <span class="badge bg-warning text-dark py-1 px-2 rounded-pill" style="font-size: 0.72rem;">
+                                    <i data-lucide="sparkles" style="width: 12px; height: 12px;" class="me-1"></i>Featured
+                                </span>
+                            @else
+                                <span class="text-muted" style="font-size: 0.75rem;">-</span>
+                            @endif
+                        </td>
+                        <td>
+                            <span class="text-danger fw-semibold" style="font-size: 0.82rem;">
+                                <i data-lucide="heart" style="width: 13px; height: 13px;" class="me-1"></i>{{ number_format($series->likes_count, 0, ',', '.') }}
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <div class="d-flex justify-content-end gap-1">
+                                <a href="{{ route('admin.series.show', $series->id) }}" class="btn-humora-icon" title="Lihat Episode">
+                                    <i data-lucide="eye"></i>
+                                </a>
+                                <a href="{{ route('admin.series.edit', $series->id) }}" class="btn-humora-icon" title="Edit Series">
+                                    <i data-lucide="pencil"></i>
+                                </a>
+                                <button type="button" class="btn-humora-icon danger" title="Hapus Series" onclick="confirmDeleteSeries({{ $series->id }}, '{{ addslashes($series->title) }}')">
+                                    <i data-lucide="trash-2"></i>
+                                </button>
+                                <form id="delete-series-{{ $series->id }}" action="{{ route('admin.series.destroy', $series->id) }}" method="POST" class="d-none">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
                             </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex flex-wrap gap-1">
-                            <span class="badge-pill-tag">Komedi</span>
-                            <span class="badge-pill-tag">Slice of Life</span>
-                            <span class="badge-pill-tag">Sketsa</span>
-                        </div>
-                    </td>
-                    <td><span class="fw-bold text-dark">4 Ep</span></td>
-                    <td>
-                        <div class="d-flex gap-1">
-                            <span class="badge-pill-free" style="font-size: 0.7rem;">2 Free</span>
-                            <span class="badge-pill-premium" style="font-size: 0.7rem;">2 Premium</span>
-                        </div>
-                    </td>
-                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>18.900</span></td>
-                    <td class="text-muted" style="font-size: 0.8rem;">3 Mar 2026</td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/series/1') }}" class="btn-humora-icon" title="Lihat Detail"><i data-lucide="eye"></i></a>
-                            <a href="{{ url('/admin/series/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon btn-toggle-series-status" title="Toggle Status (Terpublikasi/Draft)"><i data-lucide="check-circle"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Series Drama Warga Grup RT" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- Row 4 -->
-                <tr class="series-row"
-                    data-title="Tipe-Tipe Teman Sekantor"
-                    data-genre="Komedi, Workplace, Sketsa"
-                    data-status="Terpublikasi"
-                    data-likes="12400"
-                    data-date="2026-03-02">
-                    <td>
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="{{ asset('images/thumbnails/tipe-tipe-teman-sekantor.jpg') }}" alt="Teman Sekantor" class="thumbnail-table-thumb" style="width: 54px; height: 54px;">
-                            <div>
-                                <a href="{{ url('/admin/series/1') }}" class="text-decoration-none fw-bold text-dark d-block series-title-link">Tipe-Tipe Teman Sekantor</a>
-                                <small class="text-muted">/tipe-tipe-teman-sekantor</small>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex flex-wrap gap-1">
-                            <span class="badge-pill-tag">Komedi</span>
-                            <span class="badge-pill-tag">Workplace</span>
-                            <span class="badge-pill-tag">Sketsa</span>
-                        </div>
-                    </td>
-                    <td><span class="fw-bold text-dark">4 Ep</span></td>
-                    <td>
-                        <div class="d-flex gap-1">
-                            <span class="badge-pill-free" style="font-size: 0.7rem;">2 Free</span>
-                            <span class="badge-pill-premium" style="font-size: 0.7rem;">2 Premium</span>
-                        </div>
-                    </td>
-                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>12.400</span></td>
-                    <td class="text-muted" style="font-size: 0.8rem;">2 Mar 2026</td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/series/1') }}" class="btn-humora-icon" title="Lihat Detail"><i data-lucide="eye"></i></a>
-                            <a href="{{ url('/admin/series/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon btn-toggle-series-status" title="Toggle Status (Terpublikasi/Draft)"><i data-lucide="check-circle"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Series Tipe-Tipe Teman Sekantor" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- Row 5 -->
-                <tr class="series-row"
-                    data-title="Cara Deketin Cewek"
-                    data-genre="Romantis, Komedi, Sketsa"
-                    data-status="Terpublikasi"
-                    data-likes="21500"
-                    data-date="2026-03-05">
-                    <td>
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="{{ asset('images/thumbnails/cara-deketin-cewek.jpg') }}" alt="Cara Deketin" class="thumbnail-table-thumb" style="width: 54px; height: 54px;">
-                            <div>
-                                <a href="{{ url('/admin/series/1') }}" class="text-decoration-none fw-bold text-dark d-block series-title-link">Cara Deketin Cewek</a>
-                                <small class="text-muted">/cara-deketin-cewek</small>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex flex-wrap gap-1">
-                            <span class="badge-pill-tag">Romantis</span>
-                            <span class="badge-pill-tag">Komedi</span>
-                            <span class="badge-pill-tag">Sketsa</span>
-                        </div>
-                    </td>
-                    <td><span class="fw-bold text-dark">4 Ep</span></td>
-                    <td>
-                        <div class="d-flex gap-1">
-                            <span class="badge-pill-free" style="font-size: 0.7rem;">2 Free</span>
-                            <span class="badge-pill-premium" style="font-size: 0.7rem;">2 Premium</span>
-                        </div>
-                    </td>
-                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>21.500</span></td>
-                    <td class="text-muted" style="font-size: 0.8rem;">5 Mar 2026</td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/series/1') }}" class="btn-humora-icon" title="Lihat Detail"><i data-lucide="eye"></i></a>
-                            <a href="{{ url('/admin/series/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon btn-toggle-series-status" title="Toggle Status (Terpublikasi/Draft)"><i data-lucide="check-circle"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Series Cara Deketin Cewek" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <!-- Row 6 (Unggulan) -->
-                <tr class="series-row"
-                    data-title="Tipe Penumpang Taxi Online"
-                    data-genre="Komedi, Sketsa, Slice of Life"
-                    data-status="Terpublikasi"
-                    data-likes="14200"
-                    data-date="2026-03-05">
-                    <td>
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="{{ asset('images/thumbnails/tipe-penumpang-taxi-online.jpg') }}" alt="Taxi Online" class="thumbnail-table-thumb" style="width: 54px; height: 54px;">
-                            <div>
-                                <a href="{{ url('/admin/series/1') }}" class="text-decoration-none fw-bold text-dark d-block series-title-link">Tipe Penumpang Taxi Online</a>
-                                <small class="text-muted d-block">/tipe-penumpang-taxi-online</small>
-                                <span class="badge mt-1" style="background-color: #FEF08A; color: #854D0E; font-size: 0.68rem; font-weight: 700;">Unggulan</span>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex flex-wrap gap-1">
-                            <span class="badge-pill-tag">Komedi</span>
-                            <span class="badge-pill-tag">Sketsa</span>
-                            <span class="badge-pill-tag">Slice of Life</span>
-                        </div>
-                    </td>
-                    <td><span class="fw-bold text-dark">4 Ep</span></td>
-                    <td>
-                        <div class="d-flex gap-1">
-                            <span class="badge-pill-free" style="font-size: 0.7rem;">2 Free</span>
-                            <span class="badge-pill-premium" style="font-size: 0.7rem;">2 Premium</span>
-                        </div>
-                    </td>
-                    <td class="status-cell"><span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span></td>
-                    <td><span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>14.200</span></td>
-                    <td class="text-muted" style="font-size: 0.8rem;">5 Mar 2026</td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-1">
-                            <a href="{{ url('/admin/series/1') }}" class="btn-humora-icon" title="Lihat Detail"><i data-lucide="eye"></i></a>
-                            <a href="{{ url('/admin/series/1/edit') }}" class="btn-humora-icon" title="Edit"><i data-lucide="pencil"></i></a>
-                            <button class="btn-humora-icon btn-toggle-series-status" title="Toggle Status (Terpublikasi/Draft)"><i data-lucide="check-circle"></i></button>
-                            <button class="btn-humora-icon danger" data-confirm-delete data-item-name="Series Tipe Penumpang Taxi Online" title="Hapus"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Pagination Footer -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center p-3 border-top gap-2">
-        <div class="d-flex align-items-center gap-2">
-            <small class="text-muted" id="seriesPaginationCounter" style="font-size: 0.8rem;">Menampilkan <strong>1 - 6</strong> dari <strong>6</strong> data</small>
-            <div class="d-flex align-items-center gap-1 ms-3">
-                <small class="text-muted" style="font-size: 0.8rem;">Baris:</small>
-                <select class="form-select-custom py-1 px-2" style="width: 70px; font-size: 0.78rem;">
-                    <option selected>10</option>
-                    <option>25</option>
-                    <option>50</option>
-                </select>
-            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <x-empty-state 
+                        colspan="7"
+                        icon="film"
+                        title="Belum Ada Judul Series"
+                        subtitle="Tidak ada katalog series sketsa komedi yang sesuai dengan filter pencarian atau belum ada data yang ditambahkan."
+                        :actionUrl="route('admin.series.create')"
+                        actionText="Tambah Series Baru"
+                        actionIcon="plus"
+                        :resetUrl="request()->hasAny(['search', 'category_id', 'status']) ? route('admin.series.index') : null"
+                        resetText="Reset Filter"
+                    />
+                    @endforelse
+                </tbody>
+            </table>
         </div>
-        <nav aria-label="Page navigation">
-            <ul class="pagination pagination-sm mb-0">
-                <li class="page-item disabled"><a class="page-link" href="#"><i data-lucide="chevron-left"></i></a></li>
-                <li class="page-item active"><a class="page-link" href="#" style="background-color: #43135C; border-color: #43135C;">1</a></li>
-                <li class="page-item disabled"><a class="page-link" href="#"><i data-lucide="chevron-right"></i></a></li>
-            </ul>
-        </nav>
     </div>
+    @if ($seriesList->hasPages())
+    <div class="p-3 border-top d-flex justify-content-end">
+        {{ $seriesList->links() }}
+    </div>
+    @endif
 </div>
 @endsection
 
 @section('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        let publishedCount = 6;
-        let draftCount = 0;
-        let totalCount = 6;
-
-        const cardPublishedVal = document.querySelector('#cardPublishedSeries .stat-value');
-        const cardDraftVal = document.querySelector('#cardDraftSeries .stat-value');
-        const cardTotalVal = document.querySelector('#cardTotalSeries .stat-value');
-        const sortFilter = document.getElementById('seriesSortFilter');
-        const tableBody = document.querySelector('#seriesTable tbody');
-
-        // Toggle Status handler
-        document.addEventListener('click', function (e) {
-            const btn = e.target.closest('.btn-toggle-series-status');
-            if (btn) {
-                e.preventDefault();
-                const row = btn.closest('tr');
-                if (!row) return;
-
-                const statusCell = row.querySelector('.status-cell');
-                const title = row.dataset.title;
-                const isPublished = row.dataset.status === 'Terpublikasi';
-
-                if (isPublished) {
-                    row.dataset.status = 'Draft';
-                    if (statusCell) {
-                        statusCell.innerHTML = '<span class="badge-pill-warning"><i data-lucide="clock"></i> Draft</span>';
-                    }
-                    publishedCount = Math.max(0, publishedCount - 1);
-                    draftCount += 1;
-                    window.showHumoraToast(`Series "${title}" diubah menjadi Draft.`, 'warning');
-                } else {
-                    row.dataset.status = 'Terpublikasi';
-                    if (statusCell) {
-                        statusCell.innerHTML = '<span class="badge-pill-success"><i data-lucide="check-circle"></i> Terpublikasi</span>';
-                    }
-                    publishedCount += 1;
-                    draftCount = Math.max(0, draftCount - 1);
-                    window.showHumoraToast(`Series "${title}" berhasil diterbitkan!`, 'success');
-                }
-
-                if (cardPublishedVal) cardPublishedVal.innerText = publishedCount;
-                if (cardDraftVal) cardDraftVal.innerText = draftCount;
-            }
-        });
-
-        // Sorting handler
-        if (sortFilter && tableBody) {
-            sortFilter.addEventListener('change', function () {
-                const sortType = this.value;
-                const rows = Array.from(tableBody.querySelectorAll('tr.series-row'));
-
-                rows.sort((a, b) => {
-                    if (sortType === 'likes') {
-                        return parseInt(b.dataset.likes || 0) - parseInt(a.dataset.likes || 0);
-                    } else if (sortType === 'oldest') {
-                        return (a.dataset.date || '').localeCompare(b.dataset.date || '');
-                    } else { // newest
-                        return (b.dataset.date || '').localeCompare(a.dataset.date || '');
-                    }
-                });
-
-                rows.forEach(r => tableBody.appendChild(r));
-                window.showHumoraToast(`Urutan diubah: ${this.options[this.selectedIndex].text}`);
-            });
+function confirmDeleteSeries(id, title) {
+    Swal.fire({
+        title: 'Hapus Series?',
+        text: `Apakah Anda yakin ingin menghapus series '${title}'? Seluruh episode dan data terkait akan ikut terhapus secara permanen.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#DC2626',
+        cancelButtonColor: '#64748B',
+        confirmButtonText: 'Ya, Hapus Permanen',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById(`delete-series-${id}`).submit();
         }
     });
+}
 </script>
 @endsection
