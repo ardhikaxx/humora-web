@@ -14,14 +14,14 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         // Pastikan hanya ada SATU akun administrator di sistem
-        Admin::where('email', '!=', 'admin@humora.id')->delete();
+        Admin::where('email', '!=', 'admin@gmail.com')->delete();
 
         Admin::updateOrCreate(
-            ['email' => 'admin@humora.id'],
+            ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Admin Humora',
                 'phone' => '081234567890',
-                'password' => Hash::make('admin123'),
+                'password' => Hash::make('password'),
                 'role' => 'super_admin',
                 'is_active' => true,
             ]
