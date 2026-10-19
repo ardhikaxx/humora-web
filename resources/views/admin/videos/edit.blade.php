@@ -1,35 +1,35 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Video: Tipe Bawel - HUMORA')
+@section('title', 'Edit Episode #' . $episode->episode_number . ': ' . $episode->title . ' - HUMORA')
 
 @section('content')
 <!-- Breadcrumbs -->
 <div class="mb-2">
     <small class="text-muted" style="font-size: 0.78rem;">
         <span>Admin</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
-        <a href="{{ url('/admin/videos') }}" class="text-decoration-none text-muted">Kelola Video</a> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
-        <span class="text-muted">Video #1</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
+        <a href="{{ route('admin.videos.index') }}" class="text-decoration-none text-muted">Kelola Video</a> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
+        <span class="text-muted">Ep #{{ $episode->episode_number }}</span> <i data-lucide="chevron-right" class="mx-1" style="font-size: 0.65rem;"></i>
         <span class="text-dark fw-semibold">Edit</span>
     </small>
 </div>
 
 <!-- Header & Actions -->
-<form id="formEditVideo" action="{{ url('/admin/videos/1') }}" method="POST" enctype="multipart/form-data">
+<form id="formEditVideo" action="{{ route('admin.videos.update', $episode->id) }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
         <div>
-            <h1 class="page-title mb-1">Edit Video: Tipe Bawel</h1>
-            <p class="page-subtitle mb-0">Bagian dari judul besar "Tipe Penumpang Taxi Online". Thumbnail otomatis mengikuti sampul judul besar.</p>
+            <h1 class="page-title mb-1">Edit Episode #{{ $episode->episode_number }}: {{ $episode->title }}</h1>
+            <p class="page-subtitle mb-0">Series: <strong>{{ $episode->series?->title ?? '-' }}</strong>. Episode 1 & 2 Gratis, Episode 3+ Premium VIP.</p>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <a href="{{ url('/admin/videos') }}" class="btn btn-humora-secondary">
+            <a href="{{ route('admin.videos.index') }}" class="btn btn-humora-secondary">
                 <i data-lucide="arrow-left"></i>
                 <span>Batal</span>
             </a>
             <button type="submit" class="btn btn-humora-primary">
                 <i data-lucide="save"></i>
-                <span>Simpan Video</span>
+                <span>Simpan Perubahan</span>
             </button>
         </div>
     </div>
@@ -37,131 +37,146 @@
     <div class="row g-4">
         <!-- Main Form Column -->
         <div class="col-12 col-lg-8">
-            <!-- INFORMASI VIDEO -->
+            <!-- 1. PILIH SERIES INDUK -->
             <div class="humora-card mb-4">
                 <div class="humora-card-body p-4">
-                    <h5 class="fw-bold text-dark mb-4" style="font-size: 0.95rem;">INFORMASI VIDEO</h5>
+                    <h5 class="fw-bold text-dark mb-3" style="font-size: 0.95rem;">1. SERIES INDUK</h5>
+
+                    <div class="mb-3">
+                        <label for="seriesSelect" class="form-label-custom">Series Induk <span class="text-danger">*</span></label>
+                        <select id="seriesSelect" name="series_id" class="form-select-custom @error('series_id') is-invalid @enderror" required>
+                            @foreach ($seriesList as $s)
+                                <option value="{{ $s->id }}" {{ old('series_id', $episode->series_id) == $s->id ? 'selected' : '' }}>
+                                    {{ $s->title }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('series_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. DETAIL EPISODE -->
+            <div class="humora-card mb-4">
+                <div class="humora-card-body p-4">
+                    <h5 class="fw-bold text-dark mb-4" style="font-size: 0.95rem;">2. DETAIL EPISODE</h5>
 
                     <div class="row g-3 mb-3">
                         <div class="col-12 col-md-4">
-                            <label class="form-label-custom">Nomor Video</label>
-                            <input type="number" name="episode_number" class="form-control-custom" value="1" required>
-                            <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Terisi otomatis berdasarkan jumlah video pada judul ini.</small>
+                            <label for="episodeNumberInput" class="form-label-custom">Nomor Episode <span class="text-danger">*</span></label>
+                            <input type="number" id="episodeNumberInput" name="episode_number" class="form-control-custom @error('episode_number') is-invalid @enderror" value="{{ old('episode_number', $episode->episode_number) }}" min="1" required>
+                            <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Ep 1 & 2 Gratis, Ep 3+ Premium</small>
+                            @error('episode_number')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-12 col-md-8">
-                            <label class="form-label-custom">Judul / Sub-Topik Video</label>
-                            <input type="text" id="editVideoTitle" name="title" class="form-control-custom" value="Tipe Bawel" required>
+                            <label for="title" class="form-label-custom">Judul Episode <span class="text-danger">*</span></label>
+                            <input type="text" id="title" name="title" class="form-control-custom @error('title') is-invalid @enderror" value="{{ old('title', $episode->title) }}" required>
+                            @error('title')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label-custom">Deskripsi Episode</label>
-                        <textarea rows="3" name="description" class="form-control-custom">Baru masuk pintu mobil langsung curhat tanpa henti, cerita dari silsilah keluarga besar sampai resep rahasia opor ayam neneknya.</textarea>
+                        <label for="synopsis" class="form-label-custom">Sinopsis Cerita / Sketsa</label>
+                        <textarea id="synopsis" rows="3" name="synopsis" class="form-control-custom @error('synopsis') is-invalid @enderror">{{ old('synopsis', $episode->synopsis) }}</textarea>
+                        @error('synopsis')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    <div class="row g-3">
-                        <div class="col-12 col-md-6">
-                            <label class="form-label-custom">Durasi Video</label>
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <div class="input-group">
-                                        <input type="number" name="duration_minutes" class="form-control-custom" value="2" min="0" max="59">
-                                        <span class="input-group-text">m</span>
-                                    </div>
+                    <!-- Durasi -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label class="form-label-custom mb-0">Durasi Video <span class="text-danger">*</span></label>
+                            <small class="text-purple fw-semibold d-flex align-items-center gap-1" style="color: #7C3AED; font-size: 0.72rem;">
+                                <i data-lucide="clock"></i> Standar HUMORA ~2m
+                            </small>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <div class="input-group">
+                                    <input type="number" name="duration_minutes" class="form-control-custom" value="{{ old('duration_minutes', $minutes) }}" id="minuteInput" min="0" max="60" required>
+                                    <span class="input-group-text bg-light text-muted">Menit</span>
                                 </div>
-                                <div class="col-6">
-                                    <div class="input-group">
-                                        <input type="number" name="duration_seconds" class="form-control-custom" value="14" min="0" max="59">
-                                        <span class="input-group-text">s</span>
-                                    </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="input-group">
+                                    <input type="number" name="duration_seconds" class="form-control-custom" value="{{ old('duration_seconds', $seconds) }}" id="secondInput" min="0" max="59" required>
+                                    <span class="input-group-text bg-light text-muted">Detik</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label-custom">Tanggal Rilis</label>
-                            <input type="text" name="release_date" class="form-control-custom" value="10 Feb 2026">
+                        <div class="d-flex flex-wrap gap-1 mt-2 align-items-center">
+                            <small class="text-muted me-1" style="font-size: 0.72rem;">Preset Cepat:</small>
+                            @foreach ($durationPresets as $preset)
+                                <button type="button" class="btn btn-sm btn-light border py-0 px-2 rounded-pill preset-btn" data-min="{{ $preset['minutes'] }}" data-sec="{{ $preset['seconds'] }}" style="font-size: 0.72rem;">
+                                    {{ $preset['label'] }}
+                                </button>
+                            @endforeach
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- ASET VIDEO -->
+            <!-- 3. BERKAS VIDEO MASTER -->
             <div class="humora-card mb-0">
                 <div class="humora-card-body p-4">
-                    <h5 class="fw-bold text-dark mb-3" style="font-size: 0.95rem;">ASET VIDEO</h5>
-                    <label class="form-label-custom mb-2">Video File</label>
-                    <div id="existingVideoAsset" class="rounded-3 p-3 position-relative" style="background-color: #FAF8FD; border: 2px dashed #A7F3D0;">
-                        <div class="d-flex align-items-center justify-content-between p-3 bg-white rounded-3 border">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="stat-icon-wrap stat-icon-green" style="width: 40px; height: 40px;">
-                                    <i data-lucide="file-video" class="fs-5"></i>
-                                </div>
-                                <div>
-                                    <div class="fw-bold text-dark" style="font-size: 0.88rem;">ForBiggerBlazes.mp4</div>
-                                    <small class="text-muted" style="font-size: 0.74rem;">Aset master video (1080p • 24.2 MB)</small>
-                                </div>
-                            </div>
-                            <button type="button" class="btn btn-sm btn-outline-danger py-1 px-2" id="btnReplaceVideoAsset" title="Ganti video">
-                                <i data-lucide="rotate-cw" class="me-1"></i> Ganti
-                            </button>
-                        </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="fw-bold text-dark mb-0" style="font-size: 0.95rem;">3. BERKAS VIDEO MASTER</h5>
+                        <span class="badge py-1 px-2" style="background: rgba(67, 19, 92, 0.1); color: #43135C; font-size: 0.75rem;">Auto-Kompres & WebM</span>
+                    </div>
+                    <p class="text-muted mb-2" style="font-size: 0.76rem;">File saat ini: <code>{{ $episode->video_file ?? 'sample-skit.mp4' }}</code></p>
+                    <div class="p-2 px-3 rounded-2 mb-3" style="background: #F8FAFC; border: 1px dashed #CBD5E1; font-size: 0.75rem; color: #475569;">
+                        <i data-lucide="sparkles" class="text-warning me-1" style="width: 13px; height: 13px;"></i>
+                        <strong>Optimalisasi Mobile:</strong> Berkas baru otomatis dikompresi & dikonversi ke format <strong>WebM (.webm)</strong> dengan <u>tetap mempertahankan resolusi aslinya 100% tanpa penurunan resolusi</u>.
                     </div>
 
-                    <div class="humora-dropzone d-none mt-3" id="editVideoDropzone">
-                        <div class="humora-dropzone-icon">
-                            <i data-lucide="cloud-upload"></i>
-                        </div>
-                        <div class="fw-bold text-dark mb-1" style="font-size: 0.88rem;">
-                            Tarik file video baru ke sini, atau <span class="text-decoration-underline" style="color: #43135C;">pilih dari komputer</span>
-                        </div>
-                        <small class="text-muted" style="font-size: 0.76rem;">Format MP4 atau WEBM master video</small>
-                        <input type="file" name="video_file" class="d-none" id="editVideoUpload" accept="video/mp4,video/webm">
+                    <label class="form-label-custom">Ganti File Video (Opsional, MP4/WEBM/MOV, Maks 100MB)</label>
+                    <input type="file" name="video_file" id="videoUpload" class="form-control-custom @error('video_file') is-invalid @enderror" accept="video/mp4,video/webm,video/quicktime">
+                    @error('video_file')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+
+                    <!-- Pratinjau Video HTML5 -->
+                    <div class="mt-3 p-3 bg-light rounded-3 border">
+                        <div class="fw-semibold text-dark mb-2" style="font-size: 0.8rem;">Pratinjau Video:</div>
+                        <video id="videoPreviewPlayer" controls class="w-100 rounded" style="max-height: 240px; background-color: #000;" src="{{ route('file.stream', $episode->id) }}"></video>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Right Column: Akses & Publikasi -->
+        <!-- Right Options Column -->
         <div class="col-12 col-lg-4">
+            <!-- Aturan Akses Otomatis -->
+            <div class="humora-card mb-4">
+                <div class="humora-card-body p-4">
+                    <h6 class="fw-bold text-dark mb-2" style="font-size: 0.85rem; text-transform: uppercase;">Kebijakan Akses Episode</h6>
+                    <div id="accessBadgeContainer" class="p-3 rounded-3 border bg-light">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <i data-lucide="info" class="text-purple" style="width: 16px; height: 16px;"></i>
+                            <span class="fw-bold" id="accessTitle" style="font-size: 0.84rem;">Otomatis Ditentukan</span>
+                        </div>
+                        <p class="text-muted mb-0" id="accessDesc" style="font-size: 0.74rem; line-height: 1.4;">
+                            Episode 1 & 2 adalah preview gratis. Episode 3 ke atas memerlukan paket langganan VIP aktif.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Publikasi -->
             <div class="humora-card mb-0">
-                <div class="humora-card-body p-3">
-                    <h6 class="fw-bold text-dark mb-3" style="font-size: 0.82rem; text-transform: uppercase;">Akses & Publikasi</h6>
-
-                    <label class="form-label-custom mb-2">Tipe Akses Pengguna</label>
-                    <!-- Choice 1: Free (checked) -->
-                    <div class="p-3 rounded-3 border mb-2" id="boxAccessFreeEdit" style="background-color: #ECFDF5; border-color: #10B981 !important;">
-                        <div class="form-check d-flex justify-content-between align-items-start">
-                            <div>
-                                <label class="form-check-label fw-bold text-success d-flex align-items-center gap-1 mb-1" for="accessFreeEdit" style="font-size: 0.84rem; cursor: pointer;">
-                                    <i data-lucide="sparkles"></i> Free Preview
-                                </label>
-                                <small class="text-muted d-block" style="font-size: 0.74rem;">Dapat ditonton tanpa berlangganan.</small>
-                            </div>
-                            <input class="form-check-input" type="radio" name="access_type" id="accessFreeEdit" value="free" checked style="cursor: pointer; accent-color: #10B981;">
-                        </div>
-                    </div>
-
-                    <!-- Choice 2: Premium -->
-                    <div class="p-3 rounded-3 border mb-4" id="boxAccessPremiumEdit" style="background-color: #FAF5FF; border-color: #E9D5FF !important;">
-                        <div class="form-check d-flex justify-content-between align-items-start">
-                            <div>
-                                <label class="form-check-label fw-bold text-purple d-flex align-items-center gap-1 mb-1" for="accessPremiumEdit" style="color: #6B21A8; font-size: 0.84rem; cursor: pointer;">
-                                    <i data-lucide="gem"></i> Premium
-                                </label>
-                                <small class="text-muted d-block" style="font-size: 0.74rem;">Hanya untuk subscriber aktif.</small>
-                            </div>
-                            <input class="form-check-input" type="radio" name="access_type" id="accessPremiumEdit" value="premium" style="cursor: pointer;">
-                        </div>
-                    </div>
-
-                    <label class="form-label-custom mb-2">Status Publikasi</label>
-                    <div class="btn-group w-100" role="group">
-                        <input type="radio" class="btn-check" name="pub_status_edit" id="pubEdit1" value="published" checked>
-                        <label class="btn btn-outline-info text-dark fw-semibold py-2" for="pubEdit1" style="background-color: #E0F2FE; border-color: #BAE6FD; font-size: 0.82rem;">Terpublikasi</label>
-
-                        <input type="radio" class="btn-check" name="pub_status_edit" id="pubEdit2" value="draft">
-                        <label class="btn btn-outline-secondary py-2" for="pubEdit2" style="font-size: 0.82rem;">Draft</label>
-                    </div>
+                <div class="humora-card-body p-4">
+                    <h6 class="fw-bold text-dark mb-3" style="font-size: 0.85rem; text-transform: uppercase;">Status Publikasi</h6>
+                    <select name="status" class="form-select-custom">
+                        <option value="published" {{ old('status', $episode->status) === 'published' ? 'selected' : '' }}>Terpublikasi (Tampil di App)</option>
+                        <option value="draft" {{ old('status', $episode->status) === 'draft' ? 'selected' : '' }}>Draf (Disembunyikan)</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -171,49 +186,56 @@
 
 @section('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const btnReplace = document.getElementById('btnReplaceVideoAsset');
-        const existingAsset = document.getElementById('existingVideoAsset');
-        const editDropzone = document.getElementById('editVideoDropzone');
-        const editUpload = document.getElementById('editVideoUpload');
-
-        if (btnReplace && editDropzone) {
-            btnReplace.addEventListener('click', function () {
-                existingAsset.classList.add('d-none');
-                editDropzone.classList.remove('d-none');
-                editUpload.click();
-            });
-        }
-
-        const accessFreeEdit = document.getElementById('accessFreeEdit');
-        const accessPremiumEdit = document.getElementById('accessPremiumEdit');
-        const boxFree = document.getElementById('boxAccessFreeEdit');
-        const boxPremium = document.getElementById('boxAccessPremiumEdit');
-
-        function updateAccess() {
-            if (accessFreeEdit.checked) {
-                boxFree.style.backgroundColor = '#ECFDF5';
-                boxFree.style.borderColor = '#10B981';
-                boxPremium.style.backgroundColor = '#FAF5FF';
-                boxPremium.style.borderColor = '#E9D5FF';
-            } else {
-                boxPremium.style.backgroundColor = '#FAF5FF';
-                boxPremium.style.borderColor = '#D8B4FE';
-                boxFree.style.backgroundColor = '#FAFBFD';
-                boxFree.style.borderColor = '#E2E8F0';
-            }
-        }
-        accessFreeEdit.addEventListener('change', updateAccess);
-        accessPremiumEdit.addEventListener('change', updateAccess);
-
-        document.getElementById('formEditVideo').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const title = document.getElementById('editVideoTitle').value.trim();
-            window.showHumoraToast(`Video "${title}" berhasil diperbarui!`);
-            setTimeout(() => {
-                window.location.href = "{{ url('/admin/videos') }}";
-            }, 1200);
+document.addEventListener('DOMContentLoaded', function () {
+    // Preset buttons
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.getElementById('minuteInput').value = this.dataset.min;
+            document.getElementById('secondInput').value = this.dataset.sec;
         });
     });
+
+    // Update access indicator when episode number changes
+    const epNumInput = document.getElementById('episodeNumberInput');
+    const accessTitle = document.getElementById('accessTitle');
+    const accessDesc = document.getElementById('accessDesc');
+
+    function updateAccessNotice() {
+        const num = parseInt(epNumInput.value, 10);
+        if (num <= 2) {
+            accessTitle.innerHTML = '<span class="text-success"><i data-lucide="unlock" class="me-1"></i>Gratis (Free Preview)</span>';
+            accessDesc.innerText = 'Episode ini dapat ditonton secara gratis oleh seluruh pengguna (Guest, Free, & VIP).';
+        } else {
+            accessTitle.innerHTML = '<span class="text-warning-emphasis"><i data-lucide="lock" class="me-1"></i>Premium VIP</span>';
+            accessDesc.innerText = 'Episode ini terkunci dan memerlukan paket langganan Premium VIP aktif untuk dapat diputar.';
+        }
+        if (window.lucide) lucide.createIcons();
+    }
+
+    if (epNumInput) {
+        epNumInput.addEventListener('input', updateAccessNotice);
+        updateAccessNotice();
+    }
+
+    // Video preview upload handler
+    const videoUpload = document.getElementById('videoUpload');
+    const previewPlayer = document.getElementById('videoPreviewPlayer');
+
+    if (videoUpload && previewPlayer) {
+        videoUpload.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                previewPlayer.src = URL.createObjectURL(file);
+                previewPlayer.onloadedmetadata = function () {
+                    const totalSecs = Math.round(previewPlayer.duration);
+                    if (totalSecs > 0) {
+                        document.getElementById('minuteInput').value = Math.floor(totalSecs / 60);
+                        document.getElementById('secondInput').value = totalSecs % 60;
+                    }
+                };
+            }
+        });
+    }
+});
 </script>
 @endsection
