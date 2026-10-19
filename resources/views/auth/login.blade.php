@@ -11,7 +11,7 @@
 
     <div class="mb-3">
         <label for="email" class="form-label-custom">Email Administrator</label>
-        <input type="email" id="email" name="email" class="form-control-custom @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="Masukkan email administrator (contoh: admin@gmail.com)" required autofocus autocomplete="off">
+        <input type="email" id="email" name="email" class="form-control-custom @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="Masukkan email administrator" required autofocus autocomplete="off">
         @error('email')
             <div class="invalid-feedback d-block">{{ $message }}</div>
         @enderror
@@ -20,9 +20,10 @@
     <div class="mb-3">
         <div class="d-flex justify-content-between align-items-center mb-1">
             <label for="password" class="form-label-custom mb-0">Kata Sandi</label>
+            <a href="{{ route('admin.password.request') }}" class="text-decoration-none" style="font-size: 0.82rem; color: #43135C; font-weight: 600;">Lupa Sandi?</a>
         </div>
         <div class="position-relative">
-            <input type="password" id="password" name="password" class="form-control-custom pe-5 @error('password') is-invalid @enderror" placeholder="Masukkan kata sandi (contoh: password)" required autocomplete="off">
+            <input type="password" id="password" name="password" class="form-control-custom pe-5 @error('password') is-invalid @enderror" placeholder="Masukkan kata sandi" required autocomplete="off">
             <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-muted text-decoration-none pe-3" id="togglePassword">
                 <i data-lucide="eye" id="eyeIcon"></i>
             </button>
