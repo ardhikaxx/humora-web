@@ -14,9 +14,15 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('email')->nullable()->unique();
+            $table->string('phone')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->enum('gender', ['Laki-laki', 'Perempuan'])->default('Laki-laki');
+            $table->enum('tier', ['free', 'premium'])->default('free');
+            $table->timestamp('valid_until')->nullable();
+            $table->enum('status', ['active', 'suspended', 'banned'])->default('active');
+            $table->text('status_reason')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
