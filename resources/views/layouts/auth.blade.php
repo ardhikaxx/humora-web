@@ -65,7 +65,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             Swal.fire({
                 icon: 'error',
-                title: 'Gagal Masuk',
+                title: 'Perhatian',
                 text: {!! json_encode(session('error')) !!},
                 confirmButtonColor: '#43135C'
             });
