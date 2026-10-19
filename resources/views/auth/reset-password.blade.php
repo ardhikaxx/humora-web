@@ -9,7 +9,7 @@
 <div class="mb-3">
     <span class="d-inline-flex align-items-center gap-1 px-3 py-1 rounded-pill" style="background-color: #F3E8FF; color: #6B21A8; font-size: 0.78rem; font-weight: 600;">
         <i data-lucide="check-circle"></i>
-        <span>Akun: admin@humora.id</span>
+        <span>Akun: admin@gmail.com</span>
     </span>
 </div>
 
