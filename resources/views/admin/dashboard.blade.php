@@ -3,500 +3,256 @@
 @section('title', 'Dashboard - HUMORA Portal Admin')
 
 @section('content')
-<!-- Header & Action Buttons -->
+<!-- Header & Quick Action Buttons -->
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
     <div>
-        <h1 class="page-title">Dashboard</h1>
-        <p class="page-subtitle mb-0">Pantau performa konten, pertumbuhan audiens, dan aktivitas HUMORA dalam satu tempat.</p>
+        <h1 class="page-title">Dashboard HUMORA</h1>
+        <p class="page-subtitle mb-0">Pantau metrik penayangan, pertumbuhan pengguna, langganan VIP, dan verifikasi pembayaran.</p>
     </div>
-    <div class="d-flex align-items-center gap-2">
-        <a href="{{ url('/admin/analytics') }}" class="btn btn-humora-secondary">
-            <i data-lucide="trending-up"></i>
-            <span>Lihat Analytics</span>
+    <div class="d-flex flex-wrap align-items-center gap-2">
+        <a href="{{ route('admin.series.create') }}" class="btn btn-sm btn-humora-secondary">
+            <i data-lucide="tv"></i>
+            <span>+ Series</span>
         </a>
-        <a href="{{ url('/admin/videos/create') }}" class="btn btn-humora-primary">
-            <i data-lucide="plus"></i>
-            <span>Tambah Video</span>
+        <a href="{{ route('admin.videos.create') }}" class="btn btn-sm btn-humora-secondary">
+            <i data-lucide="video"></i>
+            <span>+ Episode</span>
         </a>
+        <a href="{{ route('admin.categories.index') }}" class="btn btn-sm btn-humora-secondary">
+            <i data-lucide="tag"></i>
+            <span>Kategori</span>
+        </a>
+        @if ($pendingTransactionsCount > 0)
+        <a href="{{ route('admin.transactions.index', ['status' => 'pending']) }}" class="btn btn-sm btn-warning text-dark fw-bold d-flex align-items-center gap-1">
+            <i data-lucide="alert-circle"></i>
+            <span>{{ $pendingTransactionsCount }} Trx Pending</span>
+        </a>
+        @endif
     </div>
 </div>
 
-<!-- 6 Stats Cards -->
+<!-- 6 Real Database KPI Cards -->
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-4 col-xl-2">
         <x-stat-card 
-            label="Total Users" 
-            value="24.850" 
-            icon="users" 
+            label="Total Episode" 
+            :value="number_format($totalEpisodes, 0, ',', '.')" 
+            icon="video" 
             iconBg="purple" 
-            trend="12.4%" 
-            subtext="vs bln lalu" 
+            subtext="Terdaftar di database" 
         />
     </div>
     <div class="col-6 col-md-4 col-xl-2">
         <x-stat-card 
-            label="Total Views" 
-            value="432.500" 
-            icon="eye" 
-            iconBg="green" 
-            trend="18.2%" 
-            subtext="vs bln lalu" 
+            label="Total Series" 
+            :value="number_format($totalSeries, 0, ',', '.')" 
+            icon="tv" 
+            iconBg="yellow" 
+            subtext="Katalog aktif" 
         />
     </div>
     <div class="col-6 col-md-4 col-xl-2">
         <x-stat-card 
-            label="Watch Time" 
-            value="15.960 jam" 
-            icon="clock" 
-            iconBg="orange" 
-            trend="15.6%" 
-            subtext="vs bln lalu" 
+            label="Total Akun Pengguna" 
+            :value="number_format($totalUsers, 0, ',', '.')" 
+            icon="users" 
+            iconBg="blue" 
+            subtext="Mobile terdaftar" 
         />
     </div>
     <div class="col-6 col-md-4 col-xl-2">
         <x-stat-card 
-            label="Subscribers" 
-            value="3.279" 
+            label="Subscriber VIP Aktif" 
+            :value="number_format($activeSubscribers, 0, ',', '.')" 
             badge="VIP"
             icon="gem" 
             iconBg="purple" 
-            trend="8.5%" 
-            subtext="vs bln lalu" 
+            subtext="Masa aktif valid" 
         />
     </div>
     <div class="col-6 col-md-4 col-xl-2">
         <x-stat-card 
-            label="Revenue" 
-            value="Rp 48.699.200" 
-            icon="credit-card" 
+            label="Transaksi Pending" 
+            :value="number_format($pendingTransactionsCount, 0, ',', '.')" 
+            icon="clock" 
+            iconBg="orange" 
+            subtext="Butuh verifikasi" 
+        />
+    </div>
+    <div class="col-6 col-md-4 col-xl-2">
+        <x-stat-card 
+            label="Total Pendapatan" 
+            :value="'Rp ' . number_format($totalRevenue, 0, ',', '.')" 
+            icon="banknote" 
             iconBg="green" 
-            trend="14.2%" 
-            subtext="vs bln lalu" 
-        />
-    </div>
-    <div class="col-6 col-md-4 col-xl-2">
-        <x-stat-card 
-            label="Published Ep" 
-            value="24" 
-            icon="video" 
-            iconBg="blue" 
-            trend="16.7%" 
-            subtext="vs bln lalu" 
+            subtext="Transaksi sukses" 
         />
     </div>
 </div>
 
-<!-- Charts Row -->
+<!-- Charts Row: 2 Real Visualizations -->
 <div class="row g-4 mb-4">
-    <!-- Area Chart: Views & Watch Time -->
-    <div class="col-12 col-xl-8">
+    <!-- Chart 1: Tren Penayangan Harian (7 Hari Terakhir) -->
+    <div class="col-12 col-xl-7">
         <div class="humora-card h-100">
             <div class="humora-card-header">
                 <div>
-                    <div class="humora-card-title">Pertumbuhan Views & Watch Time</div>
-                    <div class="humora-card-subtitle">Total 65.995 views (+14.2% vs periode lalu)</div>
+                    <div class="humora-card-title">TREN PENAYANGAN HARIAN</div>
+                    <div class="humora-card-subtitle">Frekuensi penayangan video sketsa komedi selama 7 hari terakhir</div>
                 </div>
-                <div class="btn-filter-group" id="dashboardFilterGroup">
-                    <button class="btn-filter-pill" data-period="7">7 Hari</button>
-                    <button class="btn-filter-pill active" data-period="30">30 Hari</button>
-                    <button class="btn-filter-pill" data-period="90">90 Hari</button>
-                </div>
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size: 0.74rem;">7 Hari Terakhir</span>
             </div>
-            <div class="humora-card-body">
-                <div style="height: 280px; width: 100%;">
-                    <canvas id="viewsChart"></canvas>
-                </div>
-                <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="d-flex align-items-center gap-1" style="font-size: 0.78rem; font-weight: 600;">
-                            <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background-color: #43135C;"></span>
-                            <span class="text-muted">Penayangan</span>
-                        </div>
-                        <div class="d-flex align-items-center gap-1" style="font-size: 0.78rem; font-weight: 600;">
-                            <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background-color: #F59E0B;"></span>
-                            <span class="text-muted">Durasi Tonton (Jam)</span>
-                        </div>
-                    </div>
-                    <a href="{{ url('/admin/analytics') }}" class="text-decoration-none fw-semibold d-inline-flex align-items-center gap-1" style="color: #43135C; font-size: 0.82rem;">
-                        <span>Laporan Mendalam</span>
-                        <i data-lucide="arrow-up-right"></i>
-                    </a>
+            <div class="humora-card-body p-3">
+                <div style="height: 260px; width: 100%;">
+                    <canvas id="dailyViewsChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Donut Chart: Genre Distribution -->
-    <div class="col-12 col-xl-4">
+    <!-- Chart 2: Konversi Subscriber Mingguan -->
+    <div class="col-12 col-xl-5">
         <div class="humora-card h-100">
             <div class="humora-card-header">
                 <div>
-                    <div class="humora-card-title">DISTRIBUSI GENRE TONTONAN</div>
-                    <div class="humora-card-subtitle">Proporsi penayangan konten</div>
+                    <div class="humora-card-title">KONVERSI LANGGANAN VIP MINGGUAN</div>
+                    <div class="humora-card-subtitle">Transaksi berhasil diverifikasi per minggu</div>
                 </div>
-                <span class="badge rounded-pill" style="background-color: #F3E8FF; color: #6B21A8; font-size: 0.74rem;">5 Genre</span>
+                <span class="badge rounded-pill bg-light text-dark border" style="font-size: 0.74rem;">4 Minggu Terakhir</span>
             </div>
-            <div class="humora-card-body">
-                <div class="position-relative d-flex justify-content-center align-items-center mb-3" style="height: 180px;">
-                    <canvas id="genreChart"></canvas>
-                    <div class="position-absolute text-center" style="pointer-events: none;">
-                        <div class="fw-bold fs-5 text-dark">186.4K</div>
-                        <div class="text-muted text-uppercase" style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em;">TOTAL VIEWS</div>
-                    </div>
-                </div>
-                <div class="px-2">
-                    <div class="d-flex justify-content-between align-items-center py-1">
-                        <div class="d-flex align-items-center gap-2" style="font-size: 0.82rem;">
-                            <span class="rounded-circle" style="width: 8px; height: 8px; background-color: #FBBF24;"></span>
-                            <span class="fw-medium">Komedi</span>
-                        </div>
-                        <div style="font-size: 0.8rem;">
-                            <span class="text-muted me-2">76.420 views</span>
-                            <span class="fw-bold text-dark">41%</span>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center py-1">
-                        <div class="d-flex align-items-center gap-2" style="font-size: 0.82rem;">
-                            <span class="rounded-circle" style="width: 8px; height: 8px; background-color: #F43F5E;"></span>
-                            <span class="fw-medium">Romantis</span>
-                        </div>
-                        <div style="font-size: 0.8rem;">
-                            <span class="text-muted me-2">48.900 views</span>
-                            <span class="fw-bold text-dark">26%</span>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center py-1">
-                        <div class="d-flex align-items-center gap-2" style="font-size: 0.82rem;">
-                            <span class="rounded-circle" style="width: 8px; height: 8px; background-color: #43135C;"></span>
-                            <span class="fw-medium">Drama</span>
-                        </div>
-                        <div style="font-size: 0.8rem;">
-                            <span class="text-muted me-2">31.250 views</span>
-                            <span class="fw-bold text-dark">17%</span>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center py-1">
-                        <div class="d-flex align-items-center gap-2" style="font-size: 0.82rem;">
-                            <span class="rounded-circle" style="width: 8px; height: 8px; background-color: #F97316;"></span>
-                            <span class="fw-medium">Slice of Life</span>
-                        </div>
-                        <div style="font-size: 0.8rem;">
-                            <span class="text-muted me-2">18.400 views</span>
-                            <span class="fw-bold text-dark">10%</span>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center py-1">
-                        <div class="d-flex align-items-center gap-2" style="font-size: 0.82rem;">
-                            <span class="rounded-circle" style="width: 8px; height: 8px; background-color: #10B981;"></span>
-                            <span class="fw-medium">Persahabatan</span>
-                        </div>
-                        <div style="font-size: 0.8rem;">
-                            <span class="text-muted me-2">11.450 views</span>
-                            <span class="fw-bold text-dark">6%</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top" style="font-size: 0.8rem;">
-                    <span class="text-muted">Total 186.420 Views</span>
-                    <a href="{{ url('/admin/categories') }}" class="text-decoration-none fw-semibold" style="color: #43135C;">
-                        Kelola Kategori <i data-lucide="arrow-up-right"></i>
-                    </a>
+            <div class="humora-card-body p-3">
+                <div style="height: 260px; width: 100%;">
+                    <canvas id="weeklyConversionChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Bottom Row: Top Episodes & Recent Activity -->
+<!-- Data Tables Row -->
 <div class="row g-4">
-    <!-- Top Performing Episodes -->
-    <div class="col-12 col-xl-8">
-        <div class="humora-card mb-0">
-            <div class="humora-card-header">
+    <!-- Left Column: Transaksi Menunggu Verifikasi -->
+    <div class="col-12 col-xl-7">
+        <div class="humora-card h-100">
+            <div class="humora-card-header d-flex justify-content-between align-items-center">
                 <div>
-                    <div class="humora-card-title">TOP PERFORMING EPISODES</div>
-                    <div class="humora-card-subtitle">Paling banyak ditonton dengan completion rate tertinggi</div>
+                    <div class="humora-card-title">TRANSAKSI MENUNGGU VERIFIKASI</div>
+                    <div class="humora-card-subtitle">{{ $pendingTransactionsCount }} transaksi pending memerlukan pengecekan bukti pembayaran</div>
                 </div>
-                <a href="{{ url('/admin/videos') }}" class="text-decoration-none fw-semibold" style="color: #43135C; font-size: 0.82rem;">
-                    Lihat Semua Video <i data-lucide="arrow-up-right"></i>
+                <a href="{{ route('admin.transactions.index', ['status' => 'pending']) }}" class="btn btn-sm btn-humora-secondary" style="font-size: 0.75rem;">
+                    <span>Lihat Semua</span>
+                    <i data-lucide="arrow-right"></i>
                 </a>
             </div>
-            <div class="table-responsive">
-                <table class="table-humora">
-                    <thead>
-                        <tr>
-                            <th style="width: 30px;">#</th>
-                            <th>Episode</th>
-                            <th>Series & Kategori</th>
-                            <th>Views</th>
-                            <th>Suka</th>
-                            <th>Completion</th>
-                            <th>Akses</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="text-muted fw-bold">1</td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <img src="{{ asset('images/thumbnails/tipe-penumpang-taxi-online.jpg') }}" alt="Ep 1" class="thumbnail-table-thumb">
-                                    <div>
-                                        <div class="fw-bold text-dark">Ep 1: Tipe Bawel</div>
-                                        <small class="text-muted">2m 14s</small>
+            <div class="humora-card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-custom align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Kode Trx</th>
+                                <th>Pengguna</th>
+                                <th>Paket</th>
+                                <th>Nominal</th>
+                                <th>Metode</th>
+                                <th class="text-end">Tindakan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($pendingTransactions as $trx)
+                            <tr>
+                                <td>
+                                    <span class="fw-bold text-dark" style="font-size: 0.82rem;">{{ $trx->trx_code }}</span>
+                                    <small class="d-block text-muted" style="font-size: 0.72rem;">{{ $trx->created_at?->diffForHumans() }}</small>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="sidebar-avatar-circle" style="width: 28px; height: 28px; font-size: 0.72rem;">
+                                            {{ $trx->user?->initials ?? 'US' }}
+                                        </div>
+                                        <div class="text-truncate" style="max-width: 130px;">
+                                            <div class="fw-semibold text-dark text-truncate" style="font-size: 0.8rem;">{{ $trx->user?->name ?? 'User' }}</div>
+                                            <small class="text-muted text-truncate d-block" style="font-size: 0.7rem;">{{ $trx->user?->email ?? $trx->user?->phone }}</small>
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="fw-medium text-dark">Tipe Penumpang Taxi On...</div>
-                                <small class="text-muted">Serial Komedi</small>
-                            </td>
-                            <td class="fw-bold text-dark">24.000</td>
-                            <td>
-                                <span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>4.250</span>
-                            </td>
-                            <td style="width: 140px;">
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="progress-humora flex-grow-1">
-                                        <div class="progress-humora-bar" style="width: 92%;"></div>
-                                    </div>
-                                    <span class="fw-bold text-success" style="font-size: 0.78rem;">92%</span>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted fw-bold">2</td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <img src="{{ asset('images/thumbnails/cara-deketin-cewek.jpg') }}" alt="Ep 1" class="thumbnail-table-thumb">
-                                    <div>
-                                        <div class="fw-bold text-dark">Ep 1: Pake Hadiah</div>
-                                        <small class="text-muted">2m 10s</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="fw-medium text-dark">Cara Deketin Cewek</div>
-                                <small class="text-muted">Serial Komedi</small>
-                            </td>
-                            <td class="fw-bold text-dark">24.000</td>
-                            <td>
-                                <span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>5.600</span>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="progress-humora flex-grow-1">
-                                        <div class="progress-humora-bar" style="width: 92%;"></div>
-                                    </div>
-                                    <span class="fw-bold text-success" style="font-size: 0.78rem;">92%</span>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted fw-bold">3</td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <img src="{{ asset('images/thumbnails/tipe-tipe-teman-sekantor.jpg') }}" alt="Ep 1" class="thumbnail-table-thumb">
-                                    <div>
-                                        <div class="fw-bold text-dark">Ep 1: Tipe Cari Muka</div>
-                                        <small class="text-muted">2m 12s</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="fw-medium text-dark">Tipe-Tipe Teman Sekant...</div>
-                                <small class="text-muted">Serial Komedi</small>
-                            </td>
-                            <td class="fw-bold text-dark">24.000</td>
-                            <td>
-                                <span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>3.800</span>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="progress-humora flex-grow-1">
-                                        <div class="progress-humora-bar" style="width: 92%;"></div>
-                                    </div>
-                                    <span class="fw-bold text-success" style="font-size: 0.78rem;">92%</span>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted fw-bold">4</td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <img src="{{ asset('images/thumbnails/drama-warga-grup-rt.jpg') }}" alt="Ep 1" class="thumbnail-table-thumb">
-                                    <div>
-                                        <div class="fw-bold text-dark">Ep 1: Iuran Sampah Macet</div>
-                                        <small class="text-muted">2m 08s</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="fw-medium text-dark">Drama Warga Grup RT</div>
-                                <small class="text-muted">Serial Komedi</small>
-                            </td>
-                            <td class="fw-bold text-dark">24.000</td>
-                            <td>
-                                <span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>6.500</span>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="progress-humora flex-grow-1">
-                                        <div class="progress-humora-bar" style="width: 92%;"></div>
-                                    </div>
-                                    <span class="fw-bold text-success" style="font-size: 0.78rem;">92%</span>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted fw-bold">5</td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <img src="{{ asset('images/thumbnails/momen-canggung-kencan-pertama.jpg') }}" alt="Ep 1" class="thumbnail-table-thumb">
-                                    <div>
-                                        <div class="fw-bold text-dark">Ep 1: Dompet Ketinggalan</div>
-                                        <small class="text-muted">2m 10s</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="fw-medium text-dark">Momen Canggung Kenc...</div>
-                                <small class="text-muted">Serial Komedi</small>
-                            </td>
-                            <td class="fw-bold text-dark">24.000</td>
-                            <td>
-                                <span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>5.100</span>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="progress-humora flex-grow-1">
-                                        <div class="progress-humora-bar" style="width: 92%;"></div>
-                                    </div>
-                                    <span class="fw-bold text-success" style="font-size: 0.78rem;">92%</span>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted fw-bold">6</td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <img src="{{ asset('images/thumbnails/tipe-pembeli-di-toko-kelontong.jpg') }}" alt="Ep 1" class="thumbnail-table-thumb">
-                                    <div>
-                                        <div class="fw-bold text-dark">Ep 1: Nawar Sadis</div>
-                                        <small class="text-muted">2m 04s</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="fw-medium text-dark">Tipe Pembeli di Toko Kel...</div>
-                                <small class="text-muted">Serial Komedi</small>
-                            </td>
-                            <td class="fw-bold text-dark">24.000</td>
-                            <td>
-                                <span class="text-danger fw-semibold table-stat-likes"><i data-lucide="heart"></i>2.900</span>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="progress-humora flex-grow-1">
-                                        <div class="progress-humora-bar" style="width: 92%;"></div>
-                                    </div>
-                                    <span class="fw-bold text-success" style="font-size: 0.78rem;">92%</span>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="badge-pill-free"><i data-lucide="play-circle"></i> Free Preview</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="text-center py-3 border-top">
-                <a href="{{ url('/admin/videos') }}" class="text-decoration-none fw-bold" style="color: #43135C; font-size: 0.84rem;">
-                    Kelola Seluruh Episode (24 Total) &rarr;
-                </a>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border" style="font-size: 0.75rem;">{{ $trx->plan?->name ?? '-' }}</span>
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-dark" style="font-size: 0.82rem;">{{ $trx->formatted_amount }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info-subtle text-info text-uppercase" style="font-size: 0.7rem;">{{ $trx->payment_method }}</span>
+                                </td>
+                                <td class="text-end">
+                                    <a href="{{ route('admin.transactions.index', ['search' => $trx->trx_code]) }}" class="btn btn-sm btn-humora-primary py-1 px-2" style="font-size: 0.75rem;">
+                                        <span>Periksa</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            @empty
+                            <x-empty-state 
+                                colspan="6"
+                                icon="check-circle"
+                                title="Semua Transaksi Selesai Diproses"
+                                subtitle="Tidak ada pembayaran yang tertunda. Seluruh bukti transfer telah diverifikasi."
+                                :compact="true"
+                            />
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Aktivitas Terbaru -->
-    <div class="col-12 col-xl-4">
+    <!-- Right Column: Judul Konten Terbit Terbaru -->
+    <div class="col-12 col-xl-5">
         <div class="humora-card h-100">
-            <div class="humora-card-header">
+            <div class="humora-card-header d-flex justify-content-between align-items-center">
                 <div>
-                    <div class="humora-card-title">AKTIVITAS TERBARU</div>
+                    <div class="humora-card-title">KATALOG SERIES AKTIF</div>
+                    <div class="humora-card-subtitle">Series yang sedang tayang di aplikasi mobile</div>
                 </div>
-                <span class="text-muted" style="font-size: 0.75rem;">Log Real-time</span>
+                <a href="{{ route('admin.series.index') }}" class="btn btn-sm btn-humora-secondary" style="font-size: 0.75rem;">
+                    <span>Semua Series</span>
+                    <i data-lucide="arrow-right"></i>
+                </a>
             </div>
-            <div class="humora-card-body">
+            <div class="humora-card-body p-3">
                 <div class="d-flex flex-column gap-3">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="stat-icon-wrap stat-icon-blue flex-shrink-0 mt-1" style="width: 32px; height: 32px; font-size: 0.95rem;">
-                            <i data-lucide="video"></i>
+                    @forelse ($recentSeries as $series)
+                    <div class="d-flex align-items-center gap-3 p-2 rounded-3 border bg-white">
+                        <img src="{{ $series->thumbnail_url }}" alt="{{ $series->title }}" class="rounded object-fit-cover" style="width: 60px; height: 45px; aspect-ratio: 16/9;" onerror="this.src='{{ asset('images/logo-humora.png') }}'">
+                        <div class="flex-grow-1 overflow-hidden">
+                            <a href="{{ route('admin.series.show', $series->id) }}" class="fw-bold text-dark text-truncate d-block text-decoration-none" style="font-size: 0.85rem;">
+                                {{ $series->title }}
+                            </a>
+                            <div class="d-flex align-items-center gap-2 text-muted" style="font-size: 0.72rem;">
+                                <span>{{ $series->published_episodes_count ?? $series->episodes->count() }} Episode</span>
+                                <span>&bull;</span>
+                                <span>Tahun {{ $series->release_year }}</span>
+                                @if ($series->is_featured)
+                                <span>&bull;</span>
+                                <span class="badge bg-warning text-dark py-0" style="font-size: 0.65rem;">Unggulan</span>
+                                @endif
+                            </div>
                         </div>
-                        <div>
-                            <div class="fw-bold text-dark" style="font-size: 0.84rem;">Video Terbit</div>
-                            <div class="text-muted" style="font-size: 0.78rem; line-height: 1.4;">Tipe Penumpang Taxi Online: Video 1 "Tipe Bawel" dipublikasikan.</div>
-                            <small class="text-muted d-flex align-items-center gap-1 mt-1" style="font-size: 0.72rem;">
-                                <i data-lucide="calendar"></i> 15 Okt 2026, 16:00 WIB
-                            </small>
-                        </div>
+                        <a href="{{ route('admin.series.edit', $series->id) }}" class="btn btn-sm btn-outline-secondary p-1" title="Edit">
+                            <i data-lucide="pencil" style="width: 14px; height: 14px;"></i>
+                        </a>
                     </div>
-
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="stat-icon-wrap stat-icon-orange flex-shrink-0 mt-1" style="width: 32px; height: 32px; font-size: 0.95rem;">
-                            <i data-lucide="badge-check"></i>
-                        </div>
-                        <div>
-                            <div class="fw-bold text-dark" style="font-size: 0.84rem;">Pembayaran Diverifikasi</div>
-                            <div class="text-muted" style="font-size: 0.78rem; line-height: 1.4;">Pembayaran Paket Tahunan oleh Dimas Aditya berhasil diverifikasi.</div>
-                            <small class="text-muted d-flex align-items-center gap-1 mt-1" style="font-size: 0.72rem;">
-                                <i data-lucide="calendar"></i> 14 Okt 2026, 18:30 WIB
-                            </small>
-                        </div>
-                    </div>
-
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="stat-icon-wrap stat-icon-purple flex-shrink-0 mt-1" style="width: 32px; height: 32px; font-size: 0.95rem;">
-                            <i data-lucide="tv"></i>
-                        </div>
-                        <div>
-                            <div class="fw-bold text-dark" style="font-size: 0.84rem;">Judul Konten Baru</div>
-                            <div class="text-muted" style="font-size: 0.78rem; line-height: 1.4;">Judul "Cara Deketin Cewek" berhasil ditambahkan ke katalog.</div>
-                            <small class="text-muted d-flex align-items-center gap-1 mt-1" style="font-size: 0.72rem;">
-                                <i data-lucide="calendar"></i> 12 Okt 2026, 17:00 WIB
-                            </small>
-                        </div>
-                    </div>
-
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="stat-icon-wrap stat-icon-green flex-shrink-0 mt-1" style="width: 32px; height: 32px; font-size: 0.95rem;">
-                            <i data-lucide="sliders"></i>
-                        </div>
-                        <div>
-                            <div class="fw-bold text-dark" style="font-size: 0.84rem;">Pembaruan Akses Video</div>
-                            <div class="text-muted" style="font-size: 0.78rem; line-height: 1.4;">Video 2 Cara Deketin Cewek diubah menjadi Free Preview.</div>
-                            <small class="text-muted d-flex align-items-center gap-1 mt-1" style="font-size: 0.72rem;">
-                                <i data-lucide="calendar"></i> 10 Okt 2026, 21:15 WIB
-                            </small>
-                        </div>
-                    </div>
-                </div>
-                <div class="text-center pt-3 mt-3 border-top">
-                    <small class="text-muted" style="font-size: 0.75rem;">Semua aktivitas tersinkronisasi otomatis</small>
+                    @empty
+                    <x-empty-state 
+                        icon="film"
+                        title="Katalog Series Belum Ada"
+                        subtitle="Belum ada series komedi yang dipublikasikan ke aplikasi mobile."
+                        :actionUrl="route('admin.series.create')"
+                        actionText="Tambah Series"
+                        actionIcon="plus"
+                        :compact="true"
+                    />
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -506,44 +262,26 @@
 
 @section('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Line chart for views
-        const ctxViews = document.getElementById('viewsChart').getContext('2d');
-        const gradientViews = ctxViews.createLinearGradient(0, 0, 0, 260);
-        gradientViews.addColorStop(0, 'rgba(67, 19, 92, 0.22)');
-        gradientViews.addColorStop(1, 'rgba(67, 19, 92, 0.01)');
-
-        const viewsDatasets = {
-            '7': {
-                labels: ['10 Okt', '11 Okt', '12 Okt', '13 Okt', '14 Okt', '15 Okt', '16 Okt'],
-                data: [3200, 3650, 4100, 3850, 4300, 5100, 4950]
-            },
-            '30': {
-                labels: ['16 Sep', '21 Sep', '26 Sep', '1 Okt', '6 Okt', '11 Okt', '15 Okt'],
-                data: [2100, 2450, 2200, 2800, 2300, 2900, 2850]
-            },
-            '90': {
-                labels: ['Agt W1', 'Agt W3', 'Sep W1', 'Sep W3', 'Okt W1', 'Okt W3'],
-                data: [8400, 9600, 11200, 12800, 14500, 15900]
-            }
-        };
-
-        const viewsChart = new Chart(ctxViews, {
+document.addEventListener('DOMContentLoaded', function () {
+    // 1. Daily Views Chart (Chart.js)
+    const dailyCtx = document.getElementById('dailyViewsChart');
+    if (dailyCtx) {
+        new Chart(dailyCtx, {
             type: 'line',
             data: {
-                labels: viewsDatasets['30'].labels,
+                labels: {!! json_encode($dailyViewLabels) !!},
                 datasets: [{
                     label: 'Penayangan',
-                    data: viewsDatasets['30'].data,
+                    data: {!! json_encode($dailyViewCounts) !!},
                     borderColor: '#43135C',
-                    borderWidth: 3,
-                    backgroundColor: gradientViews,
+                    backgroundColor: 'rgba(67, 19, 92, 0.08)',
+                    borderWidth: 2.5,
                     fill: true,
-                    tension: 0.4,
-                    pointRadius: 3,
-                    pointBackgroundColor: '#43135C',
-                    pointHoverRadius: 6,
-                    pointHoverBackgroundColor: '#43135C'
+                    tension: 0.35,
+                    pointBackgroundColor: '#FFE600',
+                    pointBorderColor: '#43135C',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
                 }]
             },
             options: {
@@ -552,75 +290,70 @@
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return ' Penayangan: ' + context.raw.toLocaleString('id-ID') + ' views';
-                            }
-                        }
+                        backgroundColor: '#1E293B',
+                        titleFont: { size: 12 },
+                        bodyFont: { size: 12 },
+                        padding: 10,
+                        cornerRadius: 8
                     }
                 },
                 scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { borderDash: [4, 4], color: '#F3F4F6' },
-                        ticks: { color: '#9CA3AF', font: { size: 11 } }
-                    },
                     x: {
                         grid: { display: false },
-                        ticks: { color: '#9CA3AF', font: { size: 11 } }
+                        ticks: { font: { size: 11 }, color: '#64748B' }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#E2E8F0' },
+                        ticks: { precision: 0, font: { size: 11 }, color: '#64748B' }
                     }
                 }
             }
         });
+    }
 
-        // Filter button clicks
-        const filterBtns = document.querySelectorAll('#dashboardFilterGroup .btn-filter-pill');
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', function () {
-                filterBtns.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                const period = this.dataset.period || '30';
-                if (viewsDatasets[period]) {
-                    viewsChart.data.labels = viewsDatasets[period].labels;
-                    viewsChart.data.datasets[0].data = viewsDatasets[period].data;
-                    viewsChart.update();
-                    if (typeof window.showHumoraToast === 'function') {
-                        window.showHumoraToast('Grafik penayangan diperbarui untuk ' + period + ' hari terakhir', 'info');
-                    }
-                }
-            });
-        });
-
-        // Donut chart for genres
-        const ctxGenre = document.getElementById('genreChart').getContext('2d');
-        new Chart(ctxGenre, {
-            type: 'doughnut',
+    // 2. Weekly Conversions Chart (Chart.js)
+    const weeklyCtx = document.getElementById('weeklyConversionChart');
+    if (weeklyCtx) {
+        new Chart(weeklyCtx, {
+            type: 'bar',
             data: {
-                labels: ['Komedi', 'Romantis', 'Drama', 'Slice of Life', 'Persahabatan'],
+                labels: {!! json_encode($weeklyLabels) !!},
                 datasets: [{
-                    data: [41, 26, 17, 10, 6],
-                    backgroundColor: ['#FBBF24', '#F43F5E', '#43135C', '#F97316', '#10B981'],
-                    borderWidth: 2,
-                    borderColor: '#ffffff',
-                    hoverOffset: 6
+                    label: 'Transaksi VIP Berhasil',
+                    data: {!! json_encode($weeklyConversions) !!},
+                    backgroundColor: '#16A34A',
+                    borderRadius: 6,
+                    barPercentage: 0.55,
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '76%',
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return ' ' + context.label + ': ' + context.raw + '%';
-                            }
-                        }
+                        backgroundColor: '#1E293B',
+                        titleFont: { size: 12 },
+                        bodyFont: { size: 12 },
+                        padding: 10,
+                        cornerRadius: 8
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 11 }, color: '#64748B' }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#E2E8F0' },
+                        ticks: { precision: 0, font: { size: 11 }, color: '#64748B' }
                     }
                 }
             }
         });
-    });
+    }
+});
 </script>
 @endsection
