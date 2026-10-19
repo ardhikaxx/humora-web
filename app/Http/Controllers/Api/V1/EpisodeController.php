@@ -71,6 +71,8 @@ class EpisodeController extends Controller
                 'last_position' => $watchHistory ? $watchHistory->last_position : 0,
                 'progress_percent' => $watchHistory ? $watchHistory->progress_percent : 0,
                 'thumbnail_url' => $episode->series->thumbnail_url,
+                'likes_count' => $episode->likes_count,
+                'is_liked' => $user ? $user->likes()->where('episode_id', $episode->id)->exists() : false,
                 'stream_url' => url('/api/v1/files/stream/' . $episode->id),
             ],
         ]);
