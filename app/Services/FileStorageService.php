@@ -313,77 +313,21 @@ class FileStorageService
             default => File::mimeType($filePath) ?: 'application/octet-stream',
         };
 
-        // Check for HTTP Range header
-        $httpRange = request()->server('HTTP_RANGE');
-
-        if ($httpRange && preg_match('/bytes=\h*(\d+)-(\d*)[\D.*]?/i', $httpRange, $matches)) {
-            $start = (int) $matches[1];
-            $end = $matches[2] !== '' ? (int) $matches[2] : $fileSize - 1;
-
-            if ($start > $end || $start >= $fileSize) {
-                return response('', 416, [
-                    'Content-Range' => "bytes */{$fileSize}",
-                ]);
-            }
-
-            $end = min($end, $fileSize - 1);
-            $length = ($end - $start) + 1;
-
-            $headers = [
-                'Content-Type' => $mimeType,
-                'Content-Length' => (string) $length,
-                'Content-Range' => "bytes {$start}-{$end}/{$fileSize}",
-                'Accept-Ranges' => 'bytes',
-                'Cache-Control' => 'no-cache, must-revalidate',
-            ];
-
-            return new StreamedResponse(function () use ($filePath, $start, $length) {
-                $stream = fopen($filePath, 'rb');
-                if ($stream === false) {
-                    return;
-                }
-
-                fseek($stream, $start);
-                $bufferSize = 65536; // 64KB buffer
-                $bytesRemaining = $length;
-
-                while (!feof($stream) && $bytesRemaining > 0 && connection_status() === CONNECTION_NORMAL) {
-                    $bytesToRead = min($bufferSize, $bytesRemaining);
-                    $data = fread($stream, $bytesToRead);
-                    echo $data;
-                    flush();
-                    $bytesRemaining -= strlen($data);
-                }
-
-                fclose($stream);
-            }, 206, $headers);
-        }
-
-        // Standard non-range full stream response
         $headers = [
             'Content-Type' => $mimeType,
-            'Content-Length' => (string) $fileSize,
             'Accept-Ranges' => 'bytes',
-            'Cache-Control' => 'max-age=86400, public',
+            'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Methods' => 'GET, HEAD, OPTIONS',
+            'Access-Control-Allow-Headers' => 'Range, Authorization, Content-Type, Accept, X-Requested-With',
+            'Access-Control-Expose-Headers' => 'Content-Range, Content-Length, Accept-Ranges, Content-Type',
         ];
 
         if ($downloadName) {
             $headers['Content-Disposition'] = 'inline; filename="' . addslashes($downloadName) . '"';
         }
 
-        return new StreamedResponse(function () use ($filePath) {
-            $stream = fopen($filePath, 'rb');
-            if ($stream === false) {
-                return;
-            }
-
-            $bufferSize = 65536;
-            while (!feof($stream) && connection_status() === CONNECTION_NORMAL) {
-                echo fread($stream, $bufferSize);
-                flush();
-            }
-
-            fclose($stream);
-        }, 200, $headers);
+        $response = response()->file($filePath, $headers);
+        $response->prepare(request());
+        return $response;
     }
 }
