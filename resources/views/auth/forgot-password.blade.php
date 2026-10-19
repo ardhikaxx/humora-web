@@ -9,7 +9,7 @@
 <form action="{{ url('/reset-password') }}" method="GET" class="text-start">
     <div class="mb-2">
         <label for="email" class="form-label-custom">Alamat Email Administrator</label>
-        <input type="email" id="email" name="email" class="form-control-custom" value="admin@humora.id" placeholder="nama@humora.id" required>
+        <input type="email" id="email" name="email" class="form-control-custom" value="admin@gmail.com" placeholder="nama@gmail.com" required>
     </div>
     <div class="mb-4">
         <small class="text-muted" style="font-size: 0.74rem;">
