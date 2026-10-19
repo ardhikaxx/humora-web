@@ -13,13 +13,15 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Custom Style CSS -->
     <link rel="stylesheet" href="{{ asset('css/humora-admin.css') }}?v={{ file_exists(public_path('css/humora-admin.css')) ? filemtime(public_path('css/humora-admin.css')) : '1.0' }}">
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @yield('styles')
 </head>
 <body>
     <div class="auth-wrapper">
         <div class="auth-card">
             <div class="auth-logo-banner">
-                <img src="{{ asset('images/logo-humora.png') }}" alt="HUMORA Logo" class="img-fluid">
+                <img src="{{ asset('images/logo-humora.png') }}" alt="HUMORA Logo" class="img-fluid rounded-circle">
             </div>
             <div>
                 <span class="badge-portal">PORTAL ADMIN</span>
@@ -44,6 +46,59 @@
             }
         });
     </script>
+
+    @if (session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: {!! json_encode(session('success')) !!},
+                confirmButtonColor: '#43135C'
+            });
+        });
+    </script>
+    @endif
+
+    @if (session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal Masuk',
+                text: {!! json_encode(session('error')) !!},
+                confirmButtonColor: '#43135C'
+            });
+        });
+    </script>
+    @endif
+
+    @if (session('info'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'info',
+                title: 'Informasi',
+                text: {!! json_encode(session('info')) !!},
+                confirmButtonColor: '#43135C'
+            });
+        });
+    </script>
+    @endif
+
+    @if ($errors->any())
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal',
+                html: {!! json_encode(implode('<br>', $errors->all())) !!},
+                confirmButtonColor: '#43135C'
+            });
+        });
+    </script>
+    @endif
+
     @yield('scripts')
 </body>
 </html>
