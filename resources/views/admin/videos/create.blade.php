@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function () {
         updateAccessNotice();
     }
 
-    // Video preview handler
+    // Video preview handler & file info
     const videoUpload = document.getElementById('videoUpload');
     const previewContainer = document.getElementById('videoPreviewContainer');
     const previewPlayer = document.getElementById('videoPreviewPlayer');
@@ -245,6 +245,42 @@ document.addEventListener('DOMContentLoaded', function () {
                         document.getElementById('secondInput').value = secs;
                     }
                 };
+
+                // Notification toast
+                if (window.showHumoraToast) {
+                    const sizeStr = file.size > 1048576 
+                        ? (file.size / 1048576).toFixed(1) + ' MB' 
+                        : Math.round(file.size / 1024) + ' KB';
+                    window.showHumoraToast(`Video dipilih: ${file.name} (${sizeStr}). Akan dikompresi ke format WebM saat disimpan.`, 'info');
+                }
+            }
+        });
+    }
+
+    // Show processing modal during video compression & upload
+    const formCreateVideo = document.getElementById('formCreateVideo');
+    if (formCreateVideo) {
+        formCreateVideo.addEventListener('submit', function (e) {
+            if (!this.checkValidity()) return;
+
+            const videoFile = videoUpload && videoUpload.files && videoUpload.files.length > 0;
+            if (videoFile && typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Mengompresi & Memproses Video...',
+                    html: `
+                        <div class="text-center py-2">
+                            <div class="spinner-border text-purple mb-3" style="width: 3rem; height: 3rem; color: #43135C;" role="status"></div>
+                            <p class="mb-1 fw-bold text-dark" style="font-size: 0.95rem;">Sedang mengompresi ukuran dan mengonversi video ke WebM</p>
+                            <p class="mb-2 text-muted" style="font-size: 0.82rem;">Video disimpan ke <code>storage/uploads/videos/</code> dengan codec VP9/Opus agar sangat ringan dan hemat kuota pengguna mobile.</p>
+                            <small class="text-warning-emphasis bg-warning-subtle py-1 px-2.5 rounded-pill" style="font-size: 0.75rem;">
+                                &bull; Mohon jangan menutup atau me-refresh browser &bull;
+                            </small>
+                        </div>
+                    `,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                });
             }
         });
     }
