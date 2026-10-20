@@ -1,58 +1,181 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🎬 HUMORA — Backend API & Web Admin Portal
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="./public/images/logo-humora.png" alt="HUMORA Logo" width="130"/>
 </p>
 
-## About Laravel
+<p align="center">
+  <strong>Platform Streaming Serial Sketsa Komedi Vertikal Pendek (~2 Menit)</strong><br>
+  <em>"scroll, laugh, repeat"</em>
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<p align="center">
+  <img src="https://img.shields.io/badge/PHP-8.4+-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.4+"/>
+  <img src="https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 12.x"/>
+  <img src="https://img.shields.io/badge/FFmpeg-VP9%20%2F%20Opus-007808?style=for-the-badge&logo=ffmpeg&logoColor=white" alt="FFmpeg"/>
+  <img src="https://img.shields.io/badge/WebP-Auto--Compress-38B2AC?style=for-the-badge" alt="WebP"/>
+  <img src="https://img.shields.io/badge/License-Proprietary-43135C?style=for-the-badge" alt="License"/>
+</p>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 📖 Tentang HUMORA
 
-## Learning Laravel
+**HUMORA** adalah ekosistem hiburan digital modern yang berfokus pada serial sketsa komedi vertikal pendek dengan durasi terstandarisasi sekitar 2 menit per episode. Dirancang khusus untuk audiens generasi muda dan pengguna mobile yang menginginkan hiburan humor cepat, berkualitas, dan adiktif di sela-sela rutinitas harian.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Repositori ini merupakan **Backend RESTful API (v1)** sekaligus **Portal Web Admin Manajemen Konten & Finansial**. Dibangun di atas fondasi **Laravel** modern berkecepatan tinggi dengan integrasi kompresi media otomatis (*WebP & WebM*), manajemen langganan VIP, pelacakan analitik tontonan *real-time*, serta *streaming* video berbasis HTTP Range.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## ⚡ Fitur Utama Sistem
 
-## Agentic Development
+### 1. 🎭 Manajemen Konten Serial & Episode Komedi
+* **Pengorganisasian Judul Serial**: Pengelompokan episode ke dalam judul besar serial (series), dilengkapi sinopsis tematik, tahun rilis, genre/kategori komedi, dan lencana unggulan (*spotlight hero*).
+* **Episode Sketsa Pendek (~2 Menit)**: Input nomor urut episode, sub-judul cerita, durasi terformat menit & detik, serta preset cepat durasi HUMORA (~2m).
+* **Aturan Akses Konten (Freemium Paywall)**:
+  * **Episode 1 & 2**: Otomatis berstatus *Free Preview* (dapat ditonton bebas oleh semua pengguna/tamu).
+  * **Episode 3 ke atas**: Otomatis terkunci khusus pengguna dengan paket langganan **Premium VIP** aktif.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### 2. 🗜️ Otomatisasi Kompresi Media & Efisiensi Server
+* **Kompresi & Konversi Foto ke WebP (Client-Side & Server)**:
+  * Setiap admin memilih foto thumbnail sampul di browser, sistem secara otomatis mengompresi dan mengonversi format ke **WebP (.webp)** melalui HTML5 Canvas resolusi tinggi.
+  * Menghemat kapasitas disk hosting dan bandwidth unggah hingga **85% – 95%** (file 5–10 MB menyusut menjadi ~150–250 KB).
+* **Transcoding Video ke WebM (VP9 & Opus)**:
+  * Video master yang diunggah otomatis diproses melalui **FFmpeg** dengan konfigurasi *multi-threading* CPU (`-c:v libvpx-vp9 -crf 32 -b:v 0 -row-mt 1 -c:a libopus`).
+  * **Resolusi asli video terjaga 100% tanpa penurunan dimensi**, menghasilkan ukuran file yang sangat padat (~6–12 MB untuk video 2 menit) sehingga bebas *buffering* dan hemat kuota pengguna mobile.
+* **Penyimpanan Fisik Aman**: Semua berkas media disimpan langsung ke direktori fisik terkelola tanpa ketergantungan pada *symbolic link* (*symlink*).
 
+### 3. 📡 Streaming Video Responsif (HTTP Range Requests)
+* **Dukungan Byte-Range (206 Partial Content)**: Mendukung pemutaran instan, pelompatan durasi (*seeking*), dan *buffering* efisien pada pemutar video aplikasi mobile Flutter.
+* **Streaming Aman**: File video terlindungi dan disalurkan melalui controller streaming terverifikasi.
+
+### 4. 💳 Manajemen Langganan & Transaksi VIP
+* **Katalog Paket Langganan**: Konfigurasi paket VIP (1 Bulan, 3 Bulan, 1 Tahun) beserta nominal harga, badge terpopuler/terhemat, dan benefit akses tanpa batas.
+* **Verifikasi Pembayaran Manual**:
+  * Pengguna mengunggah bukti transfer manual (struk/screenshot m-Banking).
+  * Panel verifikasi transaksi bagi admin keuangan untuk menyetujui (*approve*) atau menolak (*reject*) dengan alasan yang transparan.
+  * Otomatis mengaktifkan masa berlaku VIP pengguna begitu pembayaran disetujui.
+
+### 5. 📊 Dasbor Analitik & Real-Time Viewer Tracking
+* **Pelacakan Tontonan Realtime**: Endpoint pencatatan tayangan (*views*) dan akumulasi jam tonton (*watch time*) yang aktif memantau retensi audiens.
+* **Statistik Performa**: Metrik total penayangan, tingkat penyelesaian video (*completion rate*), konversi pelanggan VIP, dan performa video terpopuler.
+
+---
+
+## 💻 Prasyarat Sistem
+
+Sebelum menjalankan proyek, pastikan lingkungan server memenuhi persyaratan berikut:
+
+| Komponen | Versi Minimal | Keterangan |
+| :--- | :--- | :--- |
+| **PHP** | `v8.4.0` atau lebih tinggi | Ekstensi: `gd`, `pdo_mysql`, `mbstring`, `fileinfo`, `openssl` |
+| **Composer** | `v2.7.0` atau lebih tinggi | Manajer dependensi PHP |
+| **Database** | MySQL `8.0+` / MariaDB `10.6+` | Penyimpanan data relasional |
+| **FFmpeg** | `v6.0+` (disarankan `v9.0+`) | Wajib terpasang pada PATH sistem untuk transcoding WebM |
+| **Node.js** | `v20.0+` *(Opsional)* | Untuk kompilasi aset frontend jika diperlukan |
+
+---
+
+## 🚀 Panduan Instalasi & Menjalankan Proyek
+
+### 1. Kloning Repositori
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/ardhikaxx/humora-web.git
+cd humora-web
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Instalasi Dependensi PHP
+```bash
+composer install --optimize-autoloader --no-dev
+```
+*(Untuk lingkungan pengembangan lokal, jalankan `composer install`)*
 
-## Contributing
+### 3. Konfigurasi Lingkungan (.env)
+Salin berkas konfigurasi default dan sesuaikan kredensial database Anda:
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Sesuaikan parameter database di dalam berkas `.env`:
+```ini
+APP_NAME=HUMORA
+APP_ENV=local
+APP_KEY=base64:...
+APP_DEBUG=true
+APP_URL=http://localhost/humora-web
 
-## Code of Conduct
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=humora_db
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 4. Migrasi & Seed Database
+Jalankan migrasi database beserta data awal katalog:
+```bash
+php artisan migrate --seed
+```
 
-## Security Vulnerabilities
+### 5. Menyiapkan Direktori Penyimpanan Berkas
+Pastikan folder unggahan media telah tersedia dengan hak akses tulis (*write permissions*):
+```bash
+mkdir -p storage/uploads/thumbnails storage/uploads/videos storage/uploads/proofs storage/uploads/system
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 6. Menjalankan Server Lokal
+```bash
+php artisan serve
+```
+Akses portal web admin di browser melalui: `http://127.0.0.1:8000/admin`
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 🧪 Pengujian Sistem (Automated Tests)
+
+Sistem telah dilengkapi dengan test suite lengkap menggunakan framework **Pest PHP**:
+
+```bash
+# Menjalankan seluruh rangkaian tes
+php artisan test
+
+# Menjalankan tes spesifik untuk konversi media & storage
+php artisan test --filter FileStorageServiceTest
+```
+
+---
+
+## 💖 Dukungan & Donasi
+
+Jika proyek **HUMORA** ini bermanfaat bagi Anda, menginspirasi, atau membantu percepatan pengembangan karya digital Anda, Anda dapat memberikan apresiasi dan traktiran kopi (donasi sukarela) kepada pengembang melalui pemindaian kode **QRIS** di bawah ini:
+
+<p align="center">
+  <img src="./qris.png" alt="QRIS Donasi Pengembang HUMORA" width="280"/>
+</p>
+
+> *Donasi sepenuhnya bersifat sukarela dan tidak mengikat. Seluruh fitur sistem tetap dapat digunakan secara optimal tanpa donasi.*
+
+---
+
+## 📄 Dokumen Pendukung Lainnya
+
+Untuk informasi lebih mendalam mengenai kebijakan dan pemeliharaan proyek, silakan baca:
+* [`CHANGELOG.md`](./CHANGELOG.md) — Catatan riwayat pembaruan dan rilis versi.
+* [`CITATION.md`](./CITATION.md) — Format sitasi akademik karya (APA, BibTeX, IEEE, MLA).
+* [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) — Standar etika dan pedoman komunitas.
+* [`CONTRIBUTING.md`](./CONTRIBUTING.md) — Panduan kontribusi kode dan standar teknis.
+* [`SECURITY.md`](./SECURITY.md) — Kebijakan pelaporan kerentanan dan privasi data.
+* [`SUPPORT.md`](./SUPPORT.md) — Layanan konsultasi, bantuan teknis, dan dukungan donasi.
+
+---
+
+## 👨‍💻 Pengembang & Hak Cipta
+
+Dirancang dan dikembangkan dengan penuh dedikasi oleh:  
+**[Yanuar Ardhika Rahmadhani Ubaidillah (@ardhikaxx)](https://github.com/ardhikaxx)**  
+*Lead Software Architect & Maintainer*  
+Email Resmi: `ardhikayanuar58@gmail.com`
+
+Proyek ini dilindungi oleh lisensi **Proprietary Software License (All Rights Reserved)**.
