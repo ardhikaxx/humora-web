@@ -46,26 +46,44 @@ class SubscriptionController extends Controller
         $qrisImage = SystemSetting::get('qris_official_image');
         $qrisUrl = !empty($qrisImage) ? url('/api/v1/files/system/' . $qrisImage) : null;
 
+        $rawBankAccounts = SystemSetting::get('official_bank_accounts');
+        if (empty($rawBankAccounts) || !is_array($rawBankAccounts)) {
+            $rawBankAccounts = [
+                [
+                    'bank_name' => 'Bank Central Asia (BCA)',
+                    'account_number' => SystemSetting::get('bca_account_number', '8830-192-888'),
+                    'account_name' => SystemSetting::get('bca_account_name', 'PT HUMORA MEDIA KREATIF'),
+                ],
+                [
+                    'bank_name' => 'Bank Mandiri',
+                    'account_number' => SystemSetting::get('mandiri_account_number', '137-00-998822-1'),
+                    'account_name' => SystemSetting::get('mandiri_account_name', 'HUMORA'),
+                ],
+            ];
+        }
+
+        $formattedBanks = [];
+        foreach ($rawBankAccounts as $index => $b) {
+            $bankName = trim($b['bank_name'] ?? 'Bank Transfer');
+            $code = \Illuminate\Support\Str::slug($bankName, '_');
+            if (empty($code)) {
+                $code = 'bank_' . ($index + 1);
+            }
+
+            $formattedBanks[] = [
+                'code' => $code,
+                'bank_name' => $bankName,
+                'account_number' => trim($b['account_number'] ?? ''),
+                'account_name' => trim($b['account_name'] ?? ''),
+                'instructions' => "Transfer manual ke rekening {$bankName} di atas sesuai nominal paket, lalu unggah foto bukti transfer.",
+            ];
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Informasi pembayaran resmi berhasil diambil.',
             'data' => [
-                'bank_accounts' => [
-                    [
-                        'code' => 'bca',
-                        'bank_name' => 'Bank Central Asia (BCA)',
-                        'account_number' => SystemSetting::get('bca_account_number', '8830-192-888'),
-                        'account_name' => SystemSetting::get('bca_account_name', 'PT HUMORA MEDIA KREATIF'),
-                        'instructions' => 'Transfer manual ke rekening BCA di atas sesuai nominal paket, lalu unggah foto bukti transfer.',
-                    ],
-                    [
-                        'code' => 'mandiri',
-                        'bank_name' => 'Bank Mandiri',
-                        'account_number' => SystemSetting::get('mandiri_account_number', '137-00-998822-1'),
-                        'account_name' => SystemSetting::get('mandiri_account_name', 'HUMORA'),
-                        'instructions' => 'Transfer manual ke rekening Mandiri di atas sesuai nominal paket, lalu unggah foto bukti transfer.',
-                    ],
-                ],
+                'bank_accounts' => $formattedBanks,
                 'qris' => [
                     'code' => 'qris',
                     'is_configured' => !empty($qrisUrl),

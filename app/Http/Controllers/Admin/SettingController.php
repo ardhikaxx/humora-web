@@ -23,20 +23,28 @@ class SettingController extends Controller
     public function index(): View
     {
         $freeEpisodes = SystemSetting::get('free_preview_episodes', 2);
-        $bcaNumber = SystemSetting::get('bca_account_number', '8830-192-888');
-        $bcaName = SystemSetting::get('bca_account_name', 'PT HUMORA MEDIA KREATIF');
-        $mandiriNumber = SystemSetting::get('mandiri_account_number', '137-00-998822-1');
-        $mandiriName = SystemSetting::get('mandiri_account_name', 'HUMORA');
+        $bankAccounts = SystemSetting::get('official_bank_accounts');
+        if (empty($bankAccounts) || !is_array($bankAccounts)) {
+            $bankAccounts = [
+                [
+                    'bank_name' => 'Bank Central Asia (BCA)',
+                    'account_number' => SystemSetting::get('bca_account_number', '8830-192-888'),
+                    'account_name' => SystemSetting::get('bca_account_name', 'PT HUMORA MEDIA KREATIF'),
+                ],
+                [
+                    'bank_name' => 'Bank Mandiri',
+                    'account_number' => SystemSetting::get('mandiri_account_number', '137-00-998822-1'),
+                    'account_name' => SystemSetting::get('mandiri_account_name', 'HUMORA'),
+                ],
+            ];
+        }
         $qrisImage = SystemSetting::get('qris_official_image', '');
 
         $plans = SubscriptionPlan::orderBy('duration_days')->get()->keyBy('code');
 
         return view('admin.settings.index', compact(
             'freeEpisodes',
-            'bcaNumber',
-            'bcaName',
-            'mandiriNumber',
-            'mandiriName',
+            'bankAccounts',
             'qrisImage',
             'plans'
         ));
@@ -49,15 +57,15 @@ class SettingController extends Controller
     {
         $admin = Auth::guard('admin')->user();
         if (!$admin || !$admin->isSuperAdmin()) {
-            return back()->with('error', 'Hanya Super Admin yang berwenang mengubah pengaturan sistem.');
+            return back()->with('error', 'Hanya Administrator yang berwenang mengubah pengaturan sistem.');
         }
 
         $validated = $request->validate([
             'free_preview_episodes' => ['required', 'integer', 'min:1', 'max:5'],
-            'bca_account_number' => ['required', 'string', 'max:50'],
-            'bca_account_name' => ['required', 'string', 'max:100'],
-            'mandiri_account_number' => ['required', 'string', 'max:50'],
-            'mandiri_account_name' => ['required', 'string', 'max:100'],
+            'bank_accounts' => ['required', 'array', 'min:1'],
+            'bank_accounts.*.bank_name' => ['required', 'string', 'max:100'],
+            'bank_accounts.*.account_number' => ['required', 'string', 'max:50'],
+            'bank_accounts.*.account_name' => ['required', 'string', 'max:100'],
             'price_monthly' => ['required', 'numeric', 'min:0'],
             'price_quarterly' => ['required', 'numeric', 'min:0'],
             'price_yearly' => ['required', 'numeric', 'min:0'],
@@ -65,12 +73,40 @@ class SettingController extends Controller
             'remove_qris' => ['nullable', 'boolean'],
         ]);
 
+        // Clean and prepare bank accounts
+        $cleanBankAccounts = [];
+        foreach ($validated['bank_accounts'] as $b) {
+            $bankName = trim((string) ($b['bank_name'] ?? ''));
+            $accNumber = trim((string) ($b['account_number'] ?? ''));
+            $accName = trim((string) ($b['account_name'] ?? ''));
+
+            if (!empty($bankName) && !empty($accNumber) && !empty($accName)) {
+                $cleanBankAccounts[] = [
+                    'bank_name' => $bankName,
+                    'account_number' => $accNumber,
+                    'account_name' => $accName,
+                ];
+            }
+        }
+
+        if (empty($cleanBankAccounts)) {
+            return back()->withErrors(['bank_accounts' => 'Setidaknya harus ada satu rekening bank yang valid.']);
+        }
+
         // Save system settings
         SystemSetting::set('free_preview_episodes', (string) $validated['free_preview_episodes'], 'integer');
-        SystemSetting::set('bca_account_number', $validated['bca_account_number'], 'text');
-        SystemSetting::set('bca_account_name', $validated['bca_account_name'], 'text');
-        SystemSetting::set('mandiri_account_number', $validated['mandiri_account_number'], 'text');
-        SystemSetting::set('mandiri_account_name', $validated['mandiri_account_name'], 'text');
+        SystemSetting::set('official_bank_accounts', $cleanBankAccounts, 'json');
+
+        // Backwards compatibility for single BCA & Mandiri if present
+        foreach ($cleanBankAccounts as $b) {
+            if (stripos($b['bank_name'], 'bca') !== false) {
+                SystemSetting::set('bca_account_number', $b['account_number'], 'text');
+                SystemSetting::set('bca_account_name', $b['account_name'], 'text');
+            } elseif (stripos($b['bank_name'], 'mandiri') !== false) {
+                SystemSetting::set('mandiri_account_number', $b['account_number'], 'text');
+                SystemSetting::set('mandiri_account_name', $b['account_name'], 'text');
+            }
+        }
 
         // Update plan prices
         SubscriptionPlan::where('code', 'monthly')->update(['price' => $validated['price_monthly']]);

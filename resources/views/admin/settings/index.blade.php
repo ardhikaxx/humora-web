@@ -99,46 +99,55 @@
             </div>
         </div>
 
-        <!-- Right Column: Informasi Pembayaran Resmi (Bank BCA, Mandiri, & QRIS) -->
+        <!-- Right Column: Informasi Pembayaran Resmi (Rekening Bank Dinamis & QRIS) -->
         <div class="col-12 col-lg-6">
             <div class="humora-card mb-4">
-                <div class="humora-card-header">
+                <div class="humora-card-header d-flex justify-content-between align-items-center">
                     <div>
                         <div class="humora-card-title">REKENING TRANSFER BANK RESMI</div>
-                        <div class="humora-card-subtitle">Informasi tujuan transfer manual yang tampil pada aplikasi Flutter.</div>
+                        <div class="humora-card-subtitle">Daftar rekening bank manual yang tampil dinamis pada aplikasi mobile.</div>
                     </div>
                     <div class="text-muted"><i data-lucide="credit-card"></i></div>
                 </div>
                 <div class="humora-card-body p-4">
-                    <!-- BCA -->
-                    <div class="p-3 rounded-3 border bg-light mb-3">
-                        <h6 class="fw-bold text-dark mb-2" style="font-size: 0.85rem;">Bank Central Asia (BCA)</h6>
-                        <div class="row g-2">
-                            <div class="col-12 col-sm-6">
-                                <label class="form-label-custom">Nomor Rekening BCA <span class="text-danger">*</span></label>
-                                <input type="text" name="bca_account_number" class="form-control-custom @error('bca_account_number') is-invalid @enderror" value="{{ old('bca_account_number', $bcaNumber) }}" required>
+                    <!-- Dynamic Bank Accounts Container -->
+                    <div id="bankAccountsContainer" class="d-flex flex-column gap-3 mb-3">
+                        @foreach ($bankAccounts as $index => $bank)
+                        <div class="bank-account-item p-3 rounded-3 border bg-light position-relative" data-index="{{ $index }}">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-purple-subtle text-purple fw-bold bank-item-title" style="font-size: 0.75rem;">
+                                    <i data-lucide="building" style="width: 12px; height: 12px;" class="me-1"></i> Rekening #<span class="bank-item-number">{{ $index + 1 }}</span>
+                                </span>
+                                <button type="button" class="btn btn-sm btn-outline-danger btn-remove-bank py-0 px-2" title="Hapus Rekening" style="font-size: 0.75rem; {{ count($bankAccounts) <= 1 ? 'display: none;' : '' }}">
+                                    <i data-lucide="trash-2" style="width: 13px; height: 13px;"></i> Hapus
+                                </button>
                             </div>
-                            <div class="col-12 col-sm-6">
-                                <label class="form-label-custom">Atas Nama Penerima <span class="text-danger">*</span></label>
-                                <input type="text" name="bca_account_name" class="form-control-custom @error('bca_account_name') is-invalid @enderror" value="{{ old('bca_account_name', $bcaName) }}" required>
+                            <div class="row g-2">
+                                <div class="col-12">
+                                    <label class="form-label-custom">Nama Bank <span class="text-danger">*</span></label>
+                                    <input type="text" name="bank_accounts[{{ $index }}][bank_name]" class="form-control-custom input-bank-name" placeholder="Misal: Bank Central Asia (BCA) / Bank Mandiri / BRI" value="{{ $bank['bank_name'] ?? '' }}" required>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <label class="form-label-custom">Nomor Rekening <span class="text-danger">*</span></label>
+                                    <input type="text" name="bank_accounts[{{ $index }}][account_number]" class="form-control-custom input-bank-number" placeholder="Misal: 8830-192-888" value="{{ $bank['account_number'] ?? '' }}" required>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <label class="form-label-custom">Atas Nama Penerima <span class="text-danger">*</span></label>
+                                    <input type="text" name="bank_accounts[{{ $index }}][account_name]" class="form-control-custom input-bank-holder" placeholder="Misal: PT HUMORA MEDIA KREATIF" value="{{ $bank['account_name'] ?? '' }}" required>
+                                </div>
                             </div>
                         </div>
+                        @endforeach
                     </div>
 
-                    <!-- Mandiri -->
-                    <div class="p-3 rounded-3 border bg-light mb-0">
-                        <h6 class="fw-bold text-dark mb-2" style="font-size: 0.85rem;">Bank Mandiri</h6>
-                        <div class="row g-2">
-                            <div class="col-12 col-sm-6">
-                                <label class="form-label-custom">Nomor Rekening Mandiri <span class="text-danger">*</span></label>
-                                <input type="text" name="mandiri_account_number" class="form-control-custom @error('mandiri_account_number') is-invalid @enderror" value="{{ old('mandiri_account_number', $mandiriNumber) }}" required>
-                            </div>
-                            <div class="col-12 col-sm-6">
-                                <label class="form-label-custom">Atas Nama Penerima <span class="text-danger">*</span></label>
-                                <input type="text" name="mandiri_account_name" class="form-control-custom @error('mandiri_account_name') is-invalid @enderror" value="{{ old('mandiri_account_name', $mandiriName) }}" required>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Button Tambah Rekening (Di bawah inputan) -->
+                    <button type="button" class="btn btn-sm btn-outline-primary w-100 py-2 d-flex align-items-center justify-content-center gap-2" id="btnAddBankAccount" style="border-style: dashed; border-width: 1.5px; font-weight: 600;">
+                        <i data-lucide="plus-circle" style="width: 16px; height: 16px;"></i>
+                        <span>Tambah Rekening Bank Baru</span>
+                    </button>
+                    <small class="text-muted mt-2 d-block text-center" style="font-size: 0.72rem;">
+                        Aplikasi mobile akan menampilkan tombol metode transfer otomatis sesuai jumlah bank di atas.
+                    </small>
                 </div>
             </div>
 
@@ -189,4 +198,94 @@
         </div>
     </div>
 </form>
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const container = document.getElementById('bankAccountsContainer');
+    const addBtn = document.getElementById('btnAddBankAccount');
+
+    function updateDeleteButtons() {
+        if (!container) return;
+        const items = container.querySelectorAll('.bank-account-item');
+        const showDelete = items.length > 1;
+
+        items.forEach((item, index) => {
+            const numSpan = item.querySelector('.bank-item-number');
+            if (numSpan) numSpan.textContent = index + 1;
+
+            const nameInput = item.querySelector('.input-bank-name');
+            const numberInput = item.querySelector('.input-bank-number');
+            const holderInput = item.querySelector('.input-bank-holder');
+
+            if (nameInput) nameInput.name = `bank_accounts[${index}][bank_name]`;
+            if (numberInput) numberInput.name = `bank_accounts[${index}][account_number]`;
+            if (holderInput) holderInput.name = `bank_accounts[${index}][account_name]`;
+
+            const delBtn = item.querySelector('.btn-remove-bank');
+            if (delBtn) {
+                delBtn.style.display = showDelete ? 'inline-flex' : 'none';
+            }
+        });
+
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    }
+
+    if (addBtn && container) {
+        addBtn.addEventListener('click', function () {
+            const currentItems = container.querySelectorAll('.bank-account-item');
+            const newIndex = currentItems.length;
+
+            const newCard = document.createElement('div');
+            newCard.className = 'bank-account-item p-3 rounded-3 border bg-light position-relative';
+            newCard.setAttribute('data-index', newIndex);
+            newCard.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge bg-purple-subtle text-purple fw-bold bank-item-title" style="font-size: 0.75rem;">
+                        <i data-lucide="building" style="width: 12px; height: 12px;" class="me-1"></i> Rekening #<span class="bank-item-number">${newIndex + 1}</span>
+                    </span>
+                    <button type="button" class="btn btn-sm btn-outline-danger btn-remove-bank py-0 px-2" title="Hapus Rekening" style="font-size: 0.75rem;">
+                        <i data-lucide="trash-2" style="width: 13px; height: 13px;"></i> Hapus
+                    </button>
+                </div>
+                <div class="row g-2">
+                    <div class="col-12">
+                        <label class="form-label-custom">Nama Bank <span class="text-danger">*</span></label>
+                        <input type="text" name="bank_accounts[${newIndex}][bank_name]" class="form-control-custom input-bank-name" placeholder="Misal: Bank BRI / Bank BNI / CIMB Niaga" required>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label-custom">Nomor Rekening <span class="text-danger">*</span></label>
+                        <input type="text" name="bank_accounts[${newIndex}][account_number]" class="form-control-custom input-bank-number" placeholder="Nomor rekening" required>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label-custom">Atas Nama Penerima <span class="text-danger">*</span></label>
+                        <input type="text" name="bank_accounts[${newIndex}][account_name]" class="form-control-custom input-bank-holder" placeholder="Nama pemilik rekening" required>
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(newCard);
+            updateDeleteButtons();
+            const inputToFocus = newCard.querySelector('.input-bank-name');
+            if (inputToFocus) inputToFocus.focus();
+        });
+
+        container.addEventListener('click', function (e) {
+            const delBtn = e.target.closest('.btn-remove-bank');
+            if (!delBtn) return;
+
+            const item = delBtn.closest('.bank-account-item');
+            if (item && container.querySelectorAll('.bank-account-item').length > 1) {
+                item.remove();
+                updateDeleteButtons();
+            }
+        });
+    }
+
+    updateDeleteButtons();
+});
+</script>
 @endsection

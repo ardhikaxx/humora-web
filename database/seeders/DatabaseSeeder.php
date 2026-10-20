@@ -41,6 +41,18 @@ class DatabaseSeeder extends Seeder
         SystemSetting::set('bca_account_name', 'PT HUMORA MEDIA KREATIF', 'text');
         SystemSetting::set('mandiri_account_number', '137-00-998822-1', 'text');
         SystemSetting::set('mandiri_account_name', 'HUMORA', 'text');
+        SystemSetting::set('official_bank_accounts', [
+            [
+                'bank_name' => 'Bank Central Asia (BCA)',
+                'account_number' => '8830-192-888',
+                'account_name' => 'PT HUMORA MEDIA KREATIF',
+            ],
+            [
+                'bank_name' => 'Bank Mandiri',
+                'account_number' => '137-00-998822-1',
+                'account_name' => 'HUMORA',
+            ],
+        ], 'json');
         SystemSetting::set('qris_official_image', '', 'text');
 
         // 3. Subscription Plans

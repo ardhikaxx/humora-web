@@ -65,7 +65,7 @@ class TransactionController extends Controller
             'transaction_id' => ['nullable', 'exists:transactions,id'],
             'trx_code' => ['nullable', 'string', 'exists:transactions,trx_code'],
             'plan_id' => ['required_without_all:transaction_id,trx_code', 'nullable', 'exists:subscription_plans,id'],
-            'payment_method' => ['required_without_all:transaction_id,trx_code', 'nullable', 'string', 'in:bca,mandiri,qris'],
+            'payment_method' => ['required_without_all:transaction_id,trx_code', 'nullable', 'string', 'max:60'],
             'proof_file' => ['required', 'file', 'mimes:jpg,jpeg,png', 'max:5120'], // Max 5MB
         ]);
 

@@ -59,6 +59,42 @@ test('user can browse active subscription plans and system payment info', functi
         ]);
 });
 
+test('admin can save multiple dynamic bank accounts and API serves them', function () {
+    $response = $this->actingAs($this->financeAdmin, 'admin')
+        ->post('/admin/settings', [
+            'free_preview_episodes' => 2,
+            'price_monthly' => 19000,
+            'price_quarterly' => 49000,
+            'price_yearly' => 179000,
+            'bank_accounts' => [
+                [
+                    'bank_name' => 'Bank BCA',
+                    'account_number' => '111-222-333',
+                    'account_name' => 'PT Humora Media',
+                ],
+                [
+                    'bank_name' => 'Bank Mandiri',
+                    'account_number' => '444-555-666',
+                    'account_name' => 'PT Humora Media',
+                ],
+                [
+                    'bank_name' => 'Bank BRI',
+                    'account_number' => '777-888-999',
+                    'account_name' => 'PT Humora Media',
+                ],
+            ],
+        ]);
+
+    $response->assertRedirect('/admin/settings');
+
+    $infoResponse = $this->getJson('/api/v1/settings/payment-info');
+    $infoResponse->assertStatus(200);
+    $data = $infoResponse->json('data.bank_accounts');
+    expect($data)->toHaveCount(3);
+    expect($data[0]['bank_name'])->toBe('Bank BCA');
+    expect($data[2]['bank_name'])->toBe('Bank BRI');
+});
+
 test('user can upload payment proof and create pending transaction', function () {
     $file = UploadedFile::fake()->image('bukti_transfer.jpg', 600, 800);
 
