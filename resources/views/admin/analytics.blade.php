@@ -25,13 +25,13 @@
             <span>Refresh</span>
         </button>
         <div class="btn-filter-group ms-md-2">
-            <a href="{{ route('admin.analytics', ['range' => 7]) }}" class="btn-filter-pill {{ $days === 7 ? 'active' : '' }}">
+            <a href="{{ route('admin.analytics', ['range' => 7]) }}" class="btn-filter-pill text-decoration-none {{ $days === 7 ? 'active' : '' }}">
                 7 Hari
             </a>
-            <a href="{{ route('admin.analytics', ['range' => 30]) }}" class="btn-filter-pill {{ $days === 30 ? 'active' : '' }}">
+            <a href="{{ route('admin.analytics', ['range' => 30]) }}" class="btn-filter-pill text-decoration-none {{ $days === 30 ? 'active' : '' }}">
                 30 Hari
             </a>
-            <a href="{{ route('admin.analytics', ['range' => 90]) }}" class="btn-filter-pill {{ $days === 90 ? 'active' : '' }}">
+            <a href="{{ route('admin.analytics', ['range' => 90]) }}" class="btn-filter-pill text-decoration-none {{ $days === 90 ? 'active' : '' }}">
                 90 Hari
             </a>
         </div>
