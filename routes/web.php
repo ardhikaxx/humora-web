@@ -44,6 +44,7 @@ Route::prefix('admin')->name('admin.')->middleware(['admin.role'])->group(functi
     Route::get('/', [DashboardController::class, 'index']);
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
+    Route::get('/analytics/realtime-data', [AnalyticsController::class, 'realtimeData'])->name('analytics.realtime');
 
     // 2. Profile (Accessible by all logged-in admins)
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
