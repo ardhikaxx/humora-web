@@ -14,16 +14,27 @@
         <h1 class="page-title">Analytics & Performa</h1>
         <p class="page-subtitle mb-0">Analisis metrik penayangan aktual, penonton unik, rata-rata durasi, rasio konversi, dan konten terpopuler.</p>
     </div>
-    <div class="btn-filter-group align-self-start align-self-md-auto">
-        <a href="{{ route('admin.analytics', ['range' => 7]) }}" class="btn-filter-pill {{ $days === 7 ? 'active' : '' }}">
-            7 Hari Terakhir
-        </a>
-        <a href="{{ route('admin.analytics', ['range' => 30]) }}" class="btn-filter-pill {{ $days === 30 ? 'active' : '' }}">
-            30 Hari Terakhir
-        </a>
-        <a href="{{ route('admin.analytics', ['range' => 90]) }}" class="btn-filter-pill {{ $days === 90 ? 'active' : '' }}">
-            90 Hari Terakhir
-        </a>
+    <div class="d-flex flex-wrap align-items-center gap-2 align-self-start align-self-md-auto">
+        <div class="badge bg-success-subtle text-success border border-success-subtle d-inline-flex align-items-center gap-1.5 px-3 py-2 rounded-pill shadow-2xs" style="font-size: 0.76rem;">
+            <span class="spinner-grow spinner-grow-sm text-success" style="width: 7px; height: 7px;" role="status"></span>
+            <span class="fw-bold">Sinkron Realtime</span>
+            <span class="text-muted ms-1" style="font-size: 0.7rem;" id="liveTimeBadge">({{ now()->format('H:i:s') }})</span>
+        </div>
+        <button type="button" id="btnRefreshAnalytics" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1 rounded-pill px-3 py-1.5 shadow-2xs" style="font-size: 0.76rem;" title="Perbarui Data Sekarang">
+            <i data-lucide="refresh-cw" style="width: 13px; height: 13px;" id="iconRefresh"></i>
+            <span>Refresh</span>
+        </button>
+        <div class="btn-filter-group ms-md-2">
+            <a href="{{ route('admin.analytics', ['range' => 7]) }}" class="btn-filter-pill {{ $days === 7 ? 'active' : '' }}">
+                7 Hari
+            </a>
+            <a href="{{ route('admin.analytics', ['range' => 30]) }}" class="btn-filter-pill {{ $days === 30 ? 'active' : '' }}">
+                30 Hari
+            </a>
+            <a href="{{ route('admin.analytics', ['range' => 90]) }}" class="btn-filter-pill {{ $days === 90 ? 'active' : '' }}">
+                90 Hari
+            </a>
+        </div>
     </div>
 </div>
 
@@ -31,6 +42,7 @@
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-4 col-xl-2">
         <x-stat-card 
+            id="cardTotalViews"
             label="Total Views" 
             :value="number_format($totalViews, 0, ',', '.')" 
             icon="eye" 
@@ -40,6 +52,7 @@
     </div>
     <div class="col-6 col-md-4 col-xl-2">
         <x-stat-card 
+            id="cardUniqueViewers"
             label="Penonton Unik" 
             :value="number_format($uniqueViewers, 0, ',', '.')" 
             icon="users" 
@@ -49,6 +62,7 @@
     </div>
     <div class="col-6 col-md-4 col-xl-3">
         <x-stat-card 
+            id="cardWatchTime"
             label="Total Watch Time" 
             :value="$formattedWatchTime" 
             icon="clock" 
@@ -58,6 +72,7 @@
     </div>
     <div class="col-6 col-md-4 col-xl-3">
         <x-stat-card 
+            id="cardAvgDuration"
             label="Rata-rata Durasi" 
             :value="$formattedAvgDuration" 
             icon="trending-up" 
@@ -67,6 +82,7 @@
     </div>
     <div class="col-6 col-md-4 col-xl-2">
         <x-stat-card 
+            id="cardConversionRate"
             label="Rasio Konversi" 
             :value="$conversionRate . '%'" 
             badge="VIP"
@@ -84,7 +100,7 @@
             <div class="humora-card-title">GRAFIK TREN PENAYANGAN KONTEN</div>
             <div class="humora-card-subtitle">Frekuensi penayangan video sketsa komedi selama {{ $days }} hari terakhir (sumber: ViewingEvent)</div>
         </div>
-        <span class="badge bg-purple-subtle text-purple px-3 py-1 rounded-pill" style="font-size: 0.75rem;">
+        <span id="badgeChartTotalViews" class="badge bg-purple-subtle text-purple px-3 py-1 rounded-pill" style="font-size: 0.75rem;">
             Total: {{ number_format($totalViews, 0, ',', '.') }} views
         </span>
     </div>
@@ -117,7 +133,7 @@
                                 <th class="text-end">Views</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="tableTopSeriesBody">
                             @forelse ($topSeries as $index => $item)
                             <tr>
                                 <td class="fw-bold text-muted">{{ $index + 1 }}</td>
@@ -218,11 +234,20 @@
 @endsection
 
 @section('scripts')
+<style>
+@keyframes spinClockwise {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.spin-animation {
+    animation: spinClockwise 0.8s linear infinite;
+}
+</style>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const ctx = document.getElementById('analyticsChart');
     if (ctx) {
-        new Chart(ctx, {
+        window.analyticsChartInstance = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: {!! json_encode($chartLabels) !!},
@@ -260,6 +285,101 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
+    }
+
+    let isFetching = false;
+    function updateCardValue(cardSelector, newValue) {
+        const el = document.querySelector(cardSelector + ' .stat-value');
+        if (el && el.textContent.trim() !== newValue.toString().trim()) {
+            el.textContent = newValue;
+            el.style.transition = 'color 0.3s ease, transform 0.3s ease';
+            el.style.color = '#7028B8';
+            el.style.transform = 'scale(1.08)';
+            setTimeout(() => {
+                el.style.color = '';
+                el.style.transform = 'scale(1)';
+            }, 800);
+        }
+    }
+
+    function pollRealtimeAnalytics() {
+        if (isFetching) return;
+        isFetching = true;
+        const icon = document.getElementById('iconRefresh');
+        if (icon) icon.classList.add('spin-animation');
+
+        fetch('{{ route('admin.analytics.realtime') }}?range={{ $days }}')
+            .then(res => res.json())
+            .then(json => {
+                if (json.success && json.data) {
+                    const d = json.data;
+                    updateCardValue('#cardTotalViews', d.totalViewsFormatted);
+                    updateCardValue('#cardUniqueViewers', d.uniqueViewersFormatted);
+                    updateCardValue('#cardWatchTime', d.formattedWatchTime);
+                    updateCardValue('#cardAvgDuration', d.formattedAvgDuration);
+                    updateCardValue('#cardConversionRate', d.conversionRate + '%');
+
+                    const badgeChart = document.getElementById('badgeChartTotalViews');
+                    if (badgeChart) badgeChart.textContent = 'Total: ' + d.totalViewsFormatted + ' views';
+
+                    const liveTime = document.getElementById('liveTimeBadge');
+                    if (liveTime) liveTime.textContent = '(' + d.lastUpdated + ')';
+
+                    // Update Chart smoothly
+                    if (window.analyticsChartInstance && d.chartLabels && d.chartViews) {
+                        window.analyticsChartInstance.data.labels = d.chartLabels;
+                        window.analyticsChartInstance.data.datasets[0].data = d.chartViews;
+                        window.analyticsChartInstance.update();
+                    }
+
+                    // Update Top Series Table
+                    const tbody = document.getElementById('tableTopSeriesBody');
+                    if (tbody && d.topSeries) {
+                        if (d.topSeries.length === 0) {
+                            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted" style="font-size: 0.85rem;">Belum ada data penayangan tercatat dalam periode ini.</td></tr>';
+                        } else {
+                            tbody.innerHTML = d.topSeries.map(item => `
+                                <tr>
+                                    <td class="fw-bold text-muted">${item.rank}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img src="${item.thumbnail_url}" alt="${item.title}" class="rounded" style="width: 44px; height: 32px; object-fit: cover;" onerror="this.src='/images/logo-humora.png'">
+                                            <div class="text-truncate" style="max-width: 200px;">
+                                                <a href="${item.url}" class="fw-bold text-dark text-decoration-none text-truncate d-block" style="font-size: 0.82rem;">
+                                                    ${item.title}
+                                                </a>
+                                                <small class="text-muted" style="font-size: 0.72rem;">${item.release_year}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border" style="font-size: 0.72rem;">
+                                            ${item.genre}
+                                        </span>
+                                    </td>
+                                    <td class="text-end fw-bold text-purple" style="font-size: 0.85rem;">
+                                        ${item.views_formatted}
+                                    </td>
+                                </tr>
+                            `).join('');
+                        }
+                    }
+                }
+            })
+            .catch(err => console.error('Realtime analytics sync error:', err))
+            .finally(() => {
+                isFetching = false;
+                if (icon) icon.classList.remove('spin-animation');
+            });
+    }
+
+    // Auto-poll every 4 seconds for live sync with mobile viewing activity
+    const pollInterval = setInterval(pollRealtimeAnalytics, 4000);
+    window.addEventListener('beforeunload', () => clearInterval(pollInterval));
+
+    const btnRefresh = document.getElementById('btnRefreshAnalytics');
+    if (btnRefresh) {
+        btnRefresh.addEventListener('click', pollRealtimeAnalytics);
     }
 });
 </script>
