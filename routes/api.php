@@ -8,6 +8,8 @@ use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\SeriesController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
 use App\Http\Controllers\Api\V1\TransactionController;
+use App\Http\Controllers\Api\V1\VideoTrackingController;
+use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Api\V1\WatchHistoryController;
 use App\Http\Controllers\FileStorageController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +32,10 @@ Route::prefix('v1')->group(function () {
     Route::get('/series/{slugOrId}', [SeriesController::class, 'show']);
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::get('/episodes/{id}', [EpisodeController::class, 'show']);
+
+    // Realtime Video Views & Watch Time Tracking (Public / Guest & Authenticated)
+    Route::post('/videos/track-view', [VideoTrackingController::class, 'track']);
+    Route::get('/analytics/realtime', [AnalyticsController::class, 'realtimeData']);
 
     // 3. Subscription Plans & Payment Information (Public)
     Route::get('/subscription/plans', [SubscriptionController::class, 'plans']);
