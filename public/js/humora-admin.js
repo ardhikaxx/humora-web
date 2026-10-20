@@ -465,4 +465,202 @@ document.addEventListener('DOMContentLoaded', function () {
             if (sidebarOverlay) sidebarOverlay.classList.remove('show');
         }
     });
+
+    // -------------------------------------------------------------
+    // 9. CLIENT-SIDE AUTOMATIC IMAGE COMPRESSION & WEBP CONVERTER
+    // -------------------------------------------------------------
+    window.formatBytes = function (bytes, decimals = 1) {
+        if (!bytes || bytes === 0) return '0 B';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    };
+
+    window.compressImageFileToWebp = function (file, options = {}) {
+        return new Promise((resolve, reject) => {
+            if (!file || !file.type.startsWith('image/')) {
+                return reject(new Error('File yang dipilih bukan berkas gambar valid.'));
+            }
+
+            const maxWidth = options.maxWidth || 1920;
+            const maxHeight = options.maxHeight || 1080;
+            const quality = typeof options.quality === 'number' ? options.quality : 0.82;
+
+            const reader = new FileReader();
+            reader.onerror = () => reject(new Error('Gagal membaca file gambar.'));
+            reader.onload = function (e) {
+                const img = new Image();
+                img.onerror = () => reject(new Error('Gagal memuat gambar ke browser.'));
+                img.onload = function () {
+                    let width = img.width;
+                    let height = img.height;
+
+                    // Calculate aspect-ratio-preserving dimensions
+                    if (width > maxWidth || height > maxHeight) {
+                        const ratio = Math.min(maxWidth / width, maxHeight / height);
+                        width = Math.round(width * ratio);
+                        height = Math.round(height * ratio);
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext('2d');
+                    if (!ctx) {
+                        return reject(new Error('Gagal menginisialisasi canvas context.'));
+                    }
+
+                    // Enable high quality image smoothing
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+
+                    // Draw image to canvas
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob(
+                        function (blob) {
+                            if (!blob) {
+                                return reject(new Error('Browser tidak mendukung konversi WebP.'));
+                            }
+
+                            // Generate clean .webp filename
+                            const baseName = file.name.replace(/\.[^/.]+$/, '').trim() || 'image';
+                            const newFilename = baseName + '.webp';
+                            const webpFile = new File([blob], newFilename, {
+                                type: 'image/webp',
+                                lastModified: Date.now(),
+                            });
+
+                            const originalSize = file.size;
+                            const compressedSize = webpFile.size;
+                            const savingsPercent = originalSize > 0
+                                ? Math.max(0, Math.round((1 - compressedSize / originalSize) * 100))
+                                : 0;
+
+                            const previewUrl = URL.createObjectURL(webpFile);
+
+                            resolve({
+                                file: webpFile,
+                                originalSize,
+                                compressedSize,
+                                savingsPercent,
+                                previewUrl,
+                                width,
+                                height,
+                                originalFormat: file.type.replace('image/', '').toUpperCase(),
+                            });
+                        },
+                        'image/webp',
+                        quality
+                    );
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    };
+
+    // Auto-attach client-side compressor to all image inputs
+    document.querySelectorAll('input[type="file"][name="thumbnail"], input[type="file"][data-auto-webp="true"]').forEach(input => {
+        // Prevent double binding
+        if (input.dataset.webpBound === 'true') return;
+        input.dataset.webpBound = 'true';
+
+        // Find or create compression feedback container
+        let statusContainer = document.getElementById(input.id + '_status');
+        if (!statusContainer) {
+            statusContainer = document.createElement('div');
+            statusContainer.id = input.id + '_status';
+            statusContainer.className = 'mt-2';
+            input.parentNode.appendChild(statusContainer);
+        }
+
+        input.addEventListener('change', async function (e) {
+            const rawFile = e.target.files && e.target.files[0];
+            if (!rawFile) {
+                statusContainer.innerHTML = '';
+                return;
+            }
+
+            // If already processed webp by our script, skip re-compression
+            if (rawFile._humoraCompressed) {
+                return;
+            }
+
+            // Show interactive processing indicator
+            statusContainer.innerHTML = `
+                <div class="p-2 px-3 rounded-2 d-flex align-items-center gap-2 border" style="background: #F1F5F9; border-color: #CBD5E1; font-size: 0.76rem; color: #334155;">
+                    <div class="spinner-border spinner-border-sm text-purple" role="status" style="width: 14px; height: 14px; color: #43135C;"></div>
+                    <span>Mengompresi otomatis & mengonversi gambar ke <strong>WebP</strong> di browser...</span>
+                </div>
+            `;
+
+            try {
+                const result = await window.compressImageFileToWebp(rawFile, {
+                    maxWidth: 1920,
+                    maxHeight: 1080,
+                    quality: 0.82,
+                });
+
+                // Tag compressed file to prevent infinite event loop
+                result.file._humoraCompressed = true;
+
+                // Replace input file via DataTransfer API
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(result.file);
+                input.files = dataTransfer.files;
+
+                // Update preview image if exists
+                const previewImg = document.getElementById('imagePreview');
+                const placeholder = document.getElementById('placeholderText');
+                if (previewImg) {
+                    previewImg.src = result.previewUrl;
+                    previewImg.style.display = 'block';
+                }
+                if (placeholder) {
+                    placeholder.style.display = 'none';
+                }
+
+                // Render success badge with clear savings info
+                statusContainer.innerHTML = `
+                    <div class="p-2 px-3 rounded-2 border d-flex flex-wrap align-items-center justify-content-between gap-2" style="background: #ECFDF5; border-color: #A7F3D0; font-size: 0.76rem; color: #065F46;">
+                        <div class="d-flex align-items-center gap-2">
+                            <i data-lucide="check-circle-2" class="text-success" style="width: 15px; height: 15px;"></i>
+                            <span>
+                                <strong>Terkonversi ke WebP:</strong> 
+                                <span class="text-decoration-line-through text-muted">${window.formatBytes(result.originalSize)}</span> 
+                                &rarr; <span class="fw-bold text-success">${window.formatBytes(result.compressedSize)}</span> 
+                                <span class="badge bg-success ms-1">Hemat ${result.savingsPercent}%</span>
+                            </span>
+                        </div>
+                        <span class="badge py-1 px-2 text-uppercase" style="background: rgba(16, 185, 129, 0.2); color: #065F46; font-size: 0.7rem;">
+                            ${result.width} &times; ${result.height} px
+                        </span>
+                    </div>
+                `;
+
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+
+                if (window.showHumoraToast) {
+                    window.showHumoraToast(`Foto otomatis dikompresi ke WebP (${window.formatBytes(result.compressedSize)}, hemat ${result.savingsPercent}%).`, 'success');
+                }
+            } catch (err) {
+                console.warn('Kompresi WebP client-side gagal, fallback ke file asli:', err);
+                statusContainer.innerHTML = `
+                    <div class="p-2 px-3 rounded-2 border" style="background: #FFFBEB; border-color: #FDE68A; font-size: 0.74rem; color: #92400E;">
+                        <i data-lucide="info" class="text-warning me-1" style="width: 14px; height: 14px;"></i>
+                        File asli digunakan (${window.formatBytes(rawFile.size)}). Kompresi WebP server akan dijalankan saat disimpan.
+                    </div>
+                `;
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }
+        });
+    });
 });
