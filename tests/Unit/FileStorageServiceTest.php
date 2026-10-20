@@ -51,4 +51,36 @@ class FileStorageServiceTest extends TestCase
         $ffmpeg = FileStorageService::getFfmpegPath();
         $this->assertNotEmpty($ffmpeg);
     }
+
+    public function test_video_is_compressed_and_stored_as_webm(): void
+    {
+        $ffmpeg = FileStorageService::getFfmpegPath();
+        $this->assertNotEmpty($ffmpeg);
+
+        $tempVideo = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'test_vid_' . uniqid() . '.mp4';
+        $cmd = sprintf(
+            '"%s" -y -f lavfi -i testsrc=duration=1:size=320x180:rate=15 -f lavfi -i sine=frequency=440:duration=1 -c:v libx264 -c:a aac %s 2>&1',
+            $ffmpeg,
+            escapeshellarg($tempVideo)
+        );
+        $out = [];
+        $ret = 0;
+        @exec($cmd, $out, $ret);
+
+        if ($ret === 0 && file_exists($tempVideo)) {
+            $uploaded = new UploadedFile($tempVideo, 'sample.mp4', 'video/mp4', null, true);
+            $storedName = $this->service->storeUploadedVideoAsWebm($uploaded, 'videos', 'test_vid_unit');
+
+            $this->assertStringEndsWith('.webm', $storedName);
+            $storedPath = FileStorageService::getUploadPath('videos') . DIRECTORY_SEPARATOR . $storedName;
+            $this->assertFileExists($storedPath);
+            $this->assertGreaterThan(0, filesize($storedPath));
+
+            // Clean up
+            $this->service->deleteFile('videos', $storedName);
+            if (file_exists($tempVideo)) {
+                @unlink($tempVideo);
+            }
+        }
+    }
 }
