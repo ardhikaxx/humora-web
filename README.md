@@ -10,11 +10,12 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/PHP-8.4+-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.4+"/>
-  <img src="https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 12.x"/>
-  <img src="https://img.shields.io/badge/FFmpeg-VP9%20%2F%20Opus-007808?style=for-the-badge&logo=ffmpeg&logoColor=white" alt="FFmpeg"/>
+  <a href="https://php.net"><img src="https://img.shields.io/badge/PHP-8.4+-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.4+"/></a>
+  <a href="https://laravel.com"><img src="https://img.shields.io/badge/Laravel-13.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 13.x"/></a>
+  <a href="https://ffmpeg.org"><img src="https://img.shields.io/badge/FFmpeg-VP9%20%2F%20Opus-007808?style=for-the-badge&logo=ffmpeg&logoColor=white" alt="FFmpeg"/></a>
   <img src="https://img.shields.io/badge/WebP-Auto--Compress-38B2AC?style=for-the-badge" alt="WebP"/>
-  <img src="https://img.shields.io/badge/License-Proprietary-43135C?style=for-the-badge" alt="License"/>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-Proprietary-43135C?style=for-the-badge" alt="License"/></a>
+  <a href="https://github.com/ardhikaxx"><img src="https://img.shields.io/badge/Author-Yanuar%20Ardhika%20Rahmadhani%20Ubaidillah-181717?style=for-the-badge&logo=github&logoColor=white" alt="Author"/></a>
 </p>
 
 ---
@@ -168,6 +169,13 @@ Untuk informasi lebih mendalam mengenai kebijakan dan pemeliharaan proyek, silak
 * [`CONTRIBUTING.md`](./CONTRIBUTING.md) — Panduan kontribusi kode dan standar teknis.
 * [`SECURITY.md`](./SECURITY.md) — Kebijakan pelaporan kerentanan dan privasi data.
 * [`SUPPORT.md`](./SUPPORT.md) — Layanan konsultasi, bantuan teknis, dan dukungan donasi.
+* [`LICENSE`](./LICENSE) — Ketentuan lisensi resmi **Proprietary Software License (All Rights Reserved)**.
+
+---
+
+## ⚠️ Ketentuan Penggunaan
+
+Proyek ini dilindungi lisensi **Proprietary Software License (All Rights Reserved)**. Anda **dilarang** menyalin, memodifikasi, mendistribusikan ulang, atau menjual kode ini tanpa izin tertulis dari pemilik hak cipta. Lihat [LICENSE](./LICENSE) untuk detail lengkap.
 
 ---
 
@@ -178,4 +186,4 @@ Dirancang dan dikembangkan dengan penuh dedikasi oleh:
 *Lead Software Architect & Maintainer*  
 Email Resmi: `ardhikayanuar58@gmail.com`
 
-Proyek ini dilindungi oleh lisensi **Proprietary Software License (All Rights Reserved)**.
+> **Copyright (c) 2026 Yanuar Ardhika Rahmadhani Ubaidillah (@ardhikaxx). All Rights Reserved.**
