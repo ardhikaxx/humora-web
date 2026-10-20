@@ -175,25 +175,6 @@
 @section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const input = document.getElementById('thumbnailUpload');
-    const preview = document.getElementById('imagePreview');
-    const placeholder = document.getElementById('placeholderText');
-
-    if (input) {
-        input.addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (evt) {
-                    preview.src = evt.target.result;
-                    preview.style.display = 'block';
-                    placeholder.style.display = 'none';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
-
     // Auto slug from title if slug field is empty
     const titleInput = document.getElementById('title');
     const slugInput = document.getElementById('slug');
