@@ -113,27 +113,53 @@
                     <!-- Dynamic Bank Accounts Container -->
                     <div id="bankAccountsContainer" class="d-flex flex-column gap-3 mb-3">
                         @foreach ($bankAccounts as $index => $bank)
-                        <div class="bank-account-item p-3 rounded-3 border bg-light position-relative" data-index="{{ $index }}">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="badge bg-purple-subtle text-purple fw-bold bank-item-title" style="font-size: 0.75rem;">
-                                    <i data-lucide="building" style="width: 12px; height: 12px;" class="me-1"></i> Rekening #<span class="bank-item-number">{{ $index + 1 }}</span>
-                                </span>
-                                <button type="button" class="btn btn-sm btn-outline-danger btn-remove-bank py-0 px-2" title="Hapus Rekening" style="font-size: 0.75rem; {{ count($bankAccounts) <= 1 ? 'display: none;' : '' }}">
-                                    <i data-lucide="trash-2" style="width: 13px; height: 13px;"></i> Hapus
+                        <div class="bank-account-card" data-index="{{ $index }}">
+                            <div class="bank-card-header">
+                                <div class="bank-order-badge">
+                                    <i data-lucide="landmark"></i>
+                                    <span>Rekening #<span class="bank-item-number">{{ $index + 1 }}</span></span>
+                                </div>
+                                <button type="button" class="btn-remove-bank-custom btn-remove-bank" title="Hapus Rekening" style="{{ count($bankAccounts) <= 1 ? 'display: none;' : '' }}">
+                                    <i data-lucide="trash-2"></i>
+                                    <span>Hapus</span>
                                 </button>
                             </div>
-                            <div class="row g-2">
+                            <div class="row g-3">
                                 <div class="col-12">
                                     <label class="form-label-custom">Nama Bank <span class="text-danger">*</span></label>
-                                    <input type="text" name="bank_accounts[{{ $index }}][bank_name]" class="form-control-custom input-bank-name" placeholder="Misal: Bank Central Asia (BCA) / Bank Mandiri / BRI" value="{{ $bank['bank_name'] ?? '' }}" required>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 10px 0 0 10px; border-color: #E2E8F0;">
+                                            <i data-lucide="building-2" style="width: 16px; height: 16px;"></i>
+                                        </span>
+                                        <input type="text" name="bank_accounts[{{ $index }}][bank_name]" class="form-control-custom input-bank-name border-start-0" placeholder="Misal: Bank Central Asia (BCA)" value="{{ $bank['bank_name'] ?? '' }}" required style="border-radius: 0 10px 10px 0;">
+                                    </div>
+                                    <div class="d-flex flex-wrap gap-1 mt-2 align-items-center">
+                                        <span class="text-muted small me-1" style="font-size: 0.7rem;">Pilih Cepat:</span>
+                                        <button type="button" class="bank-preset-chip" onclick="applyBankPreset(this, 'Bank Central Asia (BCA)')">BCA</button>
+                                        <button type="button" class="bank-preset-chip" onclick="applyBankPreset(this, 'Bank Mandiri')">Mandiri</button>
+                                        <button type="button" class="bank-preset-chip" onclick="applyBankPreset(this, 'Bank Rakyat Indonesia (BRI)')">BRI</button>
+                                        <button type="button" class="bank-preset-chip" onclick="applyBankPreset(this, 'Bank Negara Indonesia (BNI)')">BNI</button>
+                                        <button type="button" class="bank-preset-chip" onclick="applyBankPreset(this, 'Bank Syariah Indonesia (BSI)')">BSI</button>
+                                        <button type="button" class="bank-preset-chip" onclick="applyBankPreset(this, 'Bank Jago')">Jago</button>
+                                    </div>
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <label class="form-label-custom">Nomor Rekening <span class="text-danger">*</span></label>
-                                    <input type="text" name="bank_accounts[{{ $index }}][account_number]" class="form-control-custom input-bank-number" placeholder="Misal: 8830-192-888" value="{{ $bank['account_number'] ?? '' }}" required>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 10px 0 0 10px; border-color: #E2E8F0;">
+                                            <i data-lucide="hash" style="width: 15px; height: 15px;"></i>
+                                        </span>
+                                        <input type="text" name="bank_accounts[{{ $index }}][account_number]" class="form-control-custom input-bank-number border-start-0" placeholder="Misal: 8830-192-888" value="{{ $bank['account_number'] ?? '' }}" required style="border-radius: 0 10px 10px 0; font-family: 'JetBrains Mono', 'Courier New', monospace; font-weight: 600; letter-spacing: 0.04em;">
+                                    </div>
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <label class="form-label-custom">Atas Nama Penerima <span class="text-danger">*</span></label>
-                                    <input type="text" name="bank_accounts[{{ $index }}][account_name]" class="form-control-custom input-bank-holder" placeholder="Misal: PT HUMORA MEDIA KREATIF" value="{{ $bank['account_name'] ?? '' }}" required>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 10px 0 0 10px; border-color: #E2E8F0;">
+                                            <i data-lucide="user-check" style="width: 15px; height: 15px;"></i>
+                                        </span>
+                                        <input type="text" name="bank_accounts[{{ $index }}][account_name]" class="form-control-custom input-bank-holder border-start-0" placeholder="Misal: PT HUMORA MEDIA KREATIF" value="{{ $bank['account_name'] ?? '' }}" required style="border-radius: 0 10px 10px 0;">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -141,8 +167,8 @@
                     </div>
 
                     <!-- Button Tambah Rekening (Di bawah inputan) -->
-                    <button type="button" class="btn btn-sm btn-outline-primary w-100 py-2 d-flex align-items-center justify-content-center gap-2" id="btnAddBankAccount" style="border-style: dashed; border-width: 1.5px; font-weight: 600;">
-                        <i data-lucide="plus-circle" style="width: 16px; height: 16px;"></i>
+                    <button type="button" class="btn-add-bank-custom" id="btnAddBankAccount">
+                        <i data-lucide="plus-circle"></i>
                         <span>Tambah Rekening Bank Baru</span>
                     </button>
                     <small class="text-muted mt-2 d-block text-center" style="font-size: 0.72rem;">
@@ -202,13 +228,24 @@
 
 @section('scripts')
 <script>
+window.applyBankPreset = function(btn, bankName) {
+    const card = btn.closest('.bank-account-card');
+    if (!card) return;
+    const input = card.querySelector('.input-bank-name');
+    if (input) {
+        input.value = bankName;
+        input.focus();
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+};
+
 document.addEventListener('DOMContentLoaded', function () {
     const container = document.getElementById('bankAccountsContainer');
     const addBtn = document.getElementById('btnAddBankAccount');
 
     function updateDeleteButtons() {
         if (!container) return;
-        const items = container.querySelectorAll('.bank-account-item');
+        const items = container.querySelectorAll('.bank-account-card');
         const showDelete = items.length > 1;
 
         items.forEach((item, index) => {
@@ -236,33 +273,59 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (addBtn && container) {
         addBtn.addEventListener('click', function () {
-            const currentItems = container.querySelectorAll('.bank-account-item');
+            const currentItems = container.querySelectorAll('.bank-account-card');
             const newIndex = currentItems.length;
 
             const newCard = document.createElement('div');
-            newCard.className = 'bank-account-item p-3 rounded-3 border bg-light position-relative';
+            newCard.className = 'bank-account-card';
             newCard.setAttribute('data-index', newIndex);
             newCard.innerHTML = `
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="badge bg-purple-subtle text-purple fw-bold bank-item-title" style="font-size: 0.75rem;">
-                        <i data-lucide="building" style="width: 12px; height: 12px;" class="me-1"></i> Rekening #<span class="bank-item-number">${newIndex + 1}</span>
-                    </span>
-                    <button type="button" class="btn btn-sm btn-outline-danger btn-remove-bank py-0 px-2" title="Hapus Rekening" style="font-size: 0.75rem;">
-                        <i data-lucide="trash-2" style="width: 13px; height: 13px;"></i> Hapus
+                <div class="bank-card-header">
+                    <div class="bank-order-badge">
+                        <i data-lucide="landmark"></i>
+                        <span>Rekening #<span class="bank-item-number">${newIndex + 1}</span></span>
+                    </div>
+                    <button type="button" class="btn-remove-bank-custom btn-remove-bank" title="Hapus Rekening">
+                        <i data-lucide="trash-2"></i>
+                        <span>Hapus</span>
                     </button>
                 </div>
-                <div class="row g-2">
+                <div class="row g-3">
                     <div class="col-12">
                         <label class="form-label-custom">Nama Bank <span class="text-danger">*</span></label>
-                        <input type="text" name="bank_accounts[${newIndex}][bank_name]" class="form-control-custom input-bank-name" placeholder="Misal: Bank BRI / Bank BNI / CIMB Niaga" required>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 10px 0 0 10px; border-color: #E2E8F0;">
+                                <i data-lucide="building-2" style="width: 16px; height: 16px;"></i>
+                            </span>
+                            <input type="text" name="bank_accounts[${newIndex}][bank_name]" class="form-control-custom input-bank-name border-start-0" placeholder="Misal: Bank Central Asia (BCA)" required style="border-radius: 0 10px 10px 0;">
+                        </div>
+                        <div class="d-flex flex-wrap gap-1 mt-2 align-items-center">
+                            <span class="text-muted small me-1" style="font-size: 0.7rem;">Pilih Cepat:</span>
+                            <button type="button" class="bank-preset-chip" onclick="applyBankPreset(this, 'Bank Central Asia (BCA)')">BCA</button>
+                            <button type="button" class="bank-preset-chip" onclick="applyBankPreset(this, 'Bank Mandiri')">Mandiri</button>
+                            <button type="button" class="bank-preset-chip" onclick="applyBankPreset(this, 'Bank Rakyat Indonesia (BRI)')">BRI</button>
+                            <button type="button" class="bank-preset-chip" onclick="applyBankPreset(this, 'Bank Negara Indonesia (BNI)')">BNI</button>
+                            <button type="button" class="bank-preset-chip" onclick="applyBankPreset(this, 'Bank Syariah Indonesia (BSI)')">BSI</button>
+                            <button type="button" class="bank-preset-chip" onclick="applyBankPreset(this, 'Bank Jago')">Jago</button>
+                        </div>
                     </div>
                     <div class="col-12 col-sm-6">
                         <label class="form-label-custom">Nomor Rekening <span class="text-danger">*</span></label>
-                        <input type="text" name="bank_accounts[${newIndex}][account_number]" class="form-control-custom input-bank-number" placeholder="Nomor rekening" required>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 10px 0 0 10px; border-color: #E2E8F0;">
+                                <i data-lucide="hash" style="width: 15px; height: 15px;"></i>
+                            </span>
+                            <input type="text" name="bank_accounts[${newIndex}][account_number]" class="form-control-custom input-bank-number border-start-0" placeholder="Misal: 8830-192-888" required style="border-radius: 0 10px 10px 0; font-family: 'JetBrains Mono', 'Courier New', monospace; font-weight: 600; letter-spacing: 0.04em;">
+                        </div>
                     </div>
                     <div class="col-12 col-sm-6">
                         <label class="form-label-custom">Atas Nama Penerima <span class="text-danger">*</span></label>
-                        <input type="text" name="bank_accounts[${newIndex}][account_name]" class="form-control-custom input-bank-holder" placeholder="Nama pemilik rekening" required>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 10px 0 0 10px; border-color: #E2E8F0;">
+                                <i data-lucide="user-check" style="width: 15px; height: 15px;"></i>
+                            </span>
+                            <input type="text" name="bank_accounts[${newIndex}][account_name]" class="form-control-custom input-bank-holder border-start-0" placeholder="Misal: PT HUMORA MEDIA KREATIF" required style="border-radius: 0 10px 10px 0;">
+                        </div>
                     </div>
                 </div>
             `;
@@ -277,8 +340,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const delBtn = e.target.closest('.btn-remove-bank');
             if (!delBtn) return;
 
-            const item = delBtn.closest('.bank-account-item');
-            if (item && container.querySelectorAll('.bank-account-item').length > 1) {
+            const item = delBtn.closest('.bank-account-card');
+            if (item && container.querySelectorAll('.bank-account-card').length > 1) {
                 item.remove();
                 updateDeleteButtons();
             }

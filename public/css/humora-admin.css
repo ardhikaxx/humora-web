@@ -812,6 +812,137 @@ body {
     flex-shrink: 0;
 }
 
+/* ================= DYNAMIC BANK ACCOUNTS UI ================= */
+.bank-account-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 1.15rem;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-left: 4px solid #7C3AED;
+}
+
+.bank-account-card:hover {
+    border-color: #CBD5E1;
+    border-left-color: #6D28D9;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.06), 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+.bank-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.9rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px dashed #E2E8F0;
+}
+
+.bank-order-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: #F5F3FF;
+    color: #6D28D9;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    border: 1px solid #DDD6FE;
+    letter-spacing: 0.02em;
+}
+
+.bank-order-badge svg,
+.bank-order-badge [data-lucide] {
+    width: 13px !important;
+    height: 13px !important;
+    stroke-width: 2.3px;
+}
+
+.bank-preset-chip {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.18rem 0.5rem;
+    border-radius: 6px;
+    background: #F1F5F9;
+    color: #475569;
+    border: 1px solid #E2E8F0;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+
+.bank-preset-chip:hover {
+    background: #EDE9FE;
+    color: #6D28D9;
+    border-color: #C4B5FD;
+    transform: translateY(-1px);
+}
+
+.btn-remove-bank-custom {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.65rem;
+    background: #FFF1F2;
+    color: #E11D48;
+    border: 1px solid #FECDD3;
+    border-radius: 8px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-remove-bank-custom:hover {
+    background: #FFE4E6;
+    color: #BE123C;
+    border-color: #FDA4AF;
+    transform: translateY(-1px);
+}
+
+.btn-remove-bank-custom svg,
+.btn-remove-bank-custom [data-lucide] {
+    width: 12px !important;
+    height: 12px !important;
+    stroke-width: 2.3px;
+}
+
+.btn-add-bank-custom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background: #FAF5FF;
+    color: #6D28D9;
+    border: 1.5px dashed #C084FC;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.btn-add-bank-custom:hover {
+    background: #F3E8FF;
+    border-color: #A855F7;
+    color: #581C87;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(168, 85, 247, 0.12);
+}
+
+.btn-add-bank-custom svg,
+.btn-add-bank-custom [data-lucide] {
+    width: 17px !important;
+    height: 17px !important;
+    stroke-width: 2.3px;
+}
+
 /* ================= TABLES ================= */
 .table-humora {
     width: 100%;
