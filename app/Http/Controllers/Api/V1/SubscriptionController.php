@@ -72,7 +72,9 @@ class SubscriptionController extends Controller
             }
 
             $logoFile = $info['logo'] ?? ($code . '.png');
-            $logoUrl = $info ? asset('images/banks/' . $info['logo']) : asset('images/banks/' . $code . '.png');
+            $logoPath = public_path('images/banks/' . $logoFile);
+            $v = file_exists($logoPath) ? filemtime($logoPath) : '1';
+            $logoUrl = asset('images/banks/' . $logoFile) . '?v=' . $v;
 
             $formattedBanks[] = [
                 'code' => $code,
