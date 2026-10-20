@@ -170,23 +170,5 @@
 @endsection
 
 @section('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const input = document.getElementById('thumbnailUpload');
-    const preview = document.getElementById('imagePreview');
-
-    if (input && preview) {
-        input.addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (evt) {
-                    preview.src = evt.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
-});
-</script>
+{{-- Script kompresi WebP client-side dihandle otomatis oleh humora-admin.js --}}
 @endsection
