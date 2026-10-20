@@ -236,11 +236,12 @@ class FileStorageService
 
         if ($ffmpeg) {
             // Compress and convert to WebM with VP9 & Opus
-            // No scaling filter is passed so original resolution (e.g. 1080p, 720p) is strictly preserved!
-            // -crf 32 with -b:v 0 provides optimal visual quality compression
-            // -deadline good -cpu-used 4 enables fast multi-threaded processing
+            // Strictly preserves original resolution while achieving high-efficiency compression
+            // -crf 32 with -b:v 0 provides optimal visual quality compression (~8-15MB for a 2m skit)
+            // -row-mt 1 and -deadline good -cpu-used 4 enables fast multi-threaded processing
+            // -map 0:v:0 -map 0:a? safely maps video and optional audio (prevents errors on silent clips)
             $cmd = sprintf(
-                '"%s" -y -i %s -c:v libvpx-vp9 -crf 32 -b:v 0 -deadline good -cpu-used 4 -c:a libopus -b:a 96k %s 2>&1',
+                '"%s" -y -i %s -map 0:v:0 -map 0:a? -c:v libvpx-vp9 -crf 32 -b:v 0 -row-mt 1 -deadline good -cpu-used 4 -c:a libopus -b:a 96k %s 2>&1',
                 $ffmpeg,
                 escapeshellarg($sourcePath),
                 escapeshellarg($targetFilePath)
