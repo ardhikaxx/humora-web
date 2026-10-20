@@ -1,12 +1,6 @@
 @php
     $currentAdmin = Auth::guard('admin')->user();
-    $role = $currentAdmin?->role ?? 'super_admin';
-    $roleLabel = match($role) {
-        'super_admin' => 'Super Admin',
-        'content_admin' => 'Content Admin',
-        'finance_admin' => 'Finance Admin',
-        default => 'Administrator'
-    };
+    $roleLabel = 'Admin';
     $initials = $currentAdmin?->initials ?? 'AH';
     $name = $currentAdmin?->name ?? 'Admin HUMORA';
 @endphp
@@ -22,7 +16,7 @@
 
     <!-- Navigation Links -->
     <div class="sidebar-nav-container">
-        <!-- OVERVIEW (All Roles) -->
+        <!-- OVERVIEW -->
         <div class="sidebar-section-title">Overview</div>
         <a href="{{ route('admin.dashboard') }}" class="nav-humora-link {{ Request::is('admin/dashboard') || Request::is('admin') ? 'active' : '' }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Dashboard">
             <i data-lucide="layout-grid"></i>
@@ -33,7 +27,6 @@
             <span class="sidebar-text">Analytics</span>
         </a>
 
-        @if (in_array($role, ['super_admin', 'content_admin'], true))
         <!-- MANAJEMEN KONTEN -->
         <div class="sidebar-section-title">Manajemen Konten</div>
         <a href="{{ route('admin.series.index') }}" class="nav-humora-link {{ Request::is('admin/series*') ? 'active' : '' }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Judul Konten">
@@ -48,7 +41,6 @@
             <i data-lucide="tag"></i>
             <span class="sidebar-text">Kategori</span>
         </a>
-        @endif
 
         <!-- AUDIENS & PENDAPATAN -->
         <div class="sidebar-section-title">Audiens & Pendapatan</div>
@@ -60,32 +52,25 @@
             <i data-lucide="gem"></i>
             <span class="sidebar-text">Pelanggan Premium</span>
         </a>
-
-        @if (in_array($role, ['super_admin', 'finance_admin'], true))
         <a href="{{ route('admin.transactions.index') }}" class="nav-humora-link {{ Request::is('admin/transactions*') ? 'active' : '' }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Transaksi">
             <i data-lucide="banknote"></i>
             <span class="sidebar-text">Transaksi</span>
         </a>
-        @endif
 
         <!-- SISTEM -->
         <div class="sidebar-section-title">Sistem</div>
-        @if ($role === 'super_admin')
         <a href="{{ route('admin.admins.index') }}" class="nav-humora-link {{ Request::is('admin/admins*') ? 'active' : '' }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Kelola Admin">
             <i data-lucide="shield-check"></i>
             <span class="sidebar-text">Kelola Admin</span>
         </a>
-        @endif
         <a href="{{ route('admin.profile.index') }}" class="nav-humora-link {{ Request::is('admin/profile*') ? 'active' : '' }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Profil Admin">
             <i data-lucide="user"></i>
             <span class="sidebar-text">Profil Admin</span>
         </a>
-        @if ($role === 'super_admin')
         <a href="{{ route('admin.settings.index') }}" class="nav-humora-link {{ Request::is('admin/settings*') ? 'active' : '' }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Pengaturan">
             <i data-lucide="settings"></i>
             <span class="sidebar-text">Pengaturan</span>
         </a>
-        @endif
     </div>
 
     <!-- Bottom User Profile Card -->

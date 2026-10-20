@@ -34,7 +34,7 @@ beforeEach(function () {
         'name' => 'Finance Officer',
         'email' => 'finance@humora.id',
         'password' => Hash::make('HumoraAdmin2026!'),
-        'role' => 'finance_admin',
+        'role' => 'admin',
         'is_active' => true,
     ]);
 });

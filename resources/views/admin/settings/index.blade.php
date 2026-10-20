@@ -167,7 +167,7 @@
                             <i data-lucide="alert-circle" class="mb-1 d-block mx-auto text-muted" style="width: 24px; height: 24px;"></i>
                             <strong>QRIS Belum Dikonfigurasi</strong>
                             <p class="mb-0 text-muted mt-1" style="font-size: 0.75rem;">
-                                Aplikasi Flutter akan menampilkan bahwa metode QRIS belum tersedia sampai file gambar QRIS resmi diunggah oleh Super Admin.
+                                Aplikasi Flutter akan menampilkan bahwa metode QRIS belum tersedia sampai file gambar QRIS resmi diunggah oleh Admin.
                             </p>
                         </div>
                     @endif

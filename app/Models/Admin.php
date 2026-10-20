@@ -55,47 +55,56 @@ class Admin extends Authenticatable
         return strtoupper(mb_substr($parts[0], 0, min(2, mb_strlen($parts[0]))));
     }
 
+    public function isAdmin(): bool
+    {
+        return true;
+    }
+
     public function isSuperAdmin(): bool
     {
-        return $this->role === 'super_admin';
+        return true;
     }
 
     public function isContentAdmin(): bool
     {
-        return in_array($this->role, ['super_admin', 'content_admin'], true);
+        return true;
     }
 
     public function isFinanceAdmin(): bool
     {
-        return in_array($this->role, ['super_admin', 'finance_admin'], true);
+        return true;
     }
 
     public function canManageAdmins(): bool
     {
-        return $this->isSuperAdmin();
+        return true;
     }
 
     public function canManageContent(): bool
     {
-        return $this->isContentAdmin();
+        return true;
     }
 
     public function canManageFinances(): bool
     {
-        return $this->isFinanceAdmin();
+        return true;
     }
 
     /**
-     * Helper to verify if an admin is the last active super admin
+     * Helper to verify if an admin is the last active admin
      */
-    public static function isLastActiveSuperAdmin(int $adminId): bool
+    public static function isLastActiveAdmin(int $adminId): bool
     {
-        $count = static::where('role', 'super_admin')
-            ->where('is_active', true)
+        $count = static::where('is_active', true)
             ->where('id', '!=', $adminId)
             ->count();
 
         return $count === 0;
+    }
+
+    public static function isLastActiveSuperAdmin(int $adminId): bool
+    {
+        return static::isLastActiveAdmin($adminId);
     }
 
     public function verifiedTransactions(): HasMany

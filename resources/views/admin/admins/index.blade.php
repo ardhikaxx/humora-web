@@ -16,7 +16,7 @@
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
     <div>
         <h1 class="page-title">Kelola Administrator HUMORA</h1>
-        <p class="page-subtitle mb-0">Kelola akun pengelola platform: Super Admin, Content Admin, dan Finance Admin.</p>
+        <p class="page-subtitle mb-0">Kelola akun pengelola platform HUMORA.</p>
     </div>
     <button type="button" class="btn btn-humora-primary" data-bs-toggle="modal" data-bs-target="#addAdminModal">
         <i data-lucide="user-plus"></i>
@@ -27,8 +27,8 @@
 <!-- 3 Real Stat Cards -->
 @php
     $totalAdmins = \App\Models\Admin::count();
-    $superAdmins = \App\Models\Admin::where('role', 'super_admin')->where('is_active', true)->count();
-    $activeStaff = \App\Models\Admin::where('role', '!=', 'super_admin')->where('is_active', true)->count();
+    $activeAdmins = \App\Models\Admin::where('is_active', true)->count();
+    $inactiveAdmins = \App\Models\Admin::where('is_active', false)->count();
 @endphp
 <div class="row g-3 mb-4">
     <div class="col-12 col-md-4">
@@ -42,20 +42,20 @@
     </div>
     <div class="col-12 col-md-4">
         <x-stat-card 
-            label="Super Admin Aktif" 
-            :value="$superAdmins" 
+            label="Administrator Aktif" 
+            :value="$activeAdmins" 
             icon="shield-check" 
             iconBg="green" 
-            subtext="Akses kontrol penuh" 
+            subtext="Memiliki akses login sistem" 
         />
     </div>
     <div class="col-12 col-md-4">
         <x-stat-card 
-            label="Staf Operasional (Konten/Keuangan)" 
-            :value="$activeStaff" 
-            icon="user-check" 
+            label="Administrator Nonaktif" 
+            :value="$inactiveAdmins" 
+            icon="user-x" 
             iconBg="blue" 
-            subtext="Role spesifik terpartisi" 
+            subtext="Akses login dinonaktifkan" 
         />
     </div>
 </div>
@@ -110,22 +110,10 @@
                             </div>
                         </td>
                         <td>
-                            @if ($adm->role === 'super_admin')
-                                <span class="badge-role-super">
-                                    <i data-lucide="shield-check"></i>
-                                    <span>Super Admin</span>
-                                </span>
-                            @elseif ($adm->role === 'content_admin')
-                                <span class="badge-role-content">
-                                    <i data-lucide="clapperboard"></i>
-                                    <span>Content Admin</span>
-                                </span>
-                            @else
-                                <span class="badge-role-finance">
-                                    <i data-lucide="banknote"></i>
-                                    <span>Finance Admin</span>
-                                </span>
-                            @endif
+                            <span class="badge-role-admin">
+                                <i data-lucide="shield-check"></i>
+                                <span>Admin</span>
+                            </span>
                         </td>
                         <td>
                             @if ($adm->is_active)
@@ -144,8 +132,7 @@
                                     'name' => $adm->name,
                                     'email' => $adm->email,
                                     'phone' => $adm->phone ?? '',
-                                    'role' => $adm->role,
-                                    'is_active' => $adm->is_active,
+                                    'is_active' => (bool)$adm->is_active,
                                     'is_self' => $isSelf
                                 ]) }})">
                                     <i data-lucide="pencil"></i>
@@ -171,7 +158,7 @@
                         actionTarget="#addAdminModal"
                         actionText="Tambah Administrator"
                         actionIcon="plus"
-                        :resetUrl="request()->hasAny(['search', 'role']) ? route('admin.admins.index') : null"
+                        :resetUrl="request()->has('search') ? route('admin.admins.index') : null"
                         resetText="Reset Filter"
                     />
                     @endforelse
@@ -209,12 +196,15 @@
                     <input type="text" name="phone" class="form-control-custom" placeholder="0812-xxxx-xxxx">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label-custom">Role Hak Akses <span class="text-danger">*</span></label>
-                    <select name="role" class="form-select-custom" required>
-                        <option value="content_admin">Content Admin (Kelola Konten & Analytics)</option>
-                        <option value="finance_admin">Finance Admin (Verifikasi Pembayaran & Finansial)</option>
-                        <option value="super_admin">Super Admin (Akses Penuh Seluruh Sistem)</option>
-                    </select>
+                    <label class="form-label-custom">Role Hak Akses</label>
+                    <div class="d-flex align-items-center gap-2 p-2 rounded border bg-light">
+                        <span class="badge-role-admin">
+                            <i data-lucide="shield-check"></i>
+                            <span>Admin</span>
+                        </span>
+                        <span class="text-muted" style="font-size: 0.8rem;">Akses penuh ke seluruh modul sistem</span>
+                    </div>
+                    <input type="hidden" name="role" value="admin">
                 </div>
                 <div class="row g-2 mb-3">
                     <div class="col-6">
@@ -265,13 +255,15 @@
                     <input type="text" id="editAdminPhone" name="phone" class="form-control-custom">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label-custom">Role Hak Akses <span class="text-danger">*</span></label>
-                    <select id="editAdminRole" name="role" class="form-select-custom" required>
-                        <option value="content_admin">Content Admin (Kelola Konten & Analytics)</option>
-                        <option value="finance_admin">Finance Admin (Verifikasi Pembayaran & Finansial)</option>
-                        <option value="super_admin">Super Admin (Akses Penuh Seluruh Sistem)</option>
-                    </select>
-                    <small id="selfRoleNotice" class="text-muted mt-1 d-block" style="display: none; font-size: 0.72rem;">Anda tidak dapat mengubah role akun Anda sendiri.</small>
+                    <label class="form-label-custom">Role Hak Akses</label>
+                    <div class="d-flex align-items-center gap-2 p-2 rounded border bg-light">
+                        <span class="badge-role-admin">
+                            <i data-lucide="shield-check"></i>
+                            <span>Admin</span>
+                        </span>
+                        <span class="text-muted" style="font-size: 0.8rem;">Akses penuh ke seluruh modul sistem</span>
+                    </div>
+                    <input type="hidden" name="role" value="admin">
                 </div>
                 <div class="row g-2 mb-3">
                     <div class="col-6">
@@ -307,18 +299,12 @@ function openEditAdminModal(admin) {
     document.getElementById('editAdminName').value = admin.name;
     document.getElementById('editAdminEmail').value = admin.email;
     document.getElementById('editAdminPhone').value = admin.phone || '';
-    document.getElementById('editAdminRole').value = admin.role;
     document.getElementById('editAdminActive').checked = admin.is_active;
 
-    const roleNotice = document.getElementById('selfRoleNotice');
     if (admin.is_self) {
-        document.getElementById('editAdminRole').disabled = true;
         document.getElementById('editAdminActive').disabled = true;
-        if (roleNotice) roleNotice.style.display = 'block';
     } else {
-        document.getElementById('editAdminRole').disabled = false;
         document.getElementById('editAdminActive').disabled = false;
-        if (roleNotice) roleNotice.style.display = 'none';
     }
 
     const modal = new bootstrap.Modal(document.getElementById('editAdminModal'));

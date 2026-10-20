@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->string('password');
-            $table->enum('role', ['super_admin', 'content_admin', 'finance_admin'])->default('content_admin');
+            $table->string('role', 30)->default('admin');
             $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();

@@ -25,7 +25,7 @@ class AdminFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'phone' => '0812' . fake()->numerify('########'),
             'password' => Hash::make('HumoraAdmin2026!'),
-            'role' => 'super_admin',
+            'role' => 'admin',
             'is_active' => true,
         ];
     }
@@ -33,14 +33,14 @@ class AdminFactory extends Factory
     public function contentAdmin(): static
     {
         return $this->state(fn (array $attributes) => [
-            'role' => 'content_admin',
+            'role' => 'admin',
         ]);
     }
 
     public function financeAdmin(): static
     {
         return $this->state(fn (array $attributes) => [
-            'role' => 'finance_admin',
+            'role' => 'admin',
         ]);
     }
 }

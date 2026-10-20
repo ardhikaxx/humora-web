@@ -51,58 +51,51 @@ Route::prefix('admin')->name('admin.')->middleware(['admin.role'])->group(functi
     Route::put('/profile', [ProfileController::class, 'updateProfile'])->name('profile.update');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 
-    // 3. Content Management (super_admin, content_admin)
-    Route::middleware('admin.role:super_admin,content_admin')->group(function () {
-        // Series (Judul Konten)
-        Route::get('/series', [SeriesController::class, 'index'])->name('series.index');
-        Route::get('/series/create', [SeriesController::class, 'create'])->name('series.create');
-        Route::post('/series', [SeriesController::class, 'store'])->name('series.store');
-        Route::get('/series/{id}', [SeriesController::class, 'show'])->name('series.show');
-        Route::get('/series/{id}/edit', [SeriesController::class, 'edit'])->name('series.edit');
-        Route::put('/series/{id}', [SeriesController::class, 'update'])->name('series.update');
-        Route::delete('/series/{id}', [SeriesController::class, 'destroy'])->name('series.destroy');
+    // 3. Content Management
+    // Series (Judul Konten)
+    Route::get('/series', [SeriesController::class, 'index'])->name('series.index');
+    Route::get('/series/create', [SeriesController::class, 'create'])->name('series.create');
+    Route::post('/series', [SeriesController::class, 'store'])->name('series.store');
+    Route::get('/series/{id}', [SeriesController::class, 'show'])->name('series.show');
+    Route::get('/series/{id}/edit', [SeriesController::class, 'edit'])->name('series.edit');
+    Route::put('/series/{id}', [SeriesController::class, 'update'])->name('series.update');
+    Route::delete('/series/{id}', [SeriesController::class, 'destroy'])->name('series.destroy');
 
-        // Episodes (Kelola Video)
-        Route::get('/videos', [EpisodeController::class, 'index'])->name('videos.index');
-        Route::get('/videos/create', [EpisodeController::class, 'create'])->name('videos.create');
-        Route::post('/videos', [EpisodeController::class, 'store'])->name('videos.store');
-        Route::get('/videos/{id}/edit', [EpisodeController::class, 'edit'])->name('videos.edit');
-        Route::put('/videos/{id}', [EpisodeController::class, 'update'])->name('videos.update');
-        Route::delete('/videos/{id}', [EpisodeController::class, 'destroy'])->name('videos.destroy');
+    // Episodes (Kelola Video)
+    Route::get('/videos', [EpisodeController::class, 'index'])->name('videos.index');
+    Route::get('/videos/create', [EpisodeController::class, 'create'])->name('videos.create');
+    Route::post('/videos', [EpisodeController::class, 'store'])->name('videos.store');
+    Route::get('/videos/{id}/edit', [EpisodeController::class, 'edit'])->name('videos.edit');
+    Route::put('/videos/{id}', [EpisodeController::class, 'update'])->name('videos.update');
+    Route::delete('/videos/{id}', [EpisodeController::class, 'destroy'])->name('videos.destroy');
 
-        // Categories
-        Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
-        Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
-        Route::put('/categories/{id}', [CategoryController::class, 'update'])->name('categories.update');
-        Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
-    });
+    // Categories
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+    Route::put('/categories/{id}', [CategoryController::class, 'update'])->name('categories.update');
+    Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
     // 4. Audiens (Users & Subscribers)
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
-    Route::put('/users/{id}/status', [UserController::class, 'updateStatus'])->name('users.updateStatus')
-        ->middleware('admin.role:super_admin');
+    Route::put('/users/{id}/status', [UserController::class, 'updateStatus'])->name('users.updateStatus');
 
     Route::get('/subscribers', [SubscriberController::class, 'index'])->name('subscribers.index');
 
-    // 5. Finance & Transactions (super_admin, finance_admin)
-    Route::middleware('admin.role:super_admin,finance_admin')->group(function () {
-        Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
-        Route::post('/transactions/{id}/approve', [TransactionController::class, 'approve'])->name('transactions.approve');
-        Route::post('/transactions/{id}/reject', [TransactionController::class, 'reject'])->name('transactions.reject');
-        Route::get('/proofs/{filename}', [FileStorageController::class, 'adminProof'])->name('proof.view');
-    });
+    // 5. Finance & Transactions
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+    Route::post('/transactions/{id}/approve', [TransactionController::class, 'approve'])->name('transactions.approve');
+    Route::post('/transactions/{id}/reject', [TransactionController::class, 'reject'])->name('transactions.reject');
+    Route::get('/proofs/{filename}', [FileStorageController::class, 'adminProof'])->name('proof.view');
 
-    // 6. System Administration (super_admin only)
-    Route::middleware('admin.role:super_admin')->group(function () {
-        // Admin Accounts Management
-        Route::get('/admins', [AdminManagementController::class, 'index'])->name('admins.index');
-        Route::post('/admins', [AdminManagementController::class, 'store'])->name('admins.store');
-        Route::put('/admins/{admin}', [AdminManagementController::class, 'update'])->name('admins.update');
-        Route::delete('/admins/{admin}', [AdminManagementController::class, 'destroy'])->name('admins.destroy');
+    // 6. System Administration & Configuration
+    // Admin Accounts Management
+    Route::get('/admins', [AdminManagementController::class, 'index'])->name('admins.index');
+    Route::post('/admins', [AdminManagementController::class, 'store'])->name('admins.store');
+    Route::put('/admins/{admin}', [AdminManagementController::class, 'update'])->name('admins.update');
+    Route::delete('/admins/{admin}', [AdminManagementController::class, 'destroy'])->name('admins.destroy');
 
-        // System Settings & Monetization Config
-        Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
-        Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
-    });
+    // System Settings & Monetization Config
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 });

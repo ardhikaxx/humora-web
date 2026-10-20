@@ -42,13 +42,12 @@ class AdminRoleMiddleware
                 ], 403);
             }
 
-            return redirect()->route('admin.login')->with('error', 'Akun administrator Anda telah dinonaktifkan oleh Super Admin.');
+            return redirect()->route('admin.login')->with('error', 'Akun administrator Anda telah dinonaktifkan.');
         }
 
-        // If specific roles are required, enforce them
+        // If specific roles are required, allow 'admin' and 'super_admin' or matching roles
         if (!empty($roles)) {
-            // Super admin always has access to all admin routes
-            if ($admin->role === 'super_admin') {
+            if ($admin->role === 'admin' || $admin->role === 'super_admin') {
                 return $next($request);
             }
 

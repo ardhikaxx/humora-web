@@ -24,7 +24,7 @@ class FileStorageController extends Controller
     }
 
     /**
-     * Protected stream/view for transaction proof images (Admin finance / super_admin only)
+     * Protected stream/view for transaction proof images (Admin only)
      */
     public function adminProof(string $filename): Response
     {

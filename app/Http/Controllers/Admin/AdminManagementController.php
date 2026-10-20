@@ -51,7 +51,7 @@ class AdminManagementController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:admins,email'],
             'phone' => ['nullable', 'string', 'max:20'],
-            'role' => ['required', 'string', Rule::in(['super_admin', 'content_admin', 'finance_admin'])],
+            'role' => ['nullable', 'string'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'is_active' => ['nullable', 'boolean'],
         ]);
@@ -60,7 +60,7 @@ class AdminManagementController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'] ?? null,
-            'role' => $validated['role'],
+            'role' => 'admin',
             'password' => Hash::make($validated['password']),
             'is_active' => $request->has('is_active'),
         ]);
@@ -79,35 +79,27 @@ class AdminManagementController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('admins', 'email')->ignore($admin->id)],
             'phone' => ['nullable', 'string', 'max:20'],
-            'role' => ['required', 'string', Rule::in(['super_admin', 'content_admin', 'finance_admin'])],
+            'role' => ['nullable', 'string'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
         $isActive = $request->has('is_active');
 
-        // Prevent self-deactivation or self-demotion
-        if ($currentAdmin->id === $admin->id) {
-            if (!$isActive) {
-                return back()->withErrors(['is_active' => 'Anda tidak dapat menonaktifkan akun Anda sendiri.']);
-            }
-            if ($validated['role'] !== 'super_admin') {
-                return back()->withErrors(['role' => 'Anda tidak dapat mengubah role Super Admin milik Anda sendiri.']);
-            }
+        // Prevent self-deactivation
+        if ($currentAdmin->id === $admin->id && !$isActive) {
+            return back()->withErrors(['is_active' => 'Anda tidak dapat menonaktifkan akun Anda sendiri.']);
         }
 
-        // Prevent deactivating or demoting the last active super_admin
-        if ($admin->role === 'super_admin' && ($validated['role'] !== 'super_admin' || !$isActive)) {
-            $superAdminCount = Admin::where('role', 'super_admin')->where('is_active', true)->where('id', '!=', $admin->id)->count();
-            if ($superAdminCount < 1) {
-                return back()->withErrors(['role' => 'Sistem harus memiliki setidaknya satu Super Admin aktif.']);
-            }
+        // Prevent deactivating the last active administrator
+        if (!$isActive && Admin::isLastActiveAdmin($admin->id)) {
+            return back()->withErrors(['is_active' => 'Sistem harus memiliki setidaknya satu Administrator aktif.']);
         }
 
         $admin->name = $validated['name'];
         $admin->email = $validated['email'];
         $admin->phone = $validated['phone'] ?? null;
-        $admin->role = $validated['role'];
+        $admin->role = 'admin';
         $admin->is_active = $isActive;
 
         if (!empty($validated['password'])) {
@@ -130,11 +122,8 @@ class AdminManagementController extends Controller
             return back()->withErrors(['error' => 'Anda tidak dapat menghapus akun Anda sendiri.']);
         }
 
-        if ($admin->role === 'super_admin') {
-            $superAdminCount = Admin::where('role', 'super_admin')->where('is_active', true)->where('id', '!=', $admin->id)->count();
-            if ($superAdminCount < 1) {
-                return back()->withErrors(['error' => 'Tidak dapat menghapus satu-satunya Super Admin aktif di sistem.']);
-            }
+        if (Admin::isLastActiveAdmin($admin->id)) {
+            return back()->withErrors(['error' => 'Tidak dapat menghapus satu-satunya Administrator aktif di sistem.']);
         }
 
         $name = $admin->name;

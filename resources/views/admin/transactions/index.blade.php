@@ -341,10 +341,6 @@
                                     </div>
                                 </form>
                             </div>
-                            @else
-                            <div class="alert alert-info py-2" style="font-size: 0.78rem;">
-                                Anda hanya memiliki hak baca. Tindakan verifikasi memerlukan otorisasi Finance atau Super Admin.
-                            </div>
                             @endif
                         </div>
                     </div>

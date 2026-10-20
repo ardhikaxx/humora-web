@@ -30,8 +30,8 @@ test('public auth pages render successfully', function (string $url) {
     '/admin/login',
 ]);
 
-test('authenticated super admin can access all admin portal pages', function (string $url) {
-    $admin = Admin::where('role', 'super_admin')->first() ?? Admin::factory()->create(['role' => 'super_admin', 'is_active' => true]);
+test('authenticated admin can access all admin portal pages', function (string $url) {
+    $admin = Admin::where('role', 'admin')->first() ?? Admin::factory()->create(['role' => 'admin', 'is_active' => true]);
 
     $response = $this->actingAs($admin, 'admin')->get($url);
     $response->assertStatus(200);

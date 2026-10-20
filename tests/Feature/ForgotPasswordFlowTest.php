@@ -10,7 +10,7 @@ function createTestAdmin(array $attrs = []): Admin
         'name' => 'Super Administrator',
         'email' => 'admin@gmail.com',
         'password' => Hash::make('password'),
-        'role' => 'super_admin',
+        'role' => 'admin',
         'is_active' => true,
     ], $attrs));
 }

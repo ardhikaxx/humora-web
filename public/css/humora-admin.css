@@ -746,6 +746,7 @@ body {
 }
 
 /* ================= ROLE BADGES ================= */
+.badge-role-admin,
 .badge-role-super {
     display: inline-flex;
     align-items: center;
@@ -797,6 +798,8 @@ body {
     box-shadow: 0 1px 2px rgba(4, 120, 87, 0.06);
 }
 
+.badge-role-admin [data-lucide],
+.badge-role-admin svg.lucide,
 .badge-role-super [data-lucide],
 .badge-role-super svg.lucide,
 .badge-role-content [data-lucide],
