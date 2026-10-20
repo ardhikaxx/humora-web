@@ -52,26 +52,57 @@ class WatchHistoryController extends Controller
         $user = $request->user();
 
         $validated = $request->validate([
-            'series_id' => ['required', 'exists:series,id'],
             'episode_id' => ['required', 'exists:episodes,id'],
+            'series_id' => ['nullable', 'exists:series,id'],
             'last_position' => ['required', 'integer', 'min:0'],
-            'progress_percent' => ['required', 'integer', 'min:0', 'max:100'],
+            'duration_seconds' => ['nullable', 'integer', 'min:0'],
+            'progress_percent' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'session_id' => ['nullable', 'string', 'max:100'],
         ]);
 
-        $isCompleted = $validated['progress_percent'] >= 90;
+        $episode = Episode::with('series')->findOrFail($validated['episode_id']);
+        $seriesId = $validated['series_id'] ?? $episode->series_id;
+        $durationSeconds = (int) ($validated['duration_seconds'] ?? ($episode->duration_seconds ?: 120));
+
+        $progressPercent = $validated['progress_percent'] ?? null;
+        if ($progressPercent === null) {
+            $progressPercent = $durationSeconds > 0
+                ? (int) min(100, round(($validated['last_position'] / $durationSeconds) * 100))
+                : 0;
+        }
+
+        $isCompleted = $progressPercent >= 90;
 
         $history = WatchHistory::updateOrCreate(
             [
                 'user_id' => $user->id,
-                'episode_id' => $validated['episode_id'],
+                'episode_id' => $episode->id,
             ],
             [
-                'series_id' => $validated['series_id'],
+                'series_id' => $seriesId,
                 'last_position' => $validated['last_position'],
-                'progress_percent' => $validated['progress_percent'],
+                'progress_percent' => $progressPercent,
                 'is_completed' => $isCompleted,
             ]
         );
+
+        // Also record/sync to ViewingEvent
+        $sessionId = !empty($validated['session_id']) ? $validated['session_id'] : 'hist_' . $user->id . '_' . $episode->id . '_' . date('Ymd');
+        $event = \App\Models\ViewingEvent::firstOrNew(['session_id' => $sessionId]);
+        if (!$event->exists) {
+            $event->episode_id = $episode->id;
+            $event->series_id = $seriesId;
+            $event->user_id = $user->id;
+            $event->ip_address = $request->ip();
+            $event->user_agent = substr($request->userAgent() ?? '', 0, 500);
+            $event->watched_seconds = $validated['last_position'];
+            $event->save();
+        } else {
+            if ($validated['last_position'] > $event->watched_seconds) {
+                $event->watched_seconds = $validated['last_position'];
+                $event->save();
+            }
+        }
 
         return response()->json([
             'success' => true,
