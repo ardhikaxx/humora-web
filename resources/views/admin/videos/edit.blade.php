@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
         updateAccessNotice();
     }
 
-    // Video preview upload handler
+    // Video preview upload handler & notification
     const videoUpload = document.getElementById('videoUpload');
     const previewPlayer = document.getElementById('videoPreviewPlayer');
 
@@ -233,6 +233,41 @@ document.addEventListener('DOMContentLoaded', function () {
                         document.getElementById('secondInput').value = totalSecs % 60;
                     }
                 };
+
+                if (window.showHumoraToast) {
+                    const sizeStr = file.size > 1048576 
+                        ? (file.size / 1048576).toFixed(1) + ' MB' 
+                        : Math.round(file.size / 1024) + ' KB';
+                    window.showHumoraToast(`Video baru dipilih: ${file.name} (${sizeStr}). Akan dikompresi ke WebM saat disimpan.`, 'info');
+                }
+            }
+        });
+    }
+
+    // Show processing modal during video compression & upload
+    const formEditVideo = document.getElementById('formEditVideo');
+    if (formEditVideo) {
+        formEditVideo.addEventListener('submit', function (e) {
+            if (!this.checkValidity()) return;
+
+            const videoFile = videoUpload && videoUpload.files && videoUpload.files.length > 0;
+            if (videoFile && typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Mengompresi & Memproses Video...',
+                    html: `
+                        <div class="text-center py-2">
+                            <div class="spinner-border text-purple mb-3" style="width: 3rem; height: 3rem; color: #43135C;" role="status"></div>
+                            <p class="mb-1 fw-bold text-dark" style="font-size: 0.95rem;">Sedang mengompresi dan mengonversi video ke WebM</p>
+                            <p class="mb-2 text-muted" style="font-size: 0.82rem;">File video baru akan dikompresi ke format <strong>WebM</strong> dan disimpan ke server lokal.</p>
+                            <small class="text-warning-emphasis bg-warning-subtle py-1 px-2.5 rounded-pill" style="font-size: 0.75rem;">
+                                &bull; Mohon jangan menutup atau me-refresh browser &bull;
+                            </small>
+                        </div>
+                    `,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                });
             }
         });
     }
