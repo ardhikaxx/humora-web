@@ -25,6 +25,78 @@ class AnalyticsController extends Controller
             $days = 30;
         }
 
+        $data = $this->getAnalyticsData($days);
+
+        return view('admin.analytics', $data);
+    }
+
+    /**
+     * Provide real-time analytics data as JSON for live updates
+     */
+    public function realtimeData(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $days = (int) $request->input('range', 30);
+        if (!in_array($days, [7, 30, 90], true)) {
+            $days = 30;
+        }
+
+        $data = $this->getAnalyticsData($days);
+
+        // Format topSeries and topLikedEpisodes for clean JSON serialization
+        $topSeriesList = $data['topSeries']->map(function ($item, $idx) {
+            return [
+                'rank' => $idx + 1,
+                'id' => $item->id,
+                'title' => $item->title,
+                'release_year' => $item->release_year,
+                'thumbnail_url' => $item->thumbnail_url,
+                'genre' => $item->categories->first()?->name ?? 'Komedi',
+                'views_count' => (int) ($item->viewing_events_count ?? 0),
+                'views_formatted' => number_format($item->viewing_events_count ?? 0, 0, ',', '.'),
+                'url' => route('admin.series.show', $item->id),
+            ];
+        });
+
+        $topLikedList = $data['topLikedEpisodes']->map(function ($ep, $idx) {
+            return [
+                'rank' => $idx + 1,
+                'id' => $ep->id,
+                'episode_number' => $ep->episode_number,
+                'title' => $ep->title,
+                'series_title' => $ep->series?->title ?? '-',
+                'is_free' => (bool) $ep->is_free,
+                'likes_count' => (int) $ep->likes_count,
+                'likes_formatted' => number_format($ep->likes_count, 0, ',', '.'),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'days' => $data['days'],
+                'totalViews' => $data['totalViews'],
+                'totalViewsFormatted' => number_format($data['totalViews'], 0, ',', '.'),
+                'uniqueViewers' => $data['uniqueViewers'],
+                'uniqueViewersFormatted' => number_format($data['uniqueViewers'], 0, ',', '.'),
+                'totalWatchSeconds' => $data['totalWatchSeconds'],
+                'formattedWatchTime' => $data['formattedWatchTime'],
+                'avgDurationSeconds' => $data['avgDurationSeconds'],
+                'formattedAvgDuration' => $data['formattedAvgDuration'],
+                'conversionRate' => $data['conversionRate'],
+                'chartLabels' => $data['chartLabels'],
+                'chartViews' => $data['chartViews'],
+                'topSeries' => $topSeriesList,
+                'topLikedEpisodes' => $topLikedList,
+                'lastUpdated' => Carbon::now()->format('H:i:s'),
+            ],
+        ]);
+    }
+
+    /**
+     * Compute analytics metrics for a given date range
+     */
+    protected function getAnalyticsData(int $days): array
+    {
         $startDate = Carbon::now()->subDays($days)->startOfDay();
         $endDate = Carbon::now()->endOfDay();
 
@@ -50,7 +122,13 @@ class AnalyticsController extends Controller
 
         $watchHours = floor($totalWatchSeconds / 3600);
         $watchMinutes = floor(($totalWatchSeconds % 3600) / 60);
-        $formattedWatchTime = "{$watchHours}j {$watchMinutes}m";
+        $watchSecs = $totalWatchSeconds % 60;
+
+        if ($watchHours > 0) {
+            $formattedWatchTime = "{$watchHours}j {$watchMinutes}m";
+        } else {
+            $formattedWatchTime = "{$watchMinutes}m {$watchSecs}s";
+        }
 
         // 4. Average Watch Duration
         $avgDurationSeconds = $totalViews > 0 ? (int) round($totalWatchSeconds / $totalViews) : 0;
@@ -104,17 +182,19 @@ class AnalyticsController extends Controller
             $chartViews[] = $vCount;
         }
 
-        return view('admin.analytics', compact(
+        return compact(
             'days',
             'totalViews',
             'uniqueViewers',
+            'totalWatchSeconds',
             'formattedWatchTime',
+            'avgDurationSeconds',
             'formattedAvgDuration',
             'conversionRate',
             'topSeries',
             'topLikedEpisodes',
             'chartLabels',
             'chartViews'
-        ));
+        );
     }
 }
