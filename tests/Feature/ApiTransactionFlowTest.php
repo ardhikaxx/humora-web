@@ -52,7 +52,7 @@ test('user can browse active subscription plans and system payment info', functi
             'success',
             'data' => [
                 'bank_accounts' => [
-                    '*' => ['code', 'bank_name', 'account_number', 'account_name'],
+                    '*' => ['code', 'bank_name', 'bank_logo', 'bank_logo_url', 'account_number', 'account_name'],
                 ],
                 'qris' => ['code', 'is_configured', 'account_name'],
             ],
@@ -92,7 +92,10 @@ test('admin can save multiple dynamic bank accounts and API serves them', functi
     $data = $infoResponse->json('data.bank_accounts');
     expect($data)->toHaveCount(3);
     expect($data[0]['bank_name'])->toBe('Bank BCA');
+    expect($data[0]['bank_logo'])->toBe('bca.png');
+    expect($data[0]['bank_logo_url'])->toContain('bca.png');
     expect($data[2]['bank_name'])->toBe('Bank BRI');
+    expect($data[2]['bank_logo'])->toBe('bri.png');
 });
 
 test('user can upload payment proof and create pending transaction', function () {

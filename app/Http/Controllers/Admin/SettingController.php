@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\SubscriptionPlan;
 use App\Models\SystemSetting;
 use App\Services\FileStorageService;
+use App\Support\BankDirectory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class SettingController extends Controller
@@ -27,17 +29,41 @@ class SettingController extends Controller
         if (empty($bankAccounts) || !is_array($bankAccounts)) {
             $bankAccounts = [
                 [
+                    'bank_code' => 'bca',
                     'bank_name' => 'Bank Central Asia (BCA)',
                     'account_number' => SystemSetting::get('bca_account_number', '8830-192-888'),
                     'account_name' => SystemSetting::get('bca_account_name', 'PT HUMORA MEDIA KREATIF'),
                 ],
                 [
+                    'bank_code' => 'mandiri',
                     'bank_name' => 'Bank Mandiri',
                     'account_number' => SystemSetting::get('mandiri_account_number', '137-00-998822-1'),
                     'account_name' => SystemSetting::get('mandiri_account_name', 'HUMORA'),
                 ],
             ];
         }
+
+        // Augment each bank with metadata from BankDirectory
+        foreach ($bankAccounts as &$bank) {
+            $info = BankDirectory::findByCodeOrName($bank['bank_code'] ?? $bank['bank_name'] ?? '');
+            if ($info) {
+                $bank['bank_code'] = $info['code'];
+                $bank['bank_logo'] = $info['logo'];
+                $bank['pattern'] = implode(',', $info['pattern']);
+                $bank['placeholder'] = $info['placeholder'];
+                $bank['category'] = $info['category'];
+            } else {
+                $bank['bank_code'] = $bank['bank_code'] ?? Str::slug($bank['bank_name'] ?? 'bank', '_');
+                $bank['bank_logo'] = null;
+                $bank['pattern'] = '4,4,4,4';
+                $bank['placeholder'] = 'Nomor rekening bank';
+                $bank['category'] = 'Bank Lainnya';
+            }
+        }
+        unset($bank);
+
+        $allBanks = BankDirectory::all();
+        $groupedBanks = BankDirectory::grouped();
         $qrisImage = SystemSetting::get('qris_official_image', '');
 
         $plans = SubscriptionPlan::orderBy('duration_days')->get()->keyBy('code');
@@ -45,6 +71,8 @@ class SettingController extends Controller
         return view('admin.settings.index', compact(
             'freeEpisodes',
             'bankAccounts',
+            'allBanks',
+            'groupedBanks',
             'qrisImage',
             'plans'
         ));
@@ -64,6 +92,7 @@ class SettingController extends Controller
             'free_preview_episodes' => ['required', 'integer', 'min:1', 'max:5'],
             'bank_accounts' => ['required', 'array', 'min:1'],
             'bank_accounts.*.bank_name' => ['required', 'string', 'max:100'],
+            'bank_accounts.*.bank_code' => ['nullable', 'string', 'max:50'],
             'bank_accounts.*.account_number' => ['required', 'string', 'max:50'],
             'bank_accounts.*.account_name' => ['required', 'string', 'max:100'],
             'price_monthly' => ['required', 'numeric', 'min:0'],
@@ -80,8 +109,12 @@ class SettingController extends Controller
             $accNumber = trim((string) ($b['account_number'] ?? ''));
             $accName = trim((string) ($b['account_name'] ?? ''));
 
+            $info = BankDirectory::findByCodeOrName($b['bank_code'] ?? $bankName);
+            $bankCode = $info['code'] ?? (!empty($b['bank_code']) ? trim($b['bank_code']) : Str::slug($bankName, '_'));
+
             if (!empty($bankName) && !empty($accNumber) && !empty($accName)) {
                 $cleanBankAccounts[] = [
+                    'bank_code' => $bankCode,
                     'bank_name' => $bankName,
                     'account_number' => $accNumber,
                     'account_name' => $accName,

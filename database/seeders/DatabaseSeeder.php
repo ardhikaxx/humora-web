@@ -43,11 +43,13 @@ class DatabaseSeeder extends Seeder
         SystemSetting::set('mandiri_account_name', 'HUMORA', 'text');
         SystemSetting::set('official_bank_accounts', [
             [
+                'bank_code' => 'bca',
                 'bank_name' => 'Bank Central Asia (BCA)',
                 'account_number' => '8830-192-888',
                 'account_name' => 'PT HUMORA MEDIA KREATIF',
             ],
             [
+                'bank_code' => 'mandiri',
                 'bank_name' => 'Bank Mandiri',
                 'account_number' => '137-00-998822-1',
                 'account_name' => 'HUMORA',

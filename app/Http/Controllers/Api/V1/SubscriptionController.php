@@ -65,14 +65,20 @@ class SubscriptionController extends Controller
         $formattedBanks = [];
         foreach ($rawBankAccounts as $index => $b) {
             $bankName = trim($b['bank_name'] ?? 'Bank Transfer');
-            $code = \Illuminate\Support\Str::slug($bankName, '_');
+            $info = \App\Support\BankDirectory::findByCodeOrName($b['bank_code'] ?? $bankName);
+            $code = $b['bank_code'] ?? ($info['code'] ?? \Illuminate\Support\Str::slug($bankName, '_'));
             if (empty($code)) {
                 $code = 'bank_' . ($index + 1);
             }
 
+            $logoFile = $info['logo'] ?? ($code . '.png');
+            $logoUrl = $info ? asset('images/banks/' . $info['logo']) : asset('images/banks/' . $code . '.png');
+
             $formattedBanks[] = [
                 'code' => $code,
                 'bank_name' => $bankName,
+                'bank_logo' => $logoFile,
+                'bank_logo_url' => $logoUrl,
                 'account_number' => trim($b['account_number'] ?? ''),
                 'account_name' => trim($b['account_name'] ?? ''),
                 'instructions' => "Transfer manual ke rekening {$bankName} di atas sesuai nominal paket, lalu unggah foto bukti transfer.",
