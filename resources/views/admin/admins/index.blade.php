@@ -111,16 +111,19 @@
                         </td>
                         <td>
                             @if ($adm->role === 'super_admin')
-                                <span class="badge bg-purple-subtle text-purple border border-purple-subtle px-2 py-1 rounded-pill" style="font-size: 0.72rem;">
-                                    <i data-lucide="shield" style="width: 11px; height: 11px;" class="me-1"></i>Super Admin
+                                <span class="badge-role-super">
+                                    <i data-lucide="shield-check"></i>
+                                    <span>Super Admin</span>
                                 </span>
                             @elseif ($adm->role === 'content_admin')
-                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 rounded-pill" style="font-size: 0.72rem;">
-                                    <i data-lucide="tv" style="width: 11px; height: 11px;" class="me-1"></i>Content Admin
+                                <span class="badge-role-content">
+                                    <i data-lucide="clapperboard"></i>
+                                    <span>Content Admin</span>
                                 </span>
                             @else
-                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill" style="font-size: 0.72rem;">
-                                    <i data-lucide="banknote" style="width: 11px; height: 11px;" class="me-1"></i>Finance Admin
+                                <span class="badge-role-finance">
+                                    <i data-lucide="banknote"></i>
+                                    <span>Finance Admin</span>
                                 </span>
                             @endif
                         </td>

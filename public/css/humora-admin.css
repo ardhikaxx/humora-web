@@ -745,6 +745,70 @@ body {
     display: inline-block;
 }
 
+/* ================= ROLE BADGES ================= */
+.badge-role-super {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background-color: #F3E8FF;
+    color: #581C87;
+    border: 1px solid #D8B4FE;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.28rem 0.65rem;
+    border-radius: 50rem;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(88, 28, 135, 0.06);
+}
+
+.badge-role-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background-color: #EFF6FF;
+    color: #1D4ED8;
+    border: 1px solid #BFDBFE;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.28rem 0.65rem;
+    border-radius: 50rem;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(29, 78, 216, 0.06);
+}
+
+.badge-role-finance {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background-color: #ECFDF5;
+    color: #047857;
+    border: 1px solid #A7F3D0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.28rem 0.65rem;
+    border-radius: 50rem;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(4, 120, 87, 0.06);
+}
+
+.badge-role-super [data-lucide],
+.badge-role-super svg.lucide,
+.badge-role-content [data-lucide],
+.badge-role-content svg.lucide,
+.badge-role-finance [data-lucide],
+.badge-role-finance svg.lucide {
+    width: 12px !important;
+    height: 12px !important;
+    stroke-width: 2.3px;
+    flex-shrink: 0;
+}
+
 /* ================= TABLES ================= */
 .table-humora {
     width: 100%;

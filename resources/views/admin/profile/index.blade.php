@@ -35,9 +35,22 @@
                         <i data-lucide="phone" style="width: 14px; height: 14px;"></i> <span>{{ $admin->phone ?: 'Belum diisi' }}</span>
                     </span>
                     <span>&bull;</span>
-                    <span class="badge bg-purple-subtle text-purple border border-purple-subtle rounded-pill px-2 py-0" style="font-size: 0.72rem;">
-                        {{ ucwords(str_replace('_', ' ', $admin->role)) }}
-                    </span>
+                    @if ($admin->role === 'super_admin')
+                        <span class="badge-role-super">
+                            <i data-lucide="shield-check"></i>
+                            <span>Super Admin</span>
+                        </span>
+                    @elseif ($admin->role === 'content_admin')
+                        <span class="badge-role-content">
+                            <i data-lucide="clapperboard"></i>
+                            <span>Content Admin</span>
+                        </span>
+                    @else
+                        <span class="badge-role-finance">
+                            <i data-lucide="banknote"></i>
+                            <span>Finance Admin</span>
+                        </span>
+                    @endif
                 </div>
             </div>
         </div>
