@@ -173,46 +173,7 @@ class DatabaseSeeder extends Seeder
             Episode::create($epData);
         }
 
-        // 7. Test Mobile Users
-        // Free User
-        User::firstOrCreate(
-            ['email' => 'ardhika@humora.id'],
-            [
-                'name' => 'Ardhika Pradana',
-                'phone' => '081288997766',
-                'password' => Hash::make('UserHumora2026!'),
-                'gender' => 'Laki-laki',
-                'tier' => 'free',
-                'status' => 'active',
-            ]
-        );
-
-        // Premium User
-        User::firstOrCreate(
-            ['email' => 'budi@humora.id'],
-            [
-                'name' => 'Budi Pratama',
-                'phone' => '081299887766',
-                'password' => Hash::make('UserHumora2026!'),
-                'gender' => 'Laki-laki',
-                'tier' => 'premium',
-                'valid_until' => Carbon::now()->addDays(90),
-                'status' => 'active',
-            ]
-        );
-
-        // Expired User
-        User::firstOrCreate(
-            ['email' => 'expired@humora.id'],
-            [
-                'name' => 'Siti Nurhaliza',
-                'phone' => '081277665544',
-                'password' => Hash::make('UserHumora2026!'),
-                'gender' => 'Perempuan',
-                'tier' => 'premium',
-                'valid_until' => Carbon::now()->subDays(5),
-                'status' => 'active',
-            ]
-        );
+        // 7. Test Mobile Users (Default 3 accounts: pengguna1@gmail.com, pengguna2@gmail.com, pengguna3@gmail.com)
+        $this->call(UserSeeder::class);
     }
 }
