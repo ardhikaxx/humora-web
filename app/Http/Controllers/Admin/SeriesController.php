@@ -57,7 +57,8 @@ class SeriesController extends Controller
     public function create(): View
     {
         $categories = Category::where('is_active', true)->orderBy('name')->get();
-        return view('admin.series.create', compact('categories'));
+        $suggestedOrder = ((Series::max('catalog_order') ?? 0) + 1);
+        return view('admin.series.create', compact('categories', 'suggestedOrder'));
     }
 
     /**
@@ -98,13 +99,17 @@ class SeriesController extends Controller
             10485760
         );
 
-        $series = DB::transaction(function () use ($validated, $slug, $thumbnailFile, $request) {
+        $catalogOrder = !empty($validated['catalog_order'])
+            ? (int) $validated['catalog_order']
+            : ((Series::max('catalog_order') ?? 0) + 1);
+
+        $series = DB::transaction(function () use ($validated, $slug, $thumbnailFile, $catalogOrder, $request) {
             $s = Series::create([
                 'title' => $validated['title'],
                 'slug' => $slug,
                 'synopsis' => $validated['synopsis'],
                 'release_year' => $validated['release_year'],
-                'catalog_order' => $validated['catalog_order'] ?? 0,
+                'catalog_order' => $catalogOrder,
                 'is_featured' => $request->boolean('is_featured', false),
                 'status' => $validated['status'],
                 'thumbnail' => $thumbnailFile,

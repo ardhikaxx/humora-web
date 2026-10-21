@@ -144,16 +144,21 @@
                             </div>
                         </div>
                         <div class="col-12 col-md-6">
-                            <div class="humora-field-group mb-0">
-                                <div class="humora-field @error('catalog_order') is-error @enderror">
-                                    <input type="number" id="catalog_order" name="catalog_order" class="form-control-custom @error('catalog_order') is-invalid @enderror" value="{{ old('catalog_order') }}" placeholder=" " min="0">
-                                    <label for="catalog_order" class="humora-floating-label">Urutan Katalog</label>
+                            <div class="p-3 rounded-3 border bg-light d-flex align-items-center justify-content-between h-100" style="min-height: 48px; border-color: #E2E8F0 !important;">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="d-flex align-items-center justify-content-center rounded-2" style="width: 32px; height: 32px; background: #FAF5FF; color: #43135C;">
+                                        <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
+                                    </div>
+                                    <div>
+                                        <span class="d-block fw-bold text-dark" style="font-size: 0.82rem; line-height: 1.2;">Urutan Katalog Otomatis</span>
+                                        <small class="text-muted" style="font-size: 0.72rem;">Ditempatkan di urutan ke-{{ $suggestedOrder }} katalog</small>
+                                    </div>
                                 </div>
-                                <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Semakin kecil angka, semakin awal muncul di katalog.</small>
-                                @error('catalog_order')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <span class="badge py-1 px-2 rounded-pill fw-bold" style="background: #FAF5FF; color: #43135C; border: 1px solid #E9D5FF; font-size: 0.75rem;">
+                                    Auto #{{ $suggestedOrder }}
+                                </span>
                             </div>
+                            <input type="hidden" name="catalog_order" value="{{ $suggestedOrder }}">
                         </div>
                     </div>
                 </div>
