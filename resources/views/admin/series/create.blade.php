@@ -43,9 +43,11 @@
                 <div class="humora-card-body p-4">
                     <h5 class="fw-bold text-dark mb-4" style="font-size: 0.95rem;">1. INFORMASI JUDUL KONTEN</h5>
 
-                    <div class="mb-3">
-                        <label for="title" class="form-label-custom">Judul Series <span class="text-danger">*</span></label>
-                        <input type="text" id="title" name="title" class="form-control-custom @error('title') is-invalid @enderror" placeholder="Misal: Tipe Penumpang Taxi Online" value="{{ old('title') }}" required>
+                    <div class="humora-field-group mb-3">
+                        <div class="humora-field @error('title') is-error @enderror">
+                            <input type="text" id="title" name="title" class="form-control-custom @error('title') is-invalid @enderror" placeholder=" " value="{{ old('title') }}" required>
+                            <label for="title" class="humora-floating-label">Judul Series <span class="text-danger">*</span></label>
+                        </div>
                         @error('title')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -54,17 +56,19 @@
                     <div class="mb-3">
                         <label for="slug" class="form-label-custom">Slug URL (Opsional, otomatis dibuat jika kosong)</label>
                         <div class="input-group">
-                            <span class="input-group-text bg-light text-muted border-end-0" style="font-size: 0.85rem; border-radius: 10px 0 0 10px;">/series/</span>
-                            <input type="text" id="slug" name="slug" class="form-control-custom border-start-0 @error('slug') is-invalid @enderror" placeholder="tipe-penumpang-taxi-online" value="{{ old('slug') }}" style="border-radius: 0 10px 10px 0;">
+                            <span class="input-group-text bg-light text-muted border-end-0" style="font-size: 0.85rem; border-radius: 12px 0 0 12px;">/series/</span>
+                            <input type="text" id="slug" name="slug" class="form-control-custom border-start-0 @error('slug') is-invalid @enderror" placeholder="tipe-penumpang-taxi-online" value="{{ old('slug') }}" style="border-radius: 0 12px 12px 0;">
                         </div>
                         @error('slug')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <div class="mb-4">
-                        <label for="synopsis" class="form-label-custom">Sinopsis & Ringkasan Konten <span class="text-danger">*</span></label>
-                        <textarea id="synopsis" name="synopsis" rows="4" class="form-control-custom @error('synopsis') is-invalid @enderror" placeholder="Ceritakan tema besar, latar belakang komedi, dan daya tarik utama series ini..." required>{{ old('synopsis') }}</textarea>
+                    <div class="humora-field-group mb-4">
+                        <div class="humora-field is-textarea @error('synopsis') is-error @enderror">
+                            <textarea id="synopsis" name="synopsis" rows="4" class="form-control-custom @error('synopsis') is-invalid @enderror" placeholder=" " required>{{ old('synopsis') }}</textarea>
+                            <label for="synopsis" class="humora-floating-label">Sinopsis & Ringkasan Konten <span class="text-danger">*</span></label>
+                        </div>
                         @error('synopsis')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -87,19 +91,27 @@
 
                     <div class="row g-3">
                         <div class="col-12 col-md-6">
-                            <label for="release_year" class="form-label-custom">Tahun Rilis <span class="text-danger">*</span></label>
-                            <input type="text" id="release_year" name="release_year" class="form-control-custom @error('release_year') is-invalid @enderror" value="{{ old('release_year', date('Y')) }}" required>
-                            @error('release_year')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <div class="humora-field-group mb-0">
+                                <div class="humora-field @error('release_year') is-error @enderror">
+                                    <input type="text" id="release_year" name="release_year" class="form-control-custom @error('release_year') is-invalid @enderror" value="{{ old('release_year', date('Y')) }}" placeholder=" " required>
+                                    <label for="release_year" class="humora-floating-label">Tahun Rilis <span class="text-danger">*</span></label>
+                                </div>
+                                @error('release_year')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
                         <div class="col-12 col-md-6">
-                            <label for="catalog_order" class="form-label-custom">Urutan Katalog</label>
-                            <input type="number" id="catalog_order" name="catalog_order" class="form-control-custom @error('catalog_order') is-invalid @enderror" value="{{ old('catalog_order', 0) }}" min="0">
-                            <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Semakin kecil angka, semakin awal muncul di katalog.</small>
-                            @error('catalog_order')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <div class="humora-field-group mb-0">
+                                <div class="humora-field @error('catalog_order') is-error @enderror">
+                                    <input type="number" id="catalog_order" name="catalog_order" class="form-control-custom @error('catalog_order') is-invalid @enderror" value="{{ old('catalog_order', 0) }}" placeholder=" " min="0">
+                                    <label for="catalog_order" class="humora-floating-label">Urutan Katalog</label>
+                                </div>
+                                <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Semakin kecil angka, semakin awal muncul di katalog.</small>
+                                @error('catalog_order')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
                     </div>
                 </div>

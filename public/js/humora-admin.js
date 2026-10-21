@@ -663,4 +663,206 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+
+    // =========================================================================
+    // HUMORA UNIVERSAL NOTCHED FLOATING LABEL INPUT STATES
+    // Spec: 6a152b7e212dd2cfa2d272fe3238a1fc.png
+    // States: DEFAULT, HOVER, ACTIVE, TYPING, DISABLED, ERROR
+    // =========================================================================
+    window.initHumoraInputStates = function (root = document) {
+        if (!root) return;
+
+        // 1. Process explicit .humora-field elements
+        const existingFields = root.querySelectorAll ? root.querySelectorAll('.humora-field') : [];
+        existingFields.forEach(field => setupFieldEvents(field));
+
+        // 2. Automatically wrap and enhance standalone form inputs with labels
+        const inputSelectors = [
+            'input.form-control-custom:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="submit"]):not([type="button"])',
+            'textarea.form-control-custom',
+            'select.form-select-custom',
+            'input.form-control:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="submit"]):not([type="button"])',
+            'textarea.form-control'
+        ];
+
+        const elements = root.querySelectorAll ? root.querySelectorAll(inputSelectors.join(',')) : [];
+        elements.forEach(el => {
+            // Skip elements already in .humora-field or inside input-group or select2 search fields or explicitly opted out
+            if (el.closest('.humora-field') || el.closest('.input-group') || el.closest('.select2-container') || el.classList.contains('select2-search__field') || el.dataset.noFloating === 'true') {
+                return;
+            }
+
+            // Find associated label
+            let label = null;
+            if (el.id) {
+                label = document.querySelector(`label[for="${el.id}"]`);
+            }
+            if (!label && el.parentElement) {
+                if (el.previousElementSibling && el.previousElementSibling.tagName === 'LABEL') {
+                    label = el.previousElementSibling;
+                } else {
+                    label = el.parentElement.querySelector('label.form-label-custom, label.form-label, label');
+                }
+            }
+
+            let labelText = '';
+            if (label) {
+                labelText = label.innerText.replace('*', '').trim();
+            } else if (el.placeholder && el.placeholder.trim().length > 0 && el.placeholder !== ' ') {
+                labelText = el.placeholder.trim();
+            }
+
+            if (!labelText) return;
+
+            // Create .humora-field container
+            const field = document.createElement('div');
+            field.className = 'humora-field';
+            if (el.tagName === 'TEXTAREA') field.classList.add('is-textarea');
+            if (el.tagName === 'SELECT') field.classList.add('is-select');
+
+            // Check if there is a password toggle button or suffix icon
+            const parent = el.parentElement;
+            let suffixBtn = null;
+            if (parent) {
+                suffixBtn = parent.querySelector('#togglePassword, .btn-toggle-password');
+                if (suffixBtn) {
+                    field.classList.add('has-suffix');
+                    suffixBtn.classList.add('humora-field-suffix');
+                }
+            }
+
+            // Wrap input
+            if (parent) {
+                parent.insertBefore(field, el);
+                field.appendChild(el);
+
+                // Create floating label
+                const floatingLabel = document.createElement('label');
+                if (el.id) floatingLabel.setAttribute('for', el.id);
+                floatingLabel.className = 'humora-floating-label';
+                floatingLabel.innerText = labelText;
+                field.appendChild(floatingLabel);
+
+                if (suffixBtn) {
+                    field.appendChild(suffixBtn);
+                }
+
+                // If original label existed as an external element, hide or remove it to prevent duplicate labels
+                if (label && label.parentElement !== field) {
+                    label.style.display = 'none';
+                }
+
+                setupFieldEvents(field);
+            }
+        });
+
+        function setupFieldEvents(field) {
+            if (field._humoraEventsAttached) {
+                syncFieldState(field);
+                return;
+            }
+            field._humoraEventsAttached = true;
+
+            const input = field.querySelector('input, textarea, select');
+            if (!input) return;
+
+            // Ensure placeholder is empty or space for native CSS floating mechanics
+            if (!input.placeholder || input.placeholder === '') {
+                input.placeholder = ' ';
+            }
+
+            function syncFieldState() {
+                const val = input.value !== undefined && input.value !== null ? input.value.toString().trim() : '';
+                const hasVal = val.length > 0 || (input.tagName === 'SELECT' && input.selectedIndex > 0 && input.value !== '');
+                const isInvalid = input.classList.contains('is-invalid') || 
+                                  field.classList.contains('is-invalid') ||
+                                  (field.parentElement && field.parentElement.querySelector('.invalid-feedback.d-block'));
+                const isDisabled = input.disabled || input.hasAttribute('disabled');
+
+                // 1. TYPING / FILLED state
+                if (hasVal) {
+                    field.classList.add('has-value', 'is-typing');
+                } else {
+                    field.classList.remove('has-value', 'is-typing');
+                }
+
+                // 2. DISABLED state
+                if (isDisabled) {
+                    field.classList.add('is-disabled');
+                } else {
+                    field.classList.remove('is-disabled');
+                }
+
+                // 3. ERROR state
+                if (isInvalid) {
+                    field.classList.add('is-error');
+                } else {
+                    field.classList.remove('is-error');
+                }
+            }
+
+            // Event bindings
+            input.addEventListener('focus', () => {
+                field.classList.add('is-active');
+                syncFieldState();
+            });
+
+            input.addEventListener('blur', () => {
+                field.classList.remove('is-active');
+                syncFieldState();
+            });
+
+            input.addEventListener('input', () => {
+                syncFieldState();
+            });
+
+            input.addEventListener('change', () => {
+                syncFieldState();
+            });
+
+            // Initial state sync
+            syncFieldState();
+            setTimeout(syncFieldState, 100);
+            setTimeout(syncFieldState, 500);
+        }
+    };
+
+    // Run on initial page load
+    window.initHumoraInputStates();
+
+    // Hook to Bootstrap modals
+    function syncModalFields(modalEl) {
+        window.initHumoraInputStates(modalEl);
+        const inputs = modalEl.querySelectorAll('input, textarea, select');
+        inputs.forEach(inp => {
+            inp.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+    }
+
+    document.addEventListener('show.bs.modal', function (e) {
+        setTimeout(() => syncModalFields(e.target), 30);
+        setTimeout(() => syncModalFields(e.target), 150);
+    });
+    document.addEventListener('shown.bs.modal', function (e) {
+        setTimeout(() => syncModalFields(e.target), 50);
+        setTimeout(() => syncModalFields(e.target), 200);
+    });
+
+    // Observer for dynamically added elements (e.g., dynamic bank account rows)
+    const domObserver = new MutationObserver(function (mutations) {
+        let shouldInit = false;
+        mutations.forEach(m => {
+            if (m.addedNodes && m.addedNodes.length > 0) {
+                m.addedNodes.forEach(node => {
+                    if (node.nodeType === 1 && (node.querySelector('input, textarea, select') || node.matches('input, textarea, select'))) {
+                        shouldInit = true;
+                    }
+                });
+            }
+        });
+        if (shouldInit) {
+            window.initHumoraInputStates();
+        }
+    });
+    domObserver.observe(document.body, { childList: true, subtree: true });
 });

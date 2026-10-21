@@ -60,25 +60,31 @@
                 <form action="{{ route('admin.profile.update') }}" method="POST">
                     @csrf
                     @method('PUT')
-                    <div class="mb-3">
-                        <label class="form-label-custom">Nama Lengkap <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control-custom @error('name') is-invalid @enderror" value="{{ old('name', $admin->name) }}" required>
+                    <div class="humora-field-group mb-3">
+                        <div class="humora-field @error('name') is-error @enderror">
+                            <input type="text" name="name" id="profileName" class="form-control-custom @error('name') is-invalid @enderror" value="{{ old('name', $admin->name) }}" placeholder=" " required>
+                            <label for="profileName" class="humora-floating-label">Nama Lengkap <span class="text-danger">*</span></label>
+                        </div>
                         @error('name')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label-custom">Email Administrator <span class="text-danger">*</span></label>
-                        <input type="email" name="email" class="form-control-custom @error('email') is-invalid @enderror" value="{{ old('email', $admin->email) }}" required>
+                    <div class="humora-field-group mb-3">
+                        <div class="humora-field @error('email') is-error @enderror">
+                            <input type="email" name="email" id="profileEmail" class="form-control-custom @error('email') is-invalid @enderror" value="{{ old('email', $admin->email) }}" placeholder=" " required>
+                            <label for="profileEmail" class="humora-floating-label">Email Administrator <span class="text-danger">*</span></label>
+                        </div>
                         @error('email')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label-custom">Nomor Telepon</label>
-                        <input type="text" name="phone" class="form-control-custom @error('phone') is-invalid @enderror" value="{{ old('phone', $admin->phone) }}" placeholder="0812-xxxx-xxxx">
+                    <div class="humora-field-group mb-4">
+                        <div class="humora-field @error('phone') is-error @enderror">
+                            <input type="text" name="phone" id="profilePhone" class="form-control-custom @error('phone') is-invalid @enderror" value="{{ old('phone', $admin->phone) }}" placeholder=" ">
+                            <label for="profilePhone" class="humora-floating-label">Nomor Telepon</label>
+                        </div>
                         @error('phone')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -109,25 +115,31 @@
                 <form action="{{ route('admin.profile.password') }}" method="POST">
                     @csrf
                     @method('PUT')
-                    <div class="mb-3">
-                        <label class="form-label-custom">Password Saat Ini <span class="text-danger">*</span></label>
-                        <input type="password" name="current_password" class="form-control-custom @error('current_password') is-invalid @enderror" required placeholder="••••••••">
+                    <div class="humora-field-group mb-3">
+                        <div class="humora-field @error('current_password') is-error @enderror">
+                            <input type="password" name="current_password" id="current_password" class="form-control-custom @error('current_password') is-invalid @enderror" required placeholder=" ">
+                            <label for="current_password" class="humora-floating-label">Password Saat Ini <span class="text-danger">*</span></label>
+                        </div>
                         @error('current_password')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label-custom">Password Baru (Min. 8 karakter) <span class="text-danger">*</span></label>
-                        <input type="password" name="password" class="form-control-custom @error('password') is-invalid @enderror" required minlength="8" placeholder="••••••••">
+                    <div class="humora-field-group mb-3">
+                        <div class="humora-field @error('password') is-error @enderror">
+                            <input type="password" name="password" id="new_password" class="form-control-custom @error('password') is-invalid @enderror" required minlength="8" placeholder=" ">
+                            <label for="new_password" class="humora-floating-label">Password Baru (Min. 8 Karakter) <span class="text-danger">*</span></label>
+                        </div>
                         @error('password')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label-custom">Konfirmasi Password Baru <span class="text-danger">*</span></label>
-                        <input type="password" name="password_confirmation" class="form-control-custom" required minlength="8" placeholder="••••••••">
+                    <div class="humora-field-group mb-4">
+                        <div class="humora-field">
+                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control-custom" required minlength="8" placeholder=" ">
+                            <label for="password_confirmation" class="humora-floating-label">Konfirmasi Password Baru <span class="text-danger">*</span></label>
+                        </div>
                     </div>
 
                     <div class="text-end">

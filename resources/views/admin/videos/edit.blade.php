@@ -65,25 +65,35 @@
 
                     <div class="row g-3 mb-3">
                         <div class="col-12 col-md-4">
-                            <label for="episodeNumberInput" class="form-label-custom">Nomor Episode <span class="text-danger">*</span></label>
-                            <input type="number" id="episodeNumberInput" name="episode_number" class="form-control-custom @error('episode_number') is-invalid @enderror" value="{{ old('episode_number', $episode->episode_number) }}" min="1" required>
-                            <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Ep 1 & 2 Gratis, Ep 3+ Premium</small>
-                            @error('episode_number')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <div class="humora-field-group mb-0">
+                                <div class="humora-field @error('episode_number') is-error @enderror">
+                                    <input type="number" id="episodeNumberInput" name="episode_number" class="form-control-custom @error('episode_number') is-invalid @enderror" value="{{ old('episode_number', $episode->episode_number) }}" placeholder=" " min="1" required>
+                                    <label for="episodeNumberInput" class="humora-floating-label">Nomor Episode <span class="text-danger">*</span></label>
+                                </div>
+                                <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Ep 1 & 2 Gratis, Ep 3+ Premium</small>
+                                @error('episode_number')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
                         <div class="col-12 col-md-8">
-                            <label for="title" class="form-label-custom">Judul Episode <span class="text-danger">*</span></label>
-                            <input type="text" id="title" name="title" class="form-control-custom @error('title') is-invalid @enderror" value="{{ old('title', $episode->title) }}" required>
-                            @error('title')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <div class="humora-field-group mb-0">
+                                <div class="humora-field @error('title') is-error @enderror">
+                                    <input type="text" id="title" name="title" class="form-control-custom @error('title') is-invalid @enderror" placeholder=" " value="{{ old('title', $episode->title) }}" required>
+                                    <label for="title" class="humora-floating-label">Judul Episode <span class="text-danger">*</span></label>
+                                </div>
+                                @error('title')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="synopsis" class="form-label-custom">Sinopsis Cerita / Sketsa</label>
-                        <textarea id="synopsis" rows="3" name="synopsis" class="form-control-custom @error('synopsis') is-invalid @enderror">{{ old('synopsis', $episode->synopsis) }}</textarea>
+                    <div class="humora-field-group mb-4">
+                        <div class="humora-field is-textarea @error('synopsis') is-error @enderror">
+                            <textarea id="synopsis" rows="3" name="synopsis" class="form-control-custom @error('synopsis') is-invalid @enderror" placeholder=" ">{{ old('synopsis', $episode->synopsis) }}</textarea>
+                            <label for="synopsis" class="humora-floating-label">Sinopsis Cerita / Sketsa</label>
+                        </div>
                         @error('synopsis')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

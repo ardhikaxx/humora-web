@@ -16,11 +16,11 @@
 <form action="{{ route('admin.password.update') }}" method="POST" class="text-start">
     @csrf
 
-    <div class="mb-3">
-        <label for="new_password" class="form-label-custom">Kata Sandi Baru</label>
-        <div class="position-relative">
-            <input type="password" id="new_password" name="password" class="form-control-custom pe-5 @error('password') is-invalid @enderror" placeholder="Masukkan kata sandi baru" required autocomplete="off">
-            <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-muted text-decoration-none pe-3" onclick="toggleVisibility('new_password', 'eye1')">
+    <div class="humora-field-group mb-3">
+        <div class="humora-field has-suffix @error('password') is-error @enderror">
+            <input type="password" id="new_password" name="password" class="form-control-custom @error('password') is-invalid @enderror" placeholder=" " required autocomplete="off">
+            <label for="new_password" class="humora-floating-label">Kata Sandi Baru</label>
+            <button type="button" class="btn btn-link humora-field-suffix text-muted text-decoration-none p-0" onclick="toggleVisibility('new_password', 'eye1')">
                 <i data-lucide="eye" id="eye1"></i>
             </button>
         </div>
@@ -29,11 +29,11 @@
         @enderror
     </div>
 
-    <div class="mb-2">
-        <label for="confirm_password" class="form-label-custom">Konfirmasi Kata Sandi Baru</label>
-        <div class="position-relative">
-            <input type="password" id="confirm_password" name="password_confirmation" class="form-control-custom pe-5 @error('password_confirmation') is-invalid @enderror" placeholder="Konfirmasi kata sandi baru" required autocomplete="off">
-            <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-muted text-decoration-none pe-3" onclick="toggleVisibility('confirm_password', 'eye2')">
+    <div class="humora-field-group mb-3">
+        <div class="humora-field has-suffix @error('password_confirmation') is-error @enderror">
+            <input type="password" id="confirm_password" name="password_confirmation" class="form-control-custom @error('password_confirmation') is-invalid @enderror" placeholder=" " required autocomplete="off">
+            <label for="confirm_password" class="humora-floating-label">Konfirmasi Kata Sandi Baru</label>
+            <button type="button" class="btn btn-link humora-field-suffix text-muted text-decoration-none p-0" onclick="toggleVisibility('confirm_password', 'eye2')">
                 <i data-lucide="eye" id="eye2"></i>
             </button>
         </div>

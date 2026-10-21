@@ -183,17 +183,23 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body modal-body-humora">
-                <div class="mb-3">
-                    <label class="form-label-custom">Nama Lengkap <span class="text-danger">*</span></label>
-                    <input type="text" name="name" class="form-control-custom" placeholder="Misal: Budi Pratama" required>
+                <div class="humora-field-group mb-3">
+                    <div class="humora-field">
+                        <input type="text" name="name" id="addAdminName" class="form-control-custom" placeholder=" " required>
+                        <label for="addAdminName" class="humora-floating-label">Nama Lengkap <span class="text-danger">*</span></label>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label-custom">Email Resmi <span class="text-danger">*</span></label>
-                    <input type="email" name="email" class="form-control-custom" placeholder="budi@humora.id" required>
+                <div class="humora-field-group mb-3">
+                    <div class="humora-field">
+                        <input type="email" name="email" id="addAdminEmail" class="form-control-custom" placeholder=" " required>
+                        <label for="addAdminEmail" class="humora-floating-label">Email Resmi <span class="text-danger">*</span></label>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label-custom">Nomor Telepon</label>
-                    <input type="text" name="phone" class="form-control-custom" placeholder="0812-xxxx-xxxx">
+                <div class="humora-field-group mb-3">
+                    <div class="humora-field">
+                        <input type="text" name="phone" id="addAdminPhone" class="form-control-custom" placeholder=" ">
+                        <label for="addAdminPhone" class="humora-floating-label">Nomor Telepon</label>
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label-custom">Role Hak Akses</label>
@@ -208,12 +214,20 @@
                 </div>
                 <div class="row g-2 mb-3">
                     <div class="col-6">
-                        <label class="form-label-custom">Password <span class="text-danger">*</span></label>
-                        <input type="password" name="password" class="form-control-custom" placeholder="Min. 8 karakter" required minlength="8">
+                        <div class="humora-field-group mb-0">
+                            <div class="humora-field">
+                                <input type="password" name="password" id="addAdminPassword" class="form-control-custom" placeholder=" " required minlength="8">
+                                <label for="addAdminPassword" class="humora-floating-label">Password <span class="text-danger">*</span></label>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-6">
-                        <label class="form-label-custom">Konfirmasi Password <span class="text-danger">*</span></label>
-                        <input type="password" name="password_confirmation" class="form-control-custom" placeholder="Ketik ulang" required minlength="8">
+                        <div class="humora-field-group mb-0">
+                            <div class="humora-field">
+                                <input type="password" name="password_confirmation" id="addAdminPasswordConfirm" class="form-control-custom" placeholder=" " required minlength="8">
+                                <label for="addAdminPasswordConfirm" class="humora-floating-label">Konfirmasi <span class="text-danger">*</span></label>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="form-check form-switch mt-2">
@@ -242,17 +256,23 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body modal-body-humora">
-                <div class="mb-3">
-                    <label class="form-label-custom">Nama Lengkap <span class="text-danger">*</span></label>
-                    <input type="text" id="editAdminName" name="name" class="form-control-custom" required>
+                <div class="humora-field-group mb-3">
+                    <div class="humora-field">
+                        <input type="text" id="editAdminName" name="name" class="form-control-custom" placeholder=" " required>
+                        <label for="editAdminName" class="humora-floating-label">Nama Lengkap <span class="text-danger">*</span></label>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label-custom">Email Resmi <span class="text-danger">*</span></label>
-                    <input type="email" id="editAdminEmail" name="email" class="form-control-custom" required>
+                <div class="humora-field-group mb-3">
+                    <div class="humora-field">
+                        <input type="email" id="editAdminEmail" name="email" class="form-control-custom" placeholder=" " required>
+                        <label for="editAdminEmail" class="humora-floating-label">Email Resmi <span class="text-danger">*</span></label>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label-custom">Nomor Telepon</label>
-                    <input type="text" id="editAdminPhone" name="phone" class="form-control-custom">
+                <div class="humora-field-group mb-3">
+                    <div class="humora-field">
+                        <input type="text" id="editAdminPhone" name="phone" class="form-control-custom" placeholder=" ">
+                        <label for="editAdminPhone" class="humora-floating-label">Nomor Telepon</label>
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label-custom">Role Hak Akses</label>
@@ -267,12 +287,20 @@
                 </div>
                 <div class="row g-2 mb-3">
                     <div class="col-6">
-                        <label class="form-label-custom">Password Baru (Opsional)</label>
-                        <input type="password" name="password" class="form-control-custom" placeholder="Kosongkan jika tetap" minlength="8">
+                        <div class="humora-field-group mb-0">
+                            <div class="humora-field">
+                                <input type="password" name="password" id="editAdminPassword" class="form-control-custom" placeholder=" " minlength="8">
+                                <label for="editAdminPassword" class="humora-floating-label">Password Baru</label>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-6">
-                        <label class="form-label-custom">Konfirmasi Password</label>
-                        <input type="password" name="password_confirmation" class="form-control-custom" placeholder="Ketik ulang" minlength="8">
+                        <div class="humora-field-group mb-0">
+                            <div class="humora-field">
+                                <input type="password" name="password_confirmation" id="editAdminPasswordConfirm" class="form-control-custom" placeholder=" " minlength="8">
+                                <label for="editAdminPasswordConfirm" class="humora-floating-label">Konfirmasi</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="form-check form-switch mt-2">
@@ -300,6 +328,11 @@ function openEditAdminModal(admin) {
     document.getElementById('editAdminEmail').value = admin.email;
     document.getElementById('editAdminPhone').value = admin.phone || '';
     document.getElementById('editAdminActive').checked = admin.is_active;
+
+    ['editAdminName', 'editAdminEmail', 'editAdminPhone'].forEach(fieldId => {
+        const el = document.getElementById(fieldId);
+        if (el) el.dispatchEvent(new Event('input', { bubbles: true }));
+    });
 
     if (admin.is_self) {
         document.getElementById('editAdminActive').disabled = true;

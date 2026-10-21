@@ -9,22 +9,24 @@
 <form action="{{ route('admin.login.submit') }}" method="POST" class="text-start">
     @csrf
 
-    <div class="mb-3">
-        <label for="email" class="form-label-custom">Email Administrator</label>
-        <input type="email" id="email" name="email" class="form-control-custom @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="Masukkan email administrator" required autofocus autocomplete="off">
+    <div class="humora-field-group mb-3">
+        <div class="humora-field @error('email') is-error @enderror">
+            <input type="email" id="email" name="email" class="form-control-custom @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder=" " required autofocus autocomplete="off">
+            <label for="email" class="humora-floating-label">Email Administrator</label>
+        </div>
         @error('email')
             <div class="invalid-feedback d-block">{{ $message }}</div>
         @enderror
     </div>
 
-    <div class="mb-3">
-        <div class="d-flex justify-content-between align-items-center mb-1">
-            <label for="password" class="form-label-custom mb-0">Kata Sandi</label>
+    <div class="humora-field-group mb-3">
+        <div class="d-flex justify-content-end mb-1">
             <a href="{{ route('admin.password.request') }}" class="text-decoration-none" style="font-size: 0.82rem; color: #43135C; font-weight: 600;">Lupa Sandi?</a>
         </div>
-        <div class="position-relative">
-            <input type="password" id="password" name="password" class="form-control-custom pe-5 @error('password') is-invalid @enderror" placeholder="Masukkan kata sandi" required autocomplete="off">
-            <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-muted text-decoration-none pe-3" id="togglePassword">
+        <div class="humora-field has-suffix @error('password') is-error @enderror">
+            <input type="password" id="password" name="password" class="form-control-custom @error('password') is-invalid @enderror" placeholder=" " required autocomplete="off">
+            <label for="password" class="humora-floating-label">Kata Sandi</label>
+            <button type="button" class="btn btn-link humora-field-suffix text-muted text-decoration-none p-0" id="togglePassword">
                 <i data-lucide="eye" id="eyeIcon"></i>
             </button>
         </div>

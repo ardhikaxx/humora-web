@@ -7,46 +7,56 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
 <style>
-/* Select2 customization for Humora Admin */
+/* Select2 customization for Humora Admin matching 6 input states */
 .select2-container--bootstrap-5 .select2-selection {
-    border-color: #E2E8F0 !important;
-    border-radius: 10px !important;
-    min-height: 44px !important;
-    padding: 0.35rem 0.65rem !important;
-    font-size: 0.88rem !important;
-    background-color: #F9FAFB !important;
+    border: 1.5px solid #CBD5E1 !important;
+    border-radius: 12px !important;
+    min-height: 46px !important;
+    padding: 0.35rem 0.75rem !important;
+    font-size: 0.9rem !important;
+    background-color: #FFFFFF !important;
     display: flex !important;
     align-items: center !important;
-    transition: all 0.2s ease !important;
+    transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.select2-container--bootstrap-5:hover .select2-selection {
+    border-color: #64748B !important;
 }
 .select2-container--bootstrap-5.select2-container--focus .select2-selection,
 .select2-container--bootstrap-5.select2-container--open .select2-selection {
-    border-color: #A855F7 !important;
+    border-color: #0F172A !important;
     background-color: #FFFFFF !important;
-    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15) !important;
+    box-shadow: none !important;
+}
+.select2-container--bootstrap-5.is-invalid .select2-selection {
+    border-color: #DC2626 !important;
 }
 .select2-container--bootstrap-5 .select2-dropdown {
-    border-color: #CBD5E1 !important;
+    border: 1.5px solid #CBD5E1 !important;
     border-radius: 12px !important;
-    box-shadow: 0 12px 28px rgba(67, 19, 92, 0.12) !important;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12) !important;
     overflow: hidden !important;
     z-index: 1055 !important;
 }
 .select2-search--dropdown {
     padding: 8px 10px !important;
-    background: #FAF8FD !important;
-    border-bottom: 1px solid #F1F5F9 !important;
+    background: #F8FAFC !important;
+    border-bottom: 1.5px solid #E2E8F0 !important;
 }
 .select2-search--dropdown .select2-search__field {
     border-radius: 8px !important;
-    border: 1px solid #DDD6FE !important;
+    border: 1.5px solid #CBD5E1 !important;
     padding: 0.5rem 0.75rem !important;
     font-size: 0.84rem !important;
     outline: none !important;
+    transition: border-color 0.15s ease !important;
+}
+.select2-search--dropdown .select2-search__field:hover {
+    border-color: #64748B !important;
 }
 .select2-search--dropdown .select2-search__field:focus {
-    border-color: #A855F7 !important;
-    box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2) !important;
+    border-color: #0F172A !important;
+    box-shadow: none !important;
 }
 .select2-container--bootstrap-5 .select2-results__optgroup {
     font-size: 0.72rem !important;
@@ -310,10 +320,10 @@
                                 <div class="col-12 col-sm-6">
                                     <label class="form-label-custom">Nomor Rekening <span class="text-danger">*</span></label>
                                     <div class="input-group">
-                                        <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 10px 0 0 10px; border-color: #E2E8F0;">
+                                        <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 12px 0 0 12px;">
                                             <i data-lucide="hash" style="width: 15px; height: 15px;"></i>
                                         </span>
-                                        <input type="text" name="bank_accounts[{{ $index }}][account_number]" class="form-control-custom input-bank-number border-start-0" placeholder="Contoh: {{ $bank['placeholder'] ?? '8830-192-888' }}" value="{{ $bank['account_number'] ?? '' }}" required style="border-radius: 0 10px 10px 0; font-family: 'JetBrains Mono', 'Courier New', monospace; font-weight: 600; letter-spacing: 0.04em;">
+                                        <input type="text" name="bank_accounts[{{ $index }}][account_number]" class="form-control-custom input-bank-number border-start-0" placeholder="Contoh: {{ $bank['placeholder'] ?? '8830-192-888' }}" value="{{ $bank['account_number'] ?? '' }}" required style="border-radius: 0 12px 12px 0; font-family: 'JetBrains Mono', 'Courier New', monospace; font-weight: 600; letter-spacing: 0.04em;">
                                     </div>
                                     <small class="text-muted d-block mt-1 bank-mask-hint" style="font-size: 0.7rem;">
                                         Ketik angka saja, format tanda hubung otomatis terbentuk.
@@ -322,10 +332,10 @@
                                 <div class="col-12 col-sm-6">
                                     <label class="form-label-custom">Atas Nama Penerima <span class="text-danger">*</span></label>
                                     <div class="input-group">
-                                        <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 10px 0 0 10px; border-color: #E2E8F0;">
+                                        <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 12px 0 0 12px;">
                                             <i data-lucide="user-check" style="width: 15px; height: 15px;"></i>
                                         </span>
-                                        <input type="text" name="bank_accounts[{{ $index }}][account_name]" class="form-control-custom input-bank-holder border-start-0" placeholder="Misal: PT HUMORA MEDIA KREATIF" value="{{ $bank['account_name'] ?? '' }}" required style="border-radius: 0 10px 10px 0;">
+                                        <input type="text" name="bank_accounts[{{ $index }}][account_name]" class="form-control-custom input-bank-holder border-start-0" placeholder="Misal: PT HUMORA MEDIA KREATIF" value="{{ $bank['account_name'] ?? '' }}" required style="border-radius: 0 12px 12px 0;">
                                     </div>
                                 </div>
                             </div>
@@ -642,10 +652,10 @@ $(document).ready(function () {
                     <div class="col-12 col-sm-6">
                         <label class="form-label-custom">Nomor Rekening <span class="text-danger">*</span></label>
                         <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 10px 0 0 10px; border-color: #E2E8F0;">
+                            <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 12px 0 0 12px;">
                                 <i data-lucide="hash" style="width: 15px; height: 15px;"></i>
                             </span>
-                            <input type="text" name="bank_accounts[${newIndex}][account_number]" class="form-control-custom input-bank-number border-start-0" placeholder="Nomor rekening" required style="border-radius: 0 10px 10px 0; font-family: 'JetBrains Mono', 'Courier New', monospace; font-weight: 600; letter-spacing: 0.04em;">
+                            <input type="text" name="bank_accounts[${newIndex}][account_number]" class="form-control-custom input-bank-number border-start-0" placeholder="Nomor rekening" required style="border-radius: 0 12px 12px 0; font-family: 'JetBrains Mono', 'Courier New', monospace; font-weight: 600; letter-spacing: 0.04em;">
                         </div>
                         <small class="text-muted d-block mt-1 bank-mask-hint" style="font-size: 0.7rem;">
                             Ketik angka saja, format tanda hubung otomatis terbentuk.
@@ -654,10 +664,10 @@ $(document).ready(function () {
                     <div class="col-12 col-sm-6">
                         <label class="form-label-custom">Atas Nama Penerima <span class="text-danger">*</span></label>
                         <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 10px 0 0 10px; border-color: #E2E8F0;">
+                            <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 12px 0 0 12px;">
                                 <i data-lucide="user-check" style="width: 15px; height: 15px;"></i>
                             </span>
-                            <input type="text" name="bank_accounts[${newIndex}][account_name]" class="form-control-custom input-bank-holder border-start-0" placeholder="Misal: PT HUMORA MEDIA KREATIF" required style="border-radius: 0 10px 10px 0;">
+                            <input type="text" name="bank_accounts[${newIndex}][account_name]" class="form-control-custom input-bank-holder border-start-0" placeholder="Misal: PT HUMORA MEDIA KREATIF" required style="border-radius: 0 12px 12px 0;">
                         </div>
                     </div>
                 </div>

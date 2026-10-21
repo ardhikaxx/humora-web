@@ -9,9 +9,11 @@
 <form action="{{ route('admin.password.email') }}" method="POST" class="text-start">
     @csrf
 
-    <div class="mb-2">
-        <label for="email" class="form-label-custom">Alamat Email Administrator</label>
-        <input type="email" id="email" name="email" class="form-control-custom @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="Masukkan email administrator" required autofocus autocomplete="off">
+    <div class="humora-field-group mb-3">
+        <div class="humora-field @error('email') is-error @enderror">
+            <input type="email" id="email" name="email" class="form-control-custom @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder=" " required autofocus autocomplete="off">
+            <label for="email" class="humora-floating-label">Alamat Email Administrator</label>
+        </div>
         @error('email')
             <div class="invalid-feedback d-block">{{ $message }}</div>
         @enderror

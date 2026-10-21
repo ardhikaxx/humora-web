@@ -1008,7 +1008,271 @@ body {
     color: #ffffff;
 }
 
-/* ================= FORM CONTROLS ================= */
+/* ================= FORM CONTROLS & NOTCHED FLOATING FIELD STATES ================= */
+/* Spec: 6a152b7e212dd2cfa2d272fe3238a1fc.png
+   6 States: DEFAULT, HOVER, ACTIVE, TYPING, DISABLED, ERROR */
+
+.humora-field-group {
+    position: relative;
+    margin-bottom: 1.35rem;
+    width: 100%;
+}
+
+/* 1. Universal Outlined Notched Input Container */
+.humora-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background-color: #FFFFFF;
+    border: 1.5px solid #CBD5E1; /* DEFAULT state */
+    border-radius: 12px;
+    transition: border-color 0.18s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.18s cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 0.18s ease;
+    box-sizing: border-box;
+}
+
+/* Inner input inside .humora-field */
+.humora-field .form-control-custom,
+.humora-field .form-select-custom,
+.humora-field input.form-control,
+.humora-field textarea.form-control,
+.humora-field select.form-select,
+.humora-field > input,
+.humora-field > textarea,
+.humora-field > select {
+    width: 100%;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 12px;
+    padding: 0.82rem 1rem;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: #0F172A;
+    line-height: 1.5;
+    z-index: 1;
+}
+
+/* Hide native placeholder by default so floating label acts as inside placeholder */
+.humora-field input::placeholder,
+.humora-field textarea::placeholder,
+.humora-field .form-control-custom::placeholder {
+    color: transparent;
+    opacity: 0;
+    transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+.humora-field.is-active input::placeholder,
+.humora-field.is-active textarea::placeholder,
+.humora-field.is-active .form-control-custom::placeholder {
+    color: #94A3B8;
+    opacity: 0.7;
+}
+
+/* Floating Notched Label */
+.humora-field .humora-floating-label,
+.humora-field > label {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.92rem;
+    font-weight: 400;
+    color: #64748B; /* DEFAULT: gray label centered inside */
+    pointer-events: none;
+    transition: top 0.18s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.18s cubic-bezier(0.4, 0, 0.2, 1),
+                font-size 0.18s cubic-bezier(0.4, 0, 0.2, 1),
+                font-weight 0.18s ease,
+                color 0.18s ease,
+                background-color 0.18s ease,
+                padding 0.18s ease;
+    z-index: 2;
+    padding: 0 4px;
+    background: transparent;
+    line-height: 1;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 28px);
+    overflow: hidden;
+    margin: 0;
+}
+
+/* Textarea variant */
+.humora-field.is-textarea {
+    align-items: flex-start;
+}
+.humora-field.is-textarea > label,
+.humora-field.is-textarea .humora-floating-label {
+    top: 18px;
+    transform: translateY(-50%);
+}
+.humora-field.is-textarea textarea {
+    min-height: 95px;
+    resize: vertical;
+}
+
+/* 2. HOVER State */
+.humora-field:hover:not(.is-disabled):not(.is-error) {
+    border-color: #64748B; /* Darker slate gray */
+}
+
+/* 3. ACTIVE State (Focused) */
+.humora-field.is-active,
+.humora-field:focus-within:not(.is-disabled):not(.is-error) {
+    border-color: #0F172A; /* Solid dark navy/slate border */
+}
+.humora-field.is-active > label,
+.humora-field.is-active .humora-floating-label,
+.humora-field:focus-within:not(.is-disabled):not(.is-error) > label,
+.humora-field:focus-within:not(.is-disabled):not(.is-error) .humora-floating-label {
+    top: 0;
+    transform: translateY(-50%);
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: #0F172A; /* Solid dark navy label */
+    background: #FFFFFF;
+    padding: 0 6px;
+}
+
+/* 4. TYPING / FILLED State */
+.humora-field.is-typing > label,
+.humora-field.is-typing .humora-floating-label,
+.humora-field.has-value > label,
+.humora-field.has-value .humora-floating-label,
+.humora-field.is-select > label,
+.humora-field.is-select .humora-floating-label,
+.humora-field:has(input:not(:placeholder-shown)) > label,
+.humora-field:has(input:not(:placeholder-shown)) .humora-floating-label,
+.humora-field:has(textarea:not(:placeholder-shown)) > label,
+.humora-field:has(textarea:not(:placeholder-shown)) .humora-floating-label {
+    top: 0;
+    transform: translateY(-50%);
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: #475569; /* Slate label when blurred with value */
+    background: #FFFFFF;
+    padding: 0 6px;
+}
+.humora-field.has-value:focus-within > label,
+.humora-field.has-value:focus-within .humora-floating-label,
+.humora-field.is-typing:focus-within > label,
+.humora-field.is-typing:focus-within .humora-floating-label,
+.humora-field:has(input:not(:placeholder-shown)):focus-within > label,
+.humora-field:has(input:not(:placeholder-shown)):focus-within .humora-floating-label,
+.humora-field:has(textarea:not(:placeholder-shown)):focus-within > label,
+.humora-field:has(textarea:not(:placeholder-shown)):focus-within .humora-floating-label {
+    color: #0F172A; /* Dark navy label when typing */
+}
+
+/* 5. DISABLED State */
+.humora-field.is-disabled,
+.humora-field:has(:disabled) {
+    background-color: #F8FAFC !important;
+    border-color: #E2E8F0 !important;
+    cursor: not-allowed;
+}
+.humora-field.is-disabled > label,
+.humora-field.is-disabled .humora-floating-label,
+.humora-field:has(:disabled) > label,
+.humora-field:has(:disabled) .humora-floating-label {
+    color: #CBD5E1 !important;
+    background: transparent !important;
+}
+.humora-field.is-disabled.has-value > label,
+.humora-field.is-disabled.has-value .humora-floating-label,
+.humora-field:has(:disabled).has-value > label,
+.humora-field:has(:disabled).has-value .humora-floating-label {
+    background: #F8FAFC !important;
+    padding: 0 6px;
+}
+.humora-field.is-disabled input,
+.humora-field.is-disabled select,
+.humora-field.is-disabled textarea,
+.humora-field:has(:disabled) input,
+.humora-field:has(:disabled) select,
+.humora-field:has(:disabled) textarea {
+    color: #CBD5E1 !important;
+    cursor: not-allowed !important;
+}
+
+/* 6. ERROR State */
+.humora-field.is-error,
+.humora-field:has(.is-invalid) {
+    border-color: #DC2626 !important; /* Crimson red outline */
+}
+.humora-field.is-error > label,
+.humora-field.is-error .humora-floating-label,
+.humora-field:has(.is-invalid) > label,
+.humora-field:has(.is-invalid) .humora-floating-label {
+    top: 0;
+    transform: translateY(-50%);
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: #DC2626 !important; /* Red floating label */
+    background: #FFFFFF;
+    padding: 0 6px;
+}
+
+/* Error message underneath field */
+.humora-field-group .invalid-feedback,
+.humora-field ~ .invalid-feedback,
+.humora-field + .invalid-feedback,
+.invalid-feedback.humora-error-msg {
+    display: block !important;
+    color: #DC2626;
+    font-size: 0.78rem;
+    font-style: italic; /* Exact match: italicized error text */
+    margin-top: 5px;
+    padding-left: 8px;
+    font-weight: 500;
+}
+
+/* Suffix & Prefix Elements */
+.humora-field .humora-field-suffix {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.humora-field.has-suffix input,
+.humora-field.has-suffix .form-control-custom {
+    padding-right: 2.75rem !important;
+}
+
+.humora-field .humora-field-prefix {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    color: #64748B;
+}
+.humora-field.has-prefix input,
+.humora-field.has-prefix .form-control-custom {
+    padding-left: 2.75rem !important;
+}
+.humora-field.has-prefix:not(.is-active):not(.has-value) > label,
+.humora-field.has-prefix:not(.is-active):not(.has-value) .humora-floating-label {
+    left: 2.75rem;
+}
+.humora-field.has-prefix.is-active > label,
+.humora-field.has-prefix.has-value > label,
+.humora-field.has-prefix.is-active .humora-floating-label,
+.humora-field.has-prefix.has-value .humora-floating-label {
+    left: 14px;
+}
+
+/* Standalone .form-control-custom and .form-select-custom fallback styles */
 .form-label-custom {
     font-size: 0.75rem;
     font-weight: 700;
@@ -1021,16 +1285,21 @@ body {
 
 .form-control-custom,
 .form-select-custom {
-    background-color: #F9FAFB;
-    border: 1px solid #E5E7EB;
-    border-radius: var(--humora-radius-sm);
-    padding: 0.65rem 1rem;
-    font-size: 0.88rem;
-    color: #111827;
+    background-color: #FFFFFF;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 12px;
+    padding: 0.78rem 1rem;
+    font-size: 0.9rem;
+    color: #0F172A;
     width: 100%;
     line-height: 1.5;
     box-sizing: border-box;
-    transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+    transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-control-custom:hover:not(:disabled),
+.form-select-custom:hover:not(:disabled) {
+    border-color: #64748B;
 }
 
 .form-select-custom {
@@ -1044,10 +1313,23 @@ body {
 
 .form-control-custom:focus,
 .form-select-custom:focus {
-    background-color: #ffffff;
-    border-color: #A855F7;
-    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+    background-color: #FFFFFF;
+    border-color: #0F172A;
+    box-shadow: none;
     outline: none;
+}
+
+.form-control-custom:disabled,
+.form-select-custom:disabled {
+    background-color: #F8FAFC;
+    border-color: #E2E8F0;
+    color: #CBD5E1;
+    cursor: not-allowed;
+}
+
+.form-control-custom.is-invalid,
+.form-select-custom.is-invalid {
+    border-color: #DC2626 !important;
 }
 
 /* Fix input-group with custom form controls */
@@ -1060,11 +1342,12 @@ body {
 }
 
 .input-group > .input-group-text {
-    background-color: #F9FAFB;
-    border: 1px solid #E5E7EB;
-    color: #6B7280;
+    background-color: #F8FAFC;
+    border: 1.5px solid #CBD5E1;
+    color: #64748B;
     font-size: 0.86rem;
     padding: 0.65rem 1rem;
+    transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .input-group > :not(:last-child).form-control-custom,
@@ -1079,8 +1362,39 @@ body {
     border-bottom-left-radius: 0 !important;
 }
 
-.input-group > .form-control-custom:focus {
+/* Seamless boundary between input-group-text and control */
+.input-group > .input-group-text.border-end-0 {
+    border-right: none !important;
+}
+.input-group > .form-control-custom.border-start-0 {
+    border-left: none !important;
+}
+
+/* Cohesive states across input-group elements */
+.input-group:hover:not(:focus-within) > .input-group-text,
+.input-group:hover:not(:focus-within) > .form-control-custom {
+    border-color: #64748B;
+}
+
+.input-group:focus-within > .input-group-text,
+.input-group:focus-within > .form-control-custom {
+    border-color: #0F172A;
     z-index: 3;
+}
+
+.input-group:has(.is-invalid) > .input-group-text,
+.input-group:has(.is-invalid) > .form-control-custom,
+.input-group.is-invalid > .input-group-text,
+.input-group.is-invalid > .form-control-custom {
+    border-color: #DC2626 !important;
+}
+
+.input-group:has(:disabled) > .input-group-text,
+.input-group:has(:disabled) > .form-control-custom {
+    background-color: #F8FAFC !important;
+    border-color: #E2E8F0 !important;
+    color: #CBD5E1 !important;
+    cursor: not-allowed;
 }
 
 .search-input-wrap {

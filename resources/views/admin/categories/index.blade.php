@@ -135,17 +135,23 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body modal-body-humora">
-                <div class="mb-3">
-                    <label class="form-label-custom">Nama Kategori <span class="text-danger">*</span></label>
-                    <input type="text" name="name" class="form-control-custom" placeholder="Misal: Sketsa Parodi" required>
+                <div class="humora-field-group mb-3">
+                    <div class="humora-field">
+                        <input type="text" name="name" id="addCategoryName" class="form-control-custom" placeholder=" " required>
+                        <label for="addCategoryName" class="humora-floating-label">Nama Kategori <span class="text-danger">*</span></label>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label-custom">Slug (Opsional)</label>
-                    <input type="text" name="slug" class="form-control-custom" placeholder="sketsa-parodi">
+                <div class="humora-field-group mb-3">
+                    <div class="humora-field">
+                        <input type="text" name="slug" id="addCategorySlug" class="form-control-custom" placeholder=" ">
+                        <label for="addCategorySlug" class="humora-floating-label">Slug (Opsional)</label>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label-custom">Deskripsi</label>
-                    <textarea name="description" rows="3" class="form-control-custom" placeholder="Penjelasan singkat genre kategori ini..."></textarea>
+                <div class="humora-field-group mb-3">
+                    <div class="humora-field is-textarea">
+                        <textarea name="description" id="addCategoryDesc" rows="3" class="form-control-custom" placeholder=" "></textarea>
+                        <label for="addCategoryDesc" class="humora-floating-label">Deskripsi</label>
+                    </div>
                 </div>
                 <div class="form-check form-switch mt-2">
                     <input class="form-check-input" type="checkbox" name="is_active" value="1" id="addIsActive" checked style="cursor: pointer;">
@@ -173,17 +179,23 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body modal-body-humora">
-                <div class="mb-3">
-                    <label class="form-label-custom">Nama Kategori <span class="text-danger">*</span></label>
-                    <input type="text" id="editName" name="name" class="form-control-custom" required>
+                <div class="humora-field-group mb-3">
+                    <div class="humora-field">
+                        <input type="text" id="editName" name="name" class="form-control-custom" placeholder=" " required>
+                        <label for="editName" class="humora-floating-label">Nama Kategori <span class="text-danger">*</span></label>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label-custom">Slug URL <span class="text-danger">*</span></label>
-                    <input type="text" id="editSlug" name="slug" class="form-control-custom" required>
+                <div class="humora-field-group mb-3">
+                    <div class="humora-field">
+                        <input type="text" id="editSlug" name="slug" class="form-control-custom" placeholder=" " required>
+                        <label for="editSlug" class="humora-floating-label">Slug URL <span class="text-danger">*</span></label>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label-custom">Deskripsi</label>
-                    <textarea id="editDesc" name="description" rows="3" class="form-control-custom"></textarea>
+                <div class="humora-field-group mb-3">
+                    <div class="humora-field is-textarea">
+                        <textarea id="editDesc" name="description" rows="3" class="form-control-custom" placeholder=" "></textarea>
+                        <label for="editDesc" class="humora-floating-label">Deskripsi</label>
+                    </div>
                 </div>
                 <div class="form-check form-switch mt-2">
                     <input class="form-check-input" type="checkbox" name="is_active" value="1" id="editIsActive" style="cursor: pointer;">
@@ -210,6 +222,11 @@ function openEditModal(id, name, slug, desc, isActive) {
     document.getElementById('editSlug').value = slug;
     document.getElementById('editDesc').value = desc;
     document.getElementById('editIsActive').checked = isActive === 1;
+
+    ['editName', 'editSlug', 'editDesc'].forEach(fieldId => {
+        const el = document.getElementById(fieldId);
+        if (el) el.dispatchEvent(new Event('input', { bubbles: true }));
+    });
 
     const modal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
     modal.show();
