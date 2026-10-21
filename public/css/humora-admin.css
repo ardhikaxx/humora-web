@@ -2537,4 +2537,188 @@ svg.lucide.fs-4, .fs-4 svg.lucide { width: 1.5rem !important; height: 1.5rem !im
 svg.lucide.fs-5, .fs-5 svg.lucide { width: 1.25rem !important; height: 1.25rem !important; }
 svg.lucide.fs-6, .fs-6 svg.lucide { width: 1rem !important; height: 1rem !important; }
 
+/* =========================================================================
+   HUMORA GENRE / CATEGORY SELECTOR CARDS
+   ========================================================================= */
+.humora-genre-selector {
+    background-color: #FFFFFF;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 14px;
+    padding: 1.15rem 1.25rem;
+    transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.humora-genre-selector:hover {
+    border-color: #64748B;
+}
+
+.humora-genre-selector:focus-within {
+    border-color: #0F172A;
+}
+
+.humora-genre-selector.is-invalid,
+.humora-genre-selector:has(.is-invalid) {
+    border-color: #DC2626 !important;
+}
+
+.genre-selector-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.9rem;
+}
+
+.genre-counter-badge {
+    font-size: 0.74rem;
+    font-weight: 700;
+    padding: 0.28rem 0.75rem;
+    border-radius: 20px;
+    background: #F1F5F9;
+    color: #64748B;
+    border: 1px solid #E2E8F0;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.genre-counter-badge.has-selected {
+    background: #FAF5FF;
+    color: #43135C;
+    border-color: #DDD6FE;
+    box-shadow: 0 1px 3px rgba(67, 19, 92, 0.08);
+}
+
+.genre-chips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+    gap: 0.75rem;
+}
+
+.genre-chip-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: 12px;
+    border: 1.5px solid #E2E8F0;
+    background-color: #FFFFFF;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 0;
+}
+
+.genre-checkbox-native {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+.genre-chip-card:hover {
+    border-color: #64748B;
+    background-color: #F8FAFC;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+}
+
+.genre-chip-card.is-selected {
+    border-color: #43135C;
+    background: #FAF5FF;
+    box-shadow: 0 3px 10px rgba(67, 19, 92, 0.12);
+    transform: translateY(-1px);
+}
+
+.genre-chip-icon-box {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #F1F5F9;
+    color: #64748B;
+    transition: all 0.18s ease;
+    flex-shrink: 0;
+}
+
+.genre-chip-icon-box svg.lucide {
+    width: 16px !important;
+    height: 16px !important;
+    stroke-width: 2.2px;
+}
+
+.genre-chip-card:hover .genre-chip-icon-box {
+    background: #E2E8F0;
+    color: #1E293B;
+}
+
+.genre-chip-card.is-selected .genre-chip-icon-box {
+    background: #43135C;
+    color: #FFFFFF;
+}
+
+.genre-chip-text {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.genre-chip-title {
+    display: block;
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: #334155;
+    line-height: 1.2;
+    transition: color 0.18s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.genre-chip-card.is-selected .genre-chip-title {
+    color: #43135C;
+    font-weight: 700;
+}
+
+.genre-chip-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid #CBD5E1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    flex-shrink: 0;
+    transition: all 0.18s ease;
+    background: #FFFFFF;
+}
+
+.genre-chip-indicator svg.lucide {
+    width: 12px !important;
+    height: 12px !important;
+    stroke-width: 3px !important;
+    opacity: 0;
+    color: #FFFFFF;
+    transition: opacity 0.18s ease;
+}
+
+.genre-chip-card.is-selected .genre-chip-indicator {
+    background: #43135C;
+    border-color: #43135C;
+}
+
+.genre-chip-card.is-selected .genre-chip-indicator svg.lucide {
+    opacity: 1;
+}
+
+.genre-chip-card:focus-within {
+    outline: 2px solid #43135C;
+    outline-offset: 2px;
+}
+
+
 

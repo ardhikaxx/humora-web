@@ -848,6 +848,51 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(() => syncModalFields(e.target), 200);
     });
 
+    // -------------------------------------------------------------
+    // HUMORA GENRE / CATEGORY SELECTION CARDS HANDLER
+    // -------------------------------------------------------------
+    function updateGenreSelector(container) {
+        if (!container) return;
+        const checkboxes = container.querySelectorAll('.genre-checkbox-native');
+        let selectedCount = 0;
+        checkboxes.forEach(cb => {
+            const card = cb.closest('.genre-chip-card');
+            if (cb.checked) {
+                selectedCount++;
+                if (card) card.classList.add('is-selected');
+            } else {
+                if (card) card.classList.remove('is-selected');
+            }
+        });
+
+        const countSpan = container.querySelector('#genreCountNumber');
+        const badge = container.querySelector('#genreCounterBadge');
+        if (countSpan) countSpan.textContent = selectedCount;
+        if (badge) {
+            badge.classList.toggle('has-selected', selectedCount > 0);
+        }
+
+        if (selectedCount > 0) {
+            container.classList.remove('is-invalid');
+            const feedback = container.querySelector('.invalid-feedback');
+            if (feedback) feedback.style.display = 'none';
+        }
+    }
+
+    document.addEventListener('change', function (e) {
+        if (e.target && e.target.classList.contains('genre-checkbox-native')) {
+            const container = e.target.closest('.humora-genre-selector');
+            if (container) {
+                updateGenreSelector(container);
+            }
+        }
+    });
+
+    // Initial sync for genre selectors on load
+    document.querySelectorAll('.humora-genre-selector').forEach(sel => {
+        updateGenreSelector(sel);
+    });
+
     // Observer for dynamically added elements (e.g., dynamic bank account rows)
     const domObserver = new MutationObserver(function (mutations) {
         let shouldInit = false;

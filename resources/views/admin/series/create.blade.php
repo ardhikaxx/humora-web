@@ -75,18 +75,60 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label-custom">Kategori / Genre (Minimal 1) <span class="text-danger">*</span></label>
-                        <div class="d-flex flex-wrap gap-2">
-                            @foreach ($categories as $cat)
-                            <div class="form-check form-check-inline border rounded-pill px-3 py-1 bg-light">
-                                <input class="form-check-input" type="checkbox" name="categories[]" id="cat_{{ $cat->id }}" value="{{ $cat->id }}" {{ in_array($cat->id, old('categories', [])) ? 'checked' : '' }}>
-                                <label class="form-check-label text-dark fw-medium" for="cat_{{ $cat->id }}" style="font-size: 0.85rem; cursor: pointer;">{{ $cat->name }}</label>
+                        <div class="humora-genre-selector @error('categories') is-invalid @enderror">
+                            <div class="genre-selector-header">
+                                <div>
+                                    <label class="form-label-custom mb-0 d-flex align-items-center gap-2">
+                                        <i data-lucide="tags" style="width: 14px; height: 14px; color: #7C3AED;"></i>
+                                        <span>Kategori & Genre Sketsa <span class="text-danger">*</span></span>
+                                    </label>
+                                    <small class="text-muted d-block" style="font-size: 0.73rem; margin-top: 2px;">
+                                        Pilih minimal 1 genre agar series ini dapat dieksplorasi di filter mobile app.
+                                    </small>
+                                </div>
+                                <div class="genre-counter-badge" id="genreCounterBadge">
+                                    <i data-lucide="check-circle-2" style="width: 12px; height: 12px;"></i>
+                                    <span><strong id="genreCountNumber">0</strong> Terpilih</span>
+                                </div>
                             </div>
-                            @endforeach
+
+                            <div class="genre-chips-grid">
+                                @php
+                                    $oldCategories = old('categories', []);
+                                @endphp
+                                @foreach ($categories as $cat)
+                                @php
+                                    $slug = strtolower($cat->slug ?? Str::slug($cat->name));
+                                    $icon = match($slug) {
+                                        'romantis' => 'heart',
+                                        'komedi' => 'laugh',
+                                        'sketsa' => 'clapperboard',
+                                        'keluarga' => 'home',
+                                        'kantor' => 'briefcase',
+                                        'sosial' => 'users',
+                                        default => 'sparkles'
+                                    };
+                                    $isChecked = in_array($cat->id, $oldCategories);
+                                @endphp
+                                <label class="genre-chip-card {{ $isChecked ? 'is-selected' : '' }}" for="cat_{{ $cat->id }}">
+                                    <input type="checkbox" name="categories[]" id="cat_{{ $cat->id }}" value="{{ $cat->id }}" class="genre-checkbox-native" {{ $isChecked ? 'checked' : '' }}>
+                                    <div class="genre-chip-icon-box">
+                                        <i data-lucide="{{ $icon }}"></i>
+                                    </div>
+                                    <div class="genre-chip-text">
+                                        <span class="genre-chip-title">{{ $cat->name }}</span>
+                                    </div>
+                                    <div class="genre-chip-indicator">
+                                        <i data-lucide="check"></i>
+                                    </div>
+                                </label>
+                                @endforeach
+                            </div>
+
+                            @error('categories')
+                                <div class="invalid-feedback d-block mt-2">{{ $message }}</div>
+                            @enderror
                         </div>
-                        @error('categories')
-                            <div class="text-danger mt-1" style="font-size: 0.8rem;">{{ $message }}</div>
-                        @enderror
                     </div>
 
                     <div class="row g-3">
