@@ -131,6 +131,68 @@ class FileStorageService
     }
 
     /**
+     * Locate system ffprobe executable
+     */
+    public static function getFfprobePath(): ?string
+    {
+        $knownPaths = [
+            'C:\\Users\\LENOVO\\AppData\\Local\\Microsoft\\WinGet\\Links\\ffprobe.exe',
+            'C:\\ffmpeg\\bin\\ffprobe.exe',
+            'C:\\Program Files\\ffmpeg\\bin\\ffprobe.exe',
+        ];
+
+        foreach ($knownPaths as $p) {
+            if (file_exists($p)) {
+                return $p;
+            }
+        }
+
+        $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+        $testCommand = $isWindows ? 'where ffprobe 2>nul' : 'which ffprobe 2>/dev/null';
+        $output = @shell_exec($testCommand);
+        if ($output) {
+            $lines = explode("\n", trim($output));
+            if (!empty($lines[0])) {
+                return trim($lines[0]);
+            }
+        }
+
+        return 'ffprobe';
+    }
+
+    /**
+     * Extract video duration in total integer seconds via ffprobe
+     */
+    public static function getVideoDurationSeconds(string $filePath): ?int
+    {
+        if (!file_exists($filePath)) {
+            return null;
+        }
+
+        $ffprobe = self::getFfprobePath();
+        if (!$ffprobe) {
+            return null;
+        }
+
+        try {
+            $cmd = sprintf(
+                '"%s" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 %s 2>&1',
+                $ffprobe,
+                escapeshellarg($filePath)
+            );
+            $output = @shell_exec($cmd);
+            if ($output !== null && is_numeric(trim($output))) {
+                $seconds = (float) trim($output);
+                return (int) round($seconds);
+            }
+        } catch (\Throwable $e) {
+            // Fallback gracefully
+        }
+
+        return null;
+    }
+
+    /**
      * Store and compress uploaded image, converting directly to high-efficiency WebP format (.webp)
      */
     public function storeUploadedImageAsWebp(

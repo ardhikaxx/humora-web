@@ -8,6 +8,7 @@ use App\Models\Series;
 use App\Services\FileStorageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -50,15 +51,24 @@ class EpisodeController extends Controller
      */
     public function create(Request $request): View
     {
-        $seriesList = Series::orderBy('title')->get();
-        $selectedSeriesId = $request->input('series_id', $seriesList->first()?->id);
+        $seriesList = Series::with('categories')->orderBy('title')->get();
+        $selectedSeriesId = (int) $request->input('series_id', $seriesList->first()?->id);
 
-        // Auto-suggest next episode number for selected series
-        $suggestedNumber = 1;
-        if ($selectedSeriesId) {
-            $lastEp = Episode::where('series_id', $selectedSeriesId)->max('episode_number');
-            $suggestedNumber = $lastEp ? $lastEp + 1 : 1;
+        // Pre-calculate next episode numbers and existing counts for every series
+        $epStats = Episode::select('series_id', DB::raw('MAX(episode_number) as max_ep'), DB::raw('COUNT(*) as total_ep'))
+            ->groupBy('series_id')
+            ->get()
+            ->keyBy('series_id');
+
+        $nextEpisodeNumbers = [];
+        $seriesEpisodeCounts = [];
+        foreach ($seriesList as $s) {
+            $stat = $epStats->get($s->id);
+            $nextEpisodeNumbers[$s->id] = $stat ? ($stat->max_ep + 1) : 1;
+            $seriesEpisodeCounts[$s->id] = $stat ? (int) $stat->total_ep : 0;
         }
+
+        $suggestedNumber = $nextEpisodeNumbers[$selectedSeriesId] ?? 1;
 
         $durationPresets = [
             ['label' => '1m 55s', 'minutes' => 1, 'seconds' => 55],
@@ -69,7 +79,14 @@ class EpisodeController extends Controller
             ['label' => '2m 20s', 'minutes' => 2, 'seconds' => 20],
         ];
 
-        return view('admin.videos.create', compact('seriesList', 'selectedSeriesId', 'suggestedNumber', 'durationPresets'));
+        return view('admin.videos.create', compact(
+            'seriesList',
+            'selectedSeriesId',
+            'suggestedNumber',
+            'nextEpisodeNumbers',
+            'seriesEpisodeCounts',
+            'durationPresets'
+        ));
     }
 
     /**
@@ -77,6 +94,14 @@ class EpisodeController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $seriesId = (int) $request->input('series_id');
+        $autoEpisodeNumber = (Episode::where('series_id', $seriesId)->max('episode_number') ?? 0) + 1;
+
+        // Automatically assign episode number if omitted or empty
+        if (!$request->filled('episode_number')) {
+            $request->merge(['episode_number' => $autoEpisodeNumber]);
+        }
+
         $validated = $request->validate([
             'series_id' => ['required', 'exists:series,id'],
             'episode_number' => [
@@ -87,15 +112,39 @@ class EpisodeController extends Controller
             ],
             'title' => ['required', 'string', 'max:200'],
             'synopsis' => ['nullable', 'string'],
-            'duration_minutes' => ['required', 'integer', 'min:0', 'max:60'],
+            'duration_minutes' => ['nullable', 'integer', 'min:0', 'max:60'],
             'duration_seconds' => ['nullable', 'integer', 'min:0', 'max:59'],
             'status' => ['required', 'in:draft,published'],
             'video_file' => ['nullable', 'file', 'mimetypes:video/mp4,video/webm,video/quicktime', 'max:104857600'], // Max 100MB
         ]);
 
-        $seconds = (int) ($validated['duration_seconds'] ?? 0);
-        $totalSeconds = ($validated['duration_minutes'] * 60) + $seconds;
-        $formattedDuration = sprintf('%dm %02ds', $validated['duration_minutes'], $seconds);
+        // Auto-detect duration from uploaded video master file if available
+        $detectedDuration = null;
+        if ($request->hasFile('video_file')) {
+            $tempPath = $request->file('video_file')->getRealPath();
+            $detectedDuration = FileStorageService::getVideoDurationSeconds($tempPath);
+        }
+
+        if ($detectedDuration !== null && $detectedDuration > 0) {
+            $totalSeconds = $detectedDuration;
+            $minutes = (int) floor($totalSeconds / 60);
+            $seconds = (int) ($totalSeconds % 60);
+            $formattedDuration = sprintf('%dm %02ds', $minutes, $seconds);
+        } else {
+            $minutes = isset($validated['duration_minutes']) && $validated['duration_minutes'] !== null
+                ? (int) $validated['duration_minutes']
+                : 2;
+            $seconds = isset($validated['duration_seconds']) && $validated['duration_seconds'] !== null
+                ? (int) $validated['duration_seconds']
+                : 0;
+            $totalSeconds = ($minutes * 60) + $seconds;
+            if ($totalSeconds <= 0) {
+                $totalSeconds = 120; // 2 minutes standard
+                $minutes = 2;
+                $seconds = 0;
+            }
+            $formattedDuration = sprintf('%dm %02ds', $minutes, $seconds);
+        }
 
         // HUMORA Policy: Ep 1 & 2 are ALWAYS FREE preview; Ep 3+ are PREMIUM
         $accessType = $validated['episode_number'] <= 2 ? 'free' : 'premium';

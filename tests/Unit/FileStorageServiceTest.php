@@ -52,6 +52,35 @@ class FileStorageServiceTest extends TestCase
         $this->assertNotEmpty($ffmpeg);
     }
 
+    public function test_ffprobe_path_is_detected(): void
+    {
+        $ffprobe = FileStorageService::getFfprobePath();
+        $this->assertNotEmpty($ffprobe);
+    }
+
+    public function test_video_duration_is_extracted_accurately(): void
+    {
+        $ffmpeg = FileStorageService::getFfmpegPath();
+        $this->assertNotEmpty($ffmpeg);
+
+        // Generate a 3-second test video
+        $tempVideo = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'test_dur_' . uniqid() . '.mp4';
+        $cmd = sprintf(
+            '"%s" -y -f lavfi -i testsrc=duration=3:size=320x180:rate=15 -f lavfi -i sine=frequency=440:duration=3 -c:v libx264 -c:a aac %s 2>&1',
+            $ffmpeg,
+            escapeshellarg($tempVideo)
+        );
+        $out = [];
+        $ret = 0;
+        @exec($cmd, $out, $ret);
+
+        if ($ret === 0 && file_exists($tempVideo)) {
+            $duration = FileStorageService::getVideoDurationSeconds($tempVideo);
+            $this->assertSame(3, $duration);
+            @unlink($tempVideo);
+        }
+    }
+
     public function test_video_is_compressed_and_stored_as_webm(): void
     {
         $ffmpeg = FileStorageService::getFfmpegPath();

@@ -50,8 +50,16 @@
                         <label for="seriesSelect" class="form-label-custom">Series Induk <span class="text-danger">*</span></label>
                         <select id="seriesSelect" name="series_id" class="form-select-custom @error('series_id') is-invalid @enderror" required>
                             @foreach ($seriesList as $s)
-                                <option value="{{ $s->id }}" {{ old('series_id', $selectedSeriesId) == $s->id ? 'selected' : '' }}>
-                                    {{ $s->title }} ({{ $s->categories->pluck('name')->implode(', ') ?: 'Umum' }})
+                                @php
+                                    $nextEp = $nextEpisodeNumbers[$s->id] ?? 1;
+                                    $count = $seriesEpisodeCounts[$s->id] ?? 0;
+                                @endphp
+                                <option value="{{ $s->id }}" 
+                                        data-next-ep="{{ $nextEp }}"
+                                        data-ep-count="{{ $count }}"
+                                        data-title="{{ $s->title }}"
+                                        {{ old('series_id', $selectedSeriesId) == $s->id ? 'selected' : '' }}>
+                                    {{ $s->title }} ({{ $s->categories->pluck('name')->implode(', ') ?: 'Umum' }}) — {{ $count }} Episode tersimpan
                                 </option>
                             @endforeach
                         </select>
@@ -68,19 +76,27 @@
                     <h5 class="fw-bold text-dark mb-4" style="font-size: 0.95rem;">2. DETAIL EPISODE</h5>
 
                     <div class="row g-3 mb-3">
-                        <div class="col-12 col-md-4">
-                            <div class="humora-field-group mb-0">
-                                <div class="humora-field @error('episode_number') is-error @enderror">
-                                    <input type="number" id="episodeNumberInput" name="episode_number" class="form-control-custom @error('episode_number') is-invalid @enderror" value="{{ old('episode_number', $suggestedNumber) }}" placeholder=" " min="1" required>
-                                    <label for="episodeNumberInput" class="humora-floating-label">Nomor Episode <span class="text-danger">*</span></label>
+                        <div class="col-12 col-md-6">
+                            <div class="px-3 rounded-3 border bg-light d-flex align-items-center justify-content-between" style="min-height: 52px; height: 52px; border-color: #E2E8F0 !important;">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="d-flex align-items-center justify-content-center rounded-2 flex-shrink-0" style="width: 32px; height: 32px; background: #FAF5FF; color: #43135C;">
+                                        <i data-lucide="hash" style="width: 16px; height: 16px;"></i>
+                                    </div>
+                                    <div>
+                                        <span class="d-block fw-bold text-dark" style="font-size: 0.82rem; line-height: 1.2; white-space: nowrap;">Nomor Episode</span>
+                                        <small class="text-muted d-block" id="epNumberNotice" style="font-size: 0.72rem; white-space: nowrap;">Otomatis Urutan ke-{{ $suggestedNumber }}</small>
+                                    </div>
                                 </div>
-                                <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Episode 1 & 2 gratis; 3+ premium.</small>
-                                @error('episode_number')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <span class="badge py-1 px-2.5 rounded-pill fw-bold flex-shrink-0" id="epNumberBadge" style="background: #FAF5FF; color: #43135C; border: 1px solid #E9D5FF; font-size: 0.78rem;">
+                                    Auto Ep #{{ $suggestedNumber }}
+                                </span>
                             </div>
+                            <input type="hidden" id="episodeNumberInput" name="episode_number" value="{{ old('episode_number', $suggestedNumber) }}">
+                            @error('episode_number')
+                                <div class="text-danger mt-1" style="font-size: 0.75rem;">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="col-12 col-md-8">
+                        <div class="col-12 col-md-6">
                             <div class="humora-field-group mb-0">
                                 <div class="humora-field @error('title') is-error @enderror">
                                     <input type="text" id="videoTitleInput" name="title" class="form-control-custom @error('title') is-invalid @enderror" placeholder=" " value="{{ old('title') }}" required>
@@ -103,35 +119,65 @@
                         @enderror
                     </div>
 
-                    <!-- Durasi Video (~2 Menit Standar) -->
+                    <!-- Durasi Episode Otomatis -->
                     <div class="mb-3">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <label class="form-label-custom mb-0">Durasi Episode (~2 Menit) <span class="text-danger">*</span></label>
-                            <small class="text-purple fw-semibold d-flex align-items-center gap-1" style="color: #7C3AED; font-size: 0.72rem;">
-                                <i data-lucide="clock"></i> Standar HUMORA ~2m
-                            </small>
-                        </div>
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <div class="input-group">
-                                    <input type="number" name="duration_minutes" class="form-control-custom" value="{{ old('duration_minutes', 2) }}" id="minuteInput" min="0" max="60" required>
-                                    <span class="input-group-text bg-light text-muted">Menit</span>
+                        <div class="p-3 rounded-3 border bg-light d-flex align-items-center justify-content-between mb-2" id="durationCard" style="border-color: #E2E8F0 !important;">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="d-flex align-items-center justify-content-center rounded-2" id="durationIconBox" style="width: 36px; height: 36px; background: #FAF5FF; color: #43135C;">
+                                    <i data-lucide="timer" style="width: 18px; height: 18px;"></i>
+                                </div>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="fw-bold text-dark" style="font-size: 0.85rem; line-height: 1.2;">Durasi Episode Otomatis</span>
+                                        <span class="badge py-0.5 px-2 rounded-pill fw-bold" id="durationBadge" style="background: #FAF5FF; color: #43135C; border: 1px solid #E9D5FF; font-size: 0.72rem;">
+                                            Standar ~2m (Auto)
+                                        </span>
+                                    </div>
+                                    <small class="text-muted d-block mt-0.5" id="durationStatusText" style="font-size: 0.73rem;">
+                                        Dihitung otomatis saat berkas video dipilih pada bagian 3 di bawah.
+                                    </small>
                                 </div>
                             </div>
-                            <div class="col-6">
-                                <div class="input-group">
-                                    <input type="number" name="duration_seconds" class="form-control-custom" value="{{ old('duration_seconds', '') }}" id="secondInput" min="0" max="59" placeholder="0">
-                                    <span class="input-group-text bg-light text-muted">Detik</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-wrap gap-1 mt-2 align-items-center">
-                            <small class="text-muted me-1" style="font-size: 0.72rem;">Preset Cepat:</small>
-                            @foreach ($durationPresets as $preset)
-                                <button type="button" class="btn btn-sm btn-light border py-0 px-2 rounded-pill preset-btn" data-min="{{ $preset['minutes'] }}" data-sec="{{ $preset['seconds'] }}" style="font-size: 0.72rem;">
-                                    {{ $preset['label'] }}
+                            <div class="text-end">
+                                <button type="button" class="btn btn-sm text-muted p-0 d-flex align-items-center gap-1" id="toggleManualDurationBtn" style="font-size: 0.72rem; text-decoration: underline;" title="Klik jika ingin melakukan penyesuaian manual">
+                                    <i data-lucide="sliders-horizontal" style="width: 12px; height: 12px;"></i>
+                                    <span id="toggleManualDurationText">Atur Manual</span>
                                 </button>
-                            @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Hidden Form Inputs for automatic submission -->
+                        <input type="hidden" name="duration_minutes" id="minuteInput" value="{{ old('duration_minutes', 2) }}">
+                        <input type="hidden" name="duration_seconds" id="secondInput" value="{{ old('duration_seconds', 0) }}">
+
+                        <!-- Optional Manual Duration Panel (Collapsed by default) -->
+                        <div id="manualDurationPanel" style="display: none;" class="p-3 bg-white rounded-3 border mb-2">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="fw-semibold text-dark" style="font-size: 0.78rem;">Penyesuaian Manual Durasi:</span>
+                                <small class="text-muted" style="font-size: 0.72rem;">Format: Menit &amp; Detik</small>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="input-group">
+                                        <input type="number" id="manualMinuteInput" class="form-control-custom" value="{{ old('duration_minutes', 2) }}" min="0" max="60">
+                                        <span class="input-group-text bg-light text-muted">Menit</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="input-group">
+                                        <input type="number" id="manualSecondInput" class="form-control-custom" value="{{ old('duration_seconds', 0) }}" min="0" max="59" placeholder="0">
+                                        <span class="input-group-text bg-light text-muted">Detik</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-wrap gap-1 mt-2 align-items-center">
+                                <small class="text-muted me-1" style="font-size: 0.72rem;">Preset Cepat:</small>
+                                @foreach ($durationPresets as $preset)
+                                    <button type="button" class="btn btn-sm btn-light border py-0 px-2 rounded-pill preset-btn" data-min="{{ $preset['minutes'] }}" data-sec="{{ $preset['seconds'] }}" style="font-size: 0.72rem;">
+                                        {{ $preset['label'] }}
+                                    </button>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -202,37 +248,121 @@
 @section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // Preset buttons
-    document.querySelectorAll('.preset-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            document.getElementById('minuteInput').value = this.dataset.min;
-            document.getElementById('secondInput').value = this.dataset.sec;
-        });
-    });
-
-    // Update access indicator when episode number changes
+    // 1. Dynamic Episode Number & Series Selection Sync
+    const seriesSelect = document.getElementById('seriesSelect');
     const epNumInput = document.getElementById('episodeNumberInput');
+    const epNumberBadge = document.getElementById('epNumberBadge');
+    const epNumberNotice = document.getElementById('epNumberNotice');
     const accessTitle = document.getElementById('accessTitle');
     const accessDesc = document.getElementById('accessDesc');
 
     function updateAccessNotice() {
-        const num = parseInt(epNumInput.value, 10);
+        const num = parseInt(epNumInput.value, 10) || 1;
         if (num <= 2) {
-            accessTitle.innerHTML = '<span class="text-success"><i data-lucide="unlock" class="me-1"></i>Gratis (Free Preview)</span>';
+            accessTitle.innerHTML = '<span class="text-success d-flex align-items-center gap-1"><i data-lucide="unlock" style="width: 14px; height: 14px;"></i>Gratis (Free Preview)</span>';
             accessDesc.innerText = 'Episode ini dapat ditonton secara gratis oleh seluruh pengguna (Guest, Free, & VIP).';
         } else {
-            accessTitle.innerHTML = '<span class="text-warning-emphasis"><i data-lucide="lock" class="me-1"></i>Premium VIP</span>';
+            accessTitle.innerHTML = '<span class="text-warning-emphasis d-flex align-items-center gap-1"><i data-lucide="lock" style="width: 14px; height: 14px;"></i>Premium VIP</span>';
             accessDesc.innerText = 'Episode ini terkunci dan memerlukan paket langganan Premium VIP aktif untuk dapat diputar.';
         }
         if (window.lucide) lucide.createIcons();
     }
 
-    if (epNumInput) {
-        epNumInput.addEventListener('input', updateAccessNotice);
+    function syncSeriesSelection() {
+        if (!seriesSelect) return;
+        const opt = seriesSelect.options[seriesSelect.selectedIndex];
+        if (!opt) return;
+
+        const nextEp = parseInt(opt.dataset.nextEp || 1, 10);
+        const count = parseInt(opt.dataset.epCount || 0, 10);
+        const title = opt.dataset.title || 'judul ini';
+
+        if (epNumInput) epNumInput.value = nextEp;
+        if (epNumberBadge) epNumberBadge.textContent = 'Auto Ep #' + nextEp;
+        if (epNumberNotice) {
+            epNumberNotice.textContent = 'Otomatis Urutan ke-' + nextEp;
+        }
+
         updateAccessNotice();
     }
 
-    // Video preview handler & file info
+    if (seriesSelect) {
+        seriesSelect.addEventListener('change', syncSeriesSelection);
+        // Initial sync on load
+        syncSeriesSelection();
+    }
+
+    // 2. Automatic Video Duration Calculation & Handlers
+    const minuteInput = document.getElementById('minuteInput');
+    const secondInput = document.getElementById('secondInput');
+    const manualMinuteInput = document.getElementById('manualMinuteInput');
+    const manualSecondInput = document.getElementById('manualSecondInput');
+    const durationIconBox = document.getElementById('durationIconBox');
+    const durationBadge = document.getElementById('durationBadge');
+    const durationStatusText = document.getElementById('durationStatusText');
+    const toggleManualBtn = document.getElementById('toggleManualDurationBtn');
+    const manualPanel = document.getElementById('manualDurationPanel');
+    const toggleManualText = document.getElementById('toggleManualDurationText');
+
+    function setDurationValues(mins, secs, fromFile = false) {
+        if (minuteInput) minuteInput.value = mins;
+        if (secondInput) secondInput.value = secs;
+        if (manualMinuteInput) manualMinuteInput.value = mins;
+        if (manualSecondInput) manualSecondInput.value = secs;
+
+        const formatted = mins + 'm ' + (secs < 10 ? '0' : '') + secs + 's';
+        const totalSecs = (mins * 60) + secs;
+
+        if (durationBadge) {
+            if (fromFile) {
+                durationBadge.innerHTML = '<i data-lucide="check" style="width: 12px; height: 12px; vertical-align: -1px;"></i> Auto: ' + formatted;
+                durationBadge.style.background = '#ECFDF5';
+                durationBadge.style.color = '#065F46';
+                durationBadge.style.borderColor = '#A7F3D0';
+                if (durationIconBox) {
+                    durationIconBox.style.background = '#ECFDF5';
+                    durationIconBox.style.color = '#059669';
+                }
+                if (durationStatusText) {
+                    durationStatusText.innerHTML = '<span class="text-success fw-medium"><i data-lucide="sparkles" style="width: 12px; height: 12px; vertical-align: -2px;"></i> Dihitung otomatis dari berkas video: <strong>' + mins + ' Menit ' + secs + ' Detik</strong> (' + totalSecs + ' detik)</span>';
+                }
+            } else {
+                durationBadge.textContent = 'Auto: ' + formatted;
+            }
+        }
+        if (window.lucide) lucide.createIcons();
+    }
+
+    // Toggle optional manual duration controls
+    if (toggleManualBtn && manualPanel) {
+        toggleManualBtn.addEventListener('click', function () {
+            const isHidden = manualPanel.style.display === 'none';
+            manualPanel.style.display = isHidden ? 'block' : 'none';
+            toggleManualText.textContent = isHidden ? 'Sembunyikan' : 'Atur Manual';
+        });
+    }
+
+    // Sync from manual inputs if admin adjusts them
+    if (manualMinuteInput && manualSecondInput) {
+        function syncFromManual() {
+            const mins = parseInt(manualMinuteInput.value, 10) || 0;
+            const secs = parseInt(manualSecondInput.value, 10) || 0;
+            setDurationValues(mins, secs, false);
+        }
+        manualMinuteInput.addEventListener('input', syncFromManual);
+        manualSecondInput.addEventListener('input', syncFromManual);
+    }
+
+    // Preset buttons
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const mins = parseInt(this.dataset.min, 10) || 0;
+            const secs = parseInt(this.dataset.sec, 10) || 0;
+            setDurationValues(mins, secs, false);
+        });
+    });
+
+    // 3. Video Upload Change & In-Browser Duration Extraction
     const videoUpload = document.getElementById('videoUpload');
     const previewContainer = document.getElementById('videoPreviewContainer');
     const previewPlayer = document.getElementById('videoPreviewPlayer');
@@ -245,14 +375,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 previewPlayer.src = url;
                 previewContainer.style.display = 'block';
 
-                // Try to auto-populate duration from video metadata
+                // Automatically calculate duration from video metadata
                 previewPlayer.onloadedmetadata = function () {
                     const totalSecs = Math.round(previewPlayer.duration);
                     if (totalSecs > 0) {
                         const mins = Math.floor(totalSecs / 60);
                         const secs = totalSecs % 60;
-                        document.getElementById('minuteInput').value = mins;
-                        document.getElementById('secondInput').value = secs;
+                        setDurationValues(mins, secs, true);
+
+                        if (window.showHumoraToast) {
+                            window.showHumoraToast(`Durasi video otomatis dihitung: ${mins}m ${secs}s (${totalSecs} detik).`, 'success');
+                        }
                     }
                 };
 
@@ -261,13 +394,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     const sizeStr = file.size > 1048576 
                         ? (file.size / 1048576).toFixed(1) + ' MB' 
                         : Math.round(file.size / 1024) + ' KB';
-                    window.showHumoraToast(`Video dipilih: ${file.name} (${sizeStr}). Akan dikompresi ke format WebM saat disimpan.`, 'info');
+                    window.showHumoraToast(`Video dipilih: ${file.name} (${sizeStr}). Format WebM otomatis saat disimpan.`, 'info');
                 }
             }
         });
     }
 
-    // Show processing modal during video compression & upload
+    // 4. Show processing modal during video compression & upload
     const formCreateVideo = document.getElementById('formCreateVideo');
     if (formCreateVideo) {
         formCreateVideo.addEventListener('submit', function (e) {
