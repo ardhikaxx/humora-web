@@ -120,7 +120,7 @@
                             </div>
                             <div class="col-6">
                                 <div class="input-group">
-                                    <input type="number" name="duration_seconds" class="form-control-custom" value="{{ old('duration_seconds', 0) }}" id="secondInput" min="0" max="59" required>
+                                    <input type="number" name="duration_seconds" class="form-control-custom" value="{{ old('duration_seconds', '') }}" id="secondInput" min="0" max="59" placeholder="0">
                                     <span class="input-group-text bg-light text-muted">Detik</span>
                                 </div>
                             </div>

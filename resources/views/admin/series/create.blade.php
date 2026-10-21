@@ -146,7 +146,7 @@
                         <div class="col-12 col-md-6">
                             <div class="humora-field-group mb-0">
                                 <div class="humora-field @error('catalog_order') is-error @enderror">
-                                    <input type="number" id="catalog_order" name="catalog_order" class="form-control-custom @error('catalog_order') is-invalid @enderror" value="{{ old('catalog_order', 0) }}" placeholder=" " min="0">
+                                    <input type="number" id="catalog_order" name="catalog_order" class="form-control-custom @error('catalog_order') is-invalid @enderror" value="{{ old('catalog_order') }}" placeholder=" " min="0">
                                     <label for="catalog_order" class="humora-floating-label">Urutan Katalog</label>
                                 </div>
                                 <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Semakin kecil angka, semakin awal muncul di katalog.</small>

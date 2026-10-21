@@ -88,13 +88,14 @@ class EpisodeController extends Controller
             'title' => ['required', 'string', 'max:200'],
             'synopsis' => ['nullable', 'string'],
             'duration_minutes' => ['required', 'integer', 'min:0', 'max:60'],
-            'duration_seconds' => ['required', 'integer', 'min:0', 'max:59'],
+            'duration_seconds' => ['nullable', 'integer', 'min:0', 'max:59'],
             'status' => ['required', 'in:draft,published'],
             'video_file' => ['nullable', 'file', 'mimetypes:video/mp4,video/webm,video/quicktime', 'max:104857600'], // Max 100MB
         ]);
 
-        $totalSeconds = ($validated['duration_minutes'] * 60) + $validated['duration_seconds'];
-        $formattedDuration = sprintf('%dm %02ds', $validated['duration_minutes'], $validated['duration_seconds']);
+        $seconds = (int) ($validated['duration_seconds'] ?? 0);
+        $totalSeconds = ($validated['duration_minutes'] * 60) + $seconds;
+        $formattedDuration = sprintf('%dm %02ds', $validated['duration_minutes'], $seconds);
 
         // HUMORA Policy: Ep 1 & 2 are ALWAYS FREE preview; Ep 3+ are PREMIUM
         $accessType = $validated['episode_number'] <= 2 ? 'free' : 'premium';
@@ -167,13 +168,14 @@ class EpisodeController extends Controller
             'title' => ['required', 'string', 'max:200'],
             'synopsis' => ['nullable', 'string'],
             'duration_minutes' => ['required', 'integer', 'min:0', 'max:60'],
-            'duration_seconds' => ['required', 'integer', 'min:0', 'max:59'],
+            'duration_seconds' => ['nullable', 'integer', 'min:0', 'max:59'],
             'status' => ['required', 'in:draft,published'],
             'video_file' => ['nullable', 'file', 'mimetypes:video/mp4,video/webm,video/quicktime', 'max:104857600'],
         ]);
 
-        $totalSeconds = ($validated['duration_minutes'] * 60) + $validated['duration_seconds'];
-        $formattedDuration = sprintf('%dm %02ds', $validated['duration_minutes'], $validated['duration_seconds']);
+        $seconds = (int) ($validated['duration_seconds'] ?? 0);
+        $totalSeconds = ($validated['duration_minutes'] * 60) + $seconds;
+        $formattedDuration = sprintf('%dm %02ds', $validated['duration_minutes'], $seconds);
 
         // HUMORA Policy: Ep 1 & 2 are ALWAYS FREE preview; Ep 3+ are PREMIUM
         $accessType = $validated['episode_number'] <= 2 ? 'free' : 'premium';

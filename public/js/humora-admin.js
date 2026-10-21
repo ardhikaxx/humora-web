@@ -849,6 +849,30 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // -------------------------------------------------------------
+    // NUMBER INPUTS: AUTO-CLEAR 0 ON FOCUS FOR EFFORTLESS TYPING
+    // -------------------------------------------------------------
+    document.addEventListener('focusin', function (e) {
+        const el = e.target;
+        if (el && el.tagName === 'INPUT' && el.type === 'number') {
+            if (el.value === '0') {
+                el.dataset.wasZero = 'true';
+                el.value = '';
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        }
+    });
+
+    document.addEventListener('submit', function (e) {
+        const form = e.target;
+        if (form) {
+            const sec = form.querySelector('#secondInput');
+            if (sec && sec.value === '') {
+                sec.value = '0';
+            }
+        }
+    });
+
+    // -------------------------------------------------------------
     // HUMORA GENRE / CATEGORY SELECTION CARDS HANDLER
     // -------------------------------------------------------------
     function updateGenreSelector(container) {
