@@ -140,3 +140,65 @@ test('storing video with uploaded file automatically extracts video duration via
         @unlink($tempVideo);
     }
 });
+
+test('admin can explicitly set and update episode access_type to free or premium', function () {
+    // Seed 2 initial episodes so series has > 2 published episodes
+    Episode::create([
+        'series_id' => $this->series->id,
+        'episode_number' => 1,
+        'title' => 'Ep 1',
+        'status' => 'published',
+    ]);
+    Episode::create([
+        'series_id' => $this->series->id,
+        'episode_number' => 2,
+        'title' => 'Ep 2',
+        'status' => 'published',
+    ]);
+
+    // 1. Create episode with explicit premium access
+    $resCreatePrem = $this->actingAs($this->admin, 'admin')->post('/admin/videos', [
+        'series_id' => $this->series->id,
+        'episode_number' => 3,
+        'title' => 'Explicit Premium Ep',
+        'access_type' => 'premium',
+        'status' => 'published',
+    ]);
+    $resCreatePrem->assertRedirect('/admin/videos');
+
+    $epPrem = Episode::where('series_id', $this->series->id)->where('episode_number', 3)->first();
+    expect($epPrem)->not->toBeNull();
+    expect($epPrem->access_type)->toBe('premium');
+    expect($epPrem->isFreePreview())->toBeFalse();
+
+    // 2. Create episode with explicit free access
+    $resCreateFree = $this->actingAs($this->admin, 'admin')->post('/admin/videos', [
+        'series_id' => $this->series->id,
+        'episode_number' => 4,
+        'title' => 'Explicit Free Ep',
+        'access_type' => 'free',
+        'status' => 'published',
+    ]);
+    $resCreateFree->assertRedirect('/admin/videos');
+
+    $epFree = Episode::where('series_id', $this->series->id)->where('episode_number', 4)->first();
+    expect($epFree)->not->toBeNull();
+    expect($epFree->access_type)->toBe('free');
+    expect($epFree->isFreePreview())->toBeTrue();
+
+    // 3. Edit epFree and change access_type to premium
+    $resUpdate = $this->actingAs($this->admin, 'admin')->put('/admin/videos/' . $epFree->id, [
+        'series_id' => $this->series->id,
+        'episode_number' => 4,
+        'title' => 'Explicit Free Ep (Now Premium)',
+        'duration_minutes' => 2,
+        'duration_seconds' => 0,
+        'access_type' => 'premium',
+        'status' => 'published',
+    ]);
+    $resUpdate->assertRedirect('/admin/videos');
+
+    $epFree->refresh();
+    expect($epFree->access_type)->toBe('premium');
+    expect($epFree->isFreePreview())->toBeFalse();
+});

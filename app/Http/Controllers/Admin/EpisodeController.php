@@ -114,6 +114,7 @@ class EpisodeController extends Controller
             'synopsis' => ['nullable', 'string'],
             'duration_minutes' => ['nullable', 'integer', 'min:0', 'max:60'],
             'duration_seconds' => ['nullable', 'integer', 'min:0', 'max:59'],
+            'access_type' => ['nullable', 'in:free,premium'],
             'status' => ['required', 'in:draft,published'],
             'video_file' => ['nullable', 'file', 'mimetypes:video/mp4,video/webm,video/quicktime', 'max:104857600'], // Max 100MB
         ]);
@@ -146,8 +147,12 @@ class EpisodeController extends Controller
             $formattedDuration = sprintf('%dm %02ds', $minutes, $seconds);
         }
 
-        // HUMORA Policy: Ep 1 & 2 are ALWAYS FREE preview; Ep 3+ are PREMIUM
-        $accessType = $validated['episode_number'] <= 2 ? 'free' : 'premium';
+        // Access Type: Admin can explicitly choose 'free' or 'premium', or fallback to trial policy
+        if (!empty($validated['access_type'])) {
+            $accessType = $validated['access_type'];
+        } else {
+            $accessType = $validated['episode_number'] <= 2 ? 'free' : 'premium';
+        }
 
         $videoFilename = 'sample-skit.mp4'; // default fallback
         if ($request->hasFile('video_file')) {
@@ -218,6 +223,7 @@ class EpisodeController extends Controller
             'synopsis' => ['nullable', 'string'],
             'duration_minutes' => ['required', 'integer', 'min:0', 'max:60'],
             'duration_seconds' => ['nullable', 'integer', 'min:0', 'max:59'],
+            'access_type' => ['required', 'in:free,premium'],
             'status' => ['required', 'in:draft,published'],
             'video_file' => ['nullable', 'file', 'mimetypes:video/mp4,video/webm,video/quicktime', 'max:104857600'],
         ]);
@@ -226,8 +232,12 @@ class EpisodeController extends Controller
         $totalSeconds = ($validated['duration_minutes'] * 60) + $seconds;
         $formattedDuration = sprintf('%dm %02ds', $validated['duration_minutes'], $seconds);
 
-        // HUMORA Policy: Ep 1 & 2 are ALWAYS FREE preview; Ep 3+ are PREMIUM
-        $accessType = $validated['episode_number'] <= 2 ? 'free' : 'premium';
+        // Access Type: Admin can explicitly choose 'free' or 'premium', or fallback to trial policy
+        if (!empty($validated['access_type'])) {
+            $accessType = $validated['access_type'];
+        } else {
+            $accessType = $validated['episode_number'] <= 2 ? 'free' : 'premium';
+        }
 
         $videoFilename = $episode->video_file;
         if ($request->hasFile('video_file')) {

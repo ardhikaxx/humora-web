@@ -88,8 +88,8 @@
             <div class="col-6 col-md-2">
                 <select name="access_type" class="form-select-custom">
                     <option value="">Semua Akses</option>
-                    <option value="free" {{ request('access_type') === 'free' ? 'selected' : '' }}>Gratis (Ep 1 & 2)</option>
-                    <option value="premium" {{ request('access_type') === 'premium' ? 'selected' : '' }}>Premium VIP (Ep 3+)</option>
+                    <option value="free" {{ request('access_type') === 'free' ? 'selected' : '' }}>Gratis (Free)</option>
+                    <option value="premium" {{ request('access_type') === 'premium' ? 'selected' : '' }}>Premium VIP</option>
                 </select>
             </div>
             <div class="col-12 col-md-2 d-flex gap-2">

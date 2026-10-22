@@ -20,7 +20,7 @@
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
         <div>
             <h1 class="page-title mb-1">Edit Episode #{{ $episode->episode_number }}: {{ $episode->title }}</h1>
-            <p class="page-subtitle mb-0">Series: <strong>{{ $episode->series?->title ?? '-' }}</strong>. Episode 1 & 2 Gratis, Episode 3+ Premium VIP.</p>
+            <p class="page-subtitle mb-0">Series: <strong>{{ $episode->series?->title ?? '-' }}</strong>. Anda dapat mengubah tipe akses episode ini menjadi Gratis atau Premium VIP.</p>
         </div>
         <div class="d-flex align-items-center gap-2">
             <a href="{{ route('admin.videos.index') }}" class="btn btn-humora-secondary">
@@ -163,19 +163,51 @@
 
         <!-- Right Options Column -->
         <div class="col-12 col-lg-4">
-            <!-- Aturan Akses Otomatis -->
+            <!-- Tipe Akses Video -->
             <div class="humora-card mb-4">
                 <div class="humora-card-body p-4">
-                    <h6 class="fw-bold text-dark mb-2" style="font-size: 0.85rem; text-transform: uppercase;">Kebijakan Akses Episode</h6>
-                    <div id="accessBadgeContainer" class="p-3 rounded-3 border bg-light">
-                        <div class="d-flex align-items-center gap-2 mb-1">
-                            <i data-lucide="info" class="text-purple" style="width: 16px; height: 16px;"></i>
-                            <span class="fw-bold" id="accessTitle" style="font-size: 0.84rem;">Otomatis Ditentukan</span>
-                        </div>
-                        <p class="text-muted mb-0" id="accessDesc" style="font-size: 0.74rem; line-height: 1.4;">
-                            Episode 1 & 2 adalah preview gratis. Episode 3 ke atas memerlukan paket langganan VIP aktif.
-                        </p>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="fw-bold text-dark mb-0" style="font-size: 0.85rem; text-transform: uppercase;">Tipe Akses Video <span class="text-danger">*</span></h6>
                     </div>
+                    <p class="text-muted mb-3" style="font-size: 0.74rem;">Tentukan apakah video ini dapat ditonton gratis atau harus berlangganan.</p>
+
+                    <div class="d-flex flex-column gap-2 mb-3">
+                        <!-- Pilihan Free -->
+                        <label class="access-option-card p-3 rounded-3 border d-flex align-items-start gap-2.5 position-relative" id="accessCardFree" style="cursor: pointer; border-color: #E2E8F0; transition: all 0.2s ease;">
+                            <input type="radio" name="access_type" id="accessTypeFree" value="free" class="form-check-input mt-1 flex-shrink-0" {{ old('access_type', $episode->access_type ?? ($episode->is_free ? 'free' : 'premium')) === 'free' ? 'checked' : '' }} required>
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center gap-1 mb-1">
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-0.5 rounded-pill fw-bold" style="font-size: 0.72rem;">
+                                        <i data-lucide="unlock" style="width: 11px; height: 11px;" class="me-1"></i>Gratis (Free Trial)
+                                    </span>
+                                </div>
+                                <span class="d-block text-dark fw-bold" style="font-size: 0.82rem;">Semua Penonton Bebas Nonton</span>
+                                <small class="text-muted d-block mt-0.5" style="font-size: 0.72rem; line-height: 1.35;">
+                                    Dapat ditonton secara cuma-cuma oleh seluruh pengguna (Guest &amp; Akun Gratis) sebagai trial.
+                                </small>
+                            </div>
+                        </label>
+
+                        <!-- Pilihan Premium -->
+                        <label class="access-option-card p-3 rounded-3 border d-flex align-items-start gap-2.5 position-relative" id="accessCardPremium" style="cursor: pointer; border-color: #E2E8F0; transition: all 0.2s ease;">
+                            <input type="radio" name="access_type" id="accessTypePremium" value="premium" class="form-check-input mt-1 flex-shrink-0" {{ old('access_type', $episode->access_type ?? ($episode->is_free ? 'free' : 'premium')) === 'premium' ? 'checked' : '' }} required>
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center gap-1 mb-1">
+                                    <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-2 py-0.5 rounded-pill fw-bold" style="font-size: 0.72rem;">
+                                        <i data-lucide="lock" style="width: 11px; height: 11px;" class="me-1"></i>Premium VIP
+                                    </span>
+                                </div>
+                                <span class="d-block text-dark fw-bold" style="font-size: 0.82rem;">Khusus Pengguna Berlangganan</span>
+                                <small class="text-muted d-block mt-0.5" style="font-size: 0.72rem; line-height: 1.35;">
+                                    Terkunci. Memerlukan paket langganan Mingguan, Add-On, atau Full Access aktif.
+                                </small>
+                            </div>
+                        </label>
+                    </div>
+
+                    @error('access_type')
+                        <div class="text-danger mb-2" style="font-size: 0.75rem;">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
 
@@ -205,26 +237,31 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Update access indicator when episode number changes
-    const epNumInput = document.getElementById('episodeNumberInput');
-    const accessTitle = document.getElementById('accessTitle');
-    const accessDesc = document.getElementById('accessDesc');
+    // Access type cards styling
+    const accessTypeFree = document.getElementById('accessTypeFree');
+    const accessTypePremium = document.getElementById('accessTypePremium');
+    const accessCardFree = document.getElementById('accessCardFree');
+    const accessCardPremium = document.getElementById('accessCardPremium');
 
-    function updateAccessNotice() {
-        const num = parseInt(epNumInput.value, 10);
-        if (num <= 2) {
-            accessTitle.innerHTML = '<span class="text-success"><i data-lucide="unlock" class="me-1"></i>Gratis (Free Preview)</span>';
-            accessDesc.innerText = 'Episode ini dapat ditonton secara gratis oleh seluruh pengguna (Guest, Free, & VIP).';
+    function applyAccessCardStyling() {
+        if (!accessCardFree || !accessCardPremium) return;
+        if (accessTypeFree.checked) {
+            accessCardFree.style.borderColor = '#16A34A';
+            accessCardFree.style.background = '#F0FDF4';
+            accessCardPremium.style.borderColor = '#E2E8F0';
+            accessCardPremium.style.background = '#FFFFFF';
         } else {
-            accessTitle.innerHTML = '<span class="text-warning-emphasis"><i data-lucide="lock" class="me-1"></i>Premium VIP</span>';
-            accessDesc.innerText = 'Episode ini terkunci dan memerlukan paket langganan Premium VIP aktif untuk dapat diputar.';
+            accessCardPremium.style.borderColor = '#D97706';
+            accessCardPremium.style.background = '#FFFBEB';
+            accessCardFree.style.borderColor = '#E2E8F0';
+            accessCardFree.style.background = '#FFFFFF';
         }
-        if (window.lucide) lucide.createIcons();
     }
 
-    if (epNumInput) {
-        epNumInput.addEventListener('input', updateAccessNotice);
-        updateAccessNotice();
+    if (accessTypeFree && accessTypePremium) {
+        accessTypeFree.addEventListener('change', applyAccessCardStyling);
+        accessTypePremium.addEventListener('change', applyAccessCardStyling);
+        applyAccessCardStyling();
     }
 
     // Video preview upload handler & notification

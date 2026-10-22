@@ -34,6 +34,15 @@ class Episode extends Model
         'likes_count',
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function (Episode $episode) {
+            if (empty($episode->access_type)) {
+                $episode->access_type = $episode->episode_number <= 2 ? 'free' : 'premium';
+            }
+        });
+    }
+
     public function series(): BelongsTo
     {
         return $this->belongsTo(Series::class);
@@ -61,11 +70,17 @@ class Episode extends Model
 
     /**
      * Free trial videos policy:
+     * - If admin explicitly set access_type to 'premium', it is locked/paid.
      * - If a series has <= 2 total published episodes, only Episode 1 is free trial (Episode 2 is paid).
-     * - If a series has > 2 published episodes, Episode 1 & 2 are free trial (Episode 3+ are paid).
+     * - If admin explicitly set access_type to 'free', it is always free.
+     * - Otherwise, Episode 1 & 2 are free trial (Episode 3+ are paid).
      */
     public function isFreePreview(): bool
     {
+        if ($this->access_type === 'premium') {
+            return false;
+        }
+
         $series = $this->relationLoaded('series') ? $this->series : $this->series()->first();
         if ($series) {
             $totalCount = $series->relationLoaded('publishedEpisodes')
@@ -75,6 +90,10 @@ class Episode extends Model
             if ($totalCount <= 2) {
                 return $this->episode_number <= 1;
             }
+        }
+
+        if ($this->access_type === 'free') {
+            return true;
         }
 
         return $this->episode_number <= 2;
