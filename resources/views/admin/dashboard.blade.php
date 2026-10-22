@@ -103,8 +103,19 @@
                 <span class="badge rounded-pill bg-light text-dark border" style="font-size: 0.74rem;">7 Hari Terakhir</span>
             </div>
             <div class="humora-card-body p-3">
-                <div style="height: 260px; width: 100%;">
+                <div style="height: 260px; width: 100%; position: relative;">
                     <canvas id="dailyViewsChart"></canvas>
+                    @if (array_sum($dailyViewCounts) === 0)
+                        <div class="position-absolute top-50 start-50 translate-middle text-center p-3 rounded-3" style="background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(4px); border: 1px dashed #CBD5E1; max-width: 350px; width: 90%; z-index: 5;">
+                            <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-2" style="width: 38px; height: 38px; background: #FAF5FF; color: #43135C;">
+                                <i data-lucide="play-circle" style="width: 20px; height: 20px;"></i>
+                            </div>
+                            <div class="fw-bold text-dark mb-1" style="font-size: 0.85rem;">Belum Ada Penayangan 7 Hari Ini</div>
+                            <p class="text-muted mb-0" style="font-size: 0.74rem; line-height: 1.4;">
+                                Data grafik murni dicatat saat pengguna memutar video di <strong>Aplikasi Mobile HUMORA</strong>.
+                            </p>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -304,6 +315,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     },
                     y: {
                         beginAtZero: true,
+                        suggestedMax: 5,
                         grid: { color: '#E2E8F0' },
                         ticks: { precision: 0, font: { size: 11 }, color: '#64748B' }
                     }
@@ -347,6 +359,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     },
                     y: {
                         beginAtZero: true,
+                        suggestedMax: 5,
                         grid: { color: '#E2E8F0' },
                         ticks: { precision: 0, font: { size: 11 }, color: '#64748B' }
                     }

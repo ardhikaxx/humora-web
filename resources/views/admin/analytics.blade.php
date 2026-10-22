@@ -105,8 +105,19 @@
         </span>
     </div>
     <div class="humora-card-body p-4">
-        <div style="height: 300px; width: 100%;">
+        <div style="height: 300px; width: 100%; position: relative;">
             <canvas id="analyticsChart"></canvas>
+            @if ($totalViews === 0)
+                <div id="chartZeroOverlay" class="position-absolute top-50 start-50 translate-middle text-center p-3 rounded-3" style="background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(4px); border: 1px dashed #CBD5E1; max-width: 400px; width: 90%; z-index: 5;">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-2" style="width: 42px; height: 42px; background: #FAF5FF; color: #43135C;">
+                        <i data-lucide="bar-chart-2" style="width: 22px; height: 22px;"></i>
+                    </div>
+                    <div class="fw-bold text-dark mb-1" style="font-size: 0.88rem;">Belum Ada Data Penayangan</div>
+                    <p class="text-muted mb-0" style="font-size: 0.75rem; line-height: 1.4;">
+                        Grafik ini murni menampilkan data aktivitas pemutaran video dari <strong>Aplikasi Mobile HUMORA</strong>. Grafik akan otomatis terisi dan diperbarui setiap 4 detik saat ada video yang diputar di aplikasi.
+                    </p>
+                </div>
+            @endif
         </div>
     </div>
 </div>
@@ -279,6 +290,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     },
                     y: {
                         beginAtZero: true,
+                        suggestedMax: 5,
                         grid: { color: '#E2E8F0' },
                         ticks: { precision: 0, font: { size: 11 }, color: '#64748B' }
                     }
@@ -324,6 +336,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     const liveTime = document.getElementById('liveTimeBadge');
                     if (liveTime) liveTime.textContent = '(' + d.lastUpdated + ')';
+
+                    const zeroOverlay = document.getElementById('chartZeroOverlay');
+                    if (zeroOverlay) {
+                        zeroOverlay.style.display = (d.totalViews > 0) ? 'none' : 'block';
+                    }
 
                     // Update Chart smoothly
                     if (window.analyticsChartInstance && d.chartLabels && d.chartViews) {
