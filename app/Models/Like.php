@@ -12,6 +12,8 @@ class Like extends Model
 
     protected $fillable = [
         'user_id',
+        'session_id',
+        'ip_address',
         'series_id',
         'episode_id',
     ];

@@ -8,28 +8,47 @@ use App\Models\Like;
 use App\Models\Series;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LikeController extends Controller
 {
     /**
-     * Toggle like on a series
+     * Toggle like on a series (supports both authenticated users and guests)
      */
     public function toggleSeriesLike(Request $request, int $id): JsonResponse
     {
-        $user = $request->user();
+        $user = Auth::guard('sanctum')->user() ?: $request->user();
         $series = Series::findOrFail($id);
+        $sessionId = $request->header('X-Session-ID') ?: $request->header('X-Guest-ID') ?: session()->getId();
+        $ip = $request->ip();
 
-        $existing = Like::where('user_id', $user->id)
-            ->where('series_id', $series->id)
-            ->whereNull('episode_id')
-            ->first();
+        if ($user) {
+            $existing = Like::where('user_id', $user->id)
+                ->where('series_id', $series->id)
+                ->whereNull('episode_id')
+                ->first();
+        } else {
+            $existing = Like::whereNull('user_id')
+                ->where('series_id', $series->id)
+                ->whereNull('episode_id')
+                ->where(function ($q) use ($sessionId, $ip) {
+                    if ($sessionId) {
+                        $q->where('session_id', $sessionId);
+                    } else {
+                        $q->where('ip_address', $ip);
+                    }
+                })
+                ->first();
+        }
 
         if ($existing) {
             $existing->delete();
             $isLiked = false;
         } else {
             Like::create([
-                'user_id' => $user->id,
+                'user_id' => $user?->id,
+                'session_id' => $user ? null : $sessionId,
+                'ip_address' => $ip,
                 'series_id' => $series->id,
                 'episode_id' => null,
             ]);
@@ -51,23 +70,40 @@ class LikeController extends Controller
     }
 
     /**
-     * Toggle like on an episode
+     * Toggle like on an episode (supports both authenticated users and guests)
      */
     public function toggleEpisodeLike(Request $request, int $id): JsonResponse
     {
-        $user = $request->user();
+        $user = Auth::guard('sanctum')->user() ?: $request->user();
         $episode = Episode::findOrFail($id);
+        $sessionId = $request->header('X-Session-ID') ?: $request->header('X-Guest-ID') ?: session()->getId();
+        $ip = $request->ip();
 
-        $existing = Like::where('user_id', $user->id)
-            ->where('episode_id', $episode->id)
-            ->first();
+        if ($user) {
+            $existing = Like::where('user_id', $user->id)
+                ->where('episode_id', $episode->id)
+                ->first();
+        } else {
+            $existing = Like::whereNull('user_id')
+                ->where('episode_id', $episode->id)
+                ->where(function ($q) use ($sessionId, $ip) {
+                    if ($sessionId) {
+                        $q->where('session_id', $sessionId);
+                    } else {
+                        $q->where('ip_address', $ip);
+                    }
+                })
+                ->first();
+        }
 
         if ($existing) {
             $existing->delete();
             $isLiked = false;
         } else {
             Like::create([
-                'user_id' => $user->id,
+                'user_id' => $user?->id,
+                'session_id' => $user ? null : $sessionId,
+                'ip_address' => $ip,
                 'series_id' => $episode->series_id,
                 'episode_id' => $episode->id,
             ]);

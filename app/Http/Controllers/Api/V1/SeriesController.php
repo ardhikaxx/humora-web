@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\Like;
 use App\Models\Series;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -12,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 class SeriesController extends Controller
 {
     /**
-     * Get published series catalog with search, category filter, and spotlight support
+     * Get paginated/filtered series catalog
      */
     public function index(Request $request): JsonResponse
     {
@@ -20,21 +22,18 @@ class SeriesController extends Controller
 
         $query = Series::where('status', 'published')
             ->with(['categories', 'publishedEpisodes'])
-            ->orderBy('catalog_order')
-            ->orderByDesc('id');
+            ->orderBy('catalog_order', 'asc')
+            ->orderBy('id', 'asc');
 
         // Search filter
-        if ($search = $request->input('search')) {
+        if ($search = $request->input('q')) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('synopsis', 'like', "%{$search}%")
-                    ->orWhereHas('categories', function ($cq) use ($search) {
-                        $cq->where('name', 'like', "%{$search}%");
-                    });
+                    ->orWhere('synopsis', 'like', "%{$search}%");
             });
         }
 
-        // Category slug filter
+        // Category filter
         if ($catSlug = $request->input('category')) {
             $query->whereHas('categories', function ($cq) use ($catSlug) {
                 $cq->where('slug', $catSlug);
@@ -46,8 +45,8 @@ class SeriesController extends Controller
             $query->where('is_featured', true);
         }
 
-        $seriesList = $query->get()->map(function (Series $series) use ($user) {
-            return $this->formatSeriesSummary($series, $user);
+        $seriesList = $query->get()->map(function (Series $series) use ($user, $request) {
+            return $this->formatSeriesSummary($series, $user, $request);
         });
 
         return response()->json([
@@ -82,18 +81,75 @@ class SeriesController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Detail series berhasil diambil.',
-            'data' => $this->formatSeriesDetail($series, $user),
+            'data' => $this->formatSeriesDetail($series, $user, $request),
         ]);
+    }
+
+    /**
+     * Helper to resolve liked episode IDs for user or guest session
+     */
+    protected function getLikedEpisodeIds(?User $user, ?Request $request): \Illuminate\Support\Collection
+    {
+        if ($user) {
+            return Like::where('user_id', $user->id)
+                ->whereNotNull('episode_id')
+                ->pluck('episode_id')
+                ->flip();
+        }
+
+        $sessionId = $request?->header('X-Session-ID') ?: $request?->header('X-Guest-ID') ?: session()->getId();
+        $ip = $request?->ip();
+
+        return Like::whereNull('user_id')
+            ->whereNotNull('episode_id')
+            ->where(function ($q) use ($sessionId, $ip) {
+                if ($sessionId) {
+                    $q->where('session_id', $sessionId);
+                } else {
+                    $q->where('ip_address', $ip);
+                }
+            })
+            ->pluck('episode_id')
+            ->flip();
+    }
+
+    /**
+     * Helper to check if series is liked by user or guest session
+     */
+    protected function isSeriesLiked(int $seriesId, ?User $user, ?Request $request): bool
+    {
+        if ($user) {
+            return Like::where('user_id', $user->id)
+                ->where('series_id', $seriesId)
+                ->whereNull('episode_id')
+                ->exists();
+        }
+
+        $sessionId = $request?->header('X-Session-ID') ?: $request?->header('X-Guest-ID') ?: session()->getId();
+        $ip = $request?->ip();
+
+        return Like::whereNull('user_id')
+            ->where('series_id', $seriesId)
+            ->whereNull('episode_id')
+            ->where(function ($q) use ($sessionId, $ip) {
+                if ($sessionId) {
+                    $q->where('session_id', $sessionId);
+                } else {
+                    $q->where('ip_address', $ip);
+                }
+            })
+            ->exists();
     }
 
     /**
      * Format series summary for catalog lists
      */
-    protected function formatSeriesSummary(Series $series, ?User $user): array
+    protected function formatSeriesSummary(Series $series, ?User $user, ?Request $request = null): array
     {
-        $isUserVip = $user ? $user->hasActiveVip() : false;
+        $likedEpisodeIds = $this->getLikedEpisodeIds($user, $request);
+        $isSeriesLiked = $this->isSeriesLiked($series->id, $user, $request);
 
-        $episodes = $series->publishedEpisodes->map(function ($ep) use ($user, $series) {
+        $episodes = $series->publishedEpisodes->map(function ($ep) use ($user, $series, $likedEpisodeIds) {
             $isFree = $ep->isFreePreview();
             $isAccessible = $ep->isAccessibleBy($user);
 
@@ -113,6 +169,7 @@ class SeriesController extends Controller
                 'last_position' => 0,
                 'thumbnail_url' => $series->thumbnail_url,
                 'likes_count' => $ep->likes_count,
+                'is_liked' => isset($likedEpisodeIds[$ep->id]),
                 'stream_url' => $isAccessible ? url('/api/v1/files/stream/' . $ep->id) : null,
             ];
         });
@@ -130,7 +187,8 @@ class SeriesController extends Controller
             'is_new' => true,
             'is_free_available' => true,
             'total_episodes' => $series->publishedEpisodes->count(),
-            'likes_count' => $series->likes()->count(),
+            'is_liked' => $isSeriesLiked,
+            'likes_count' => $series->likes()->whereNull('episode_id')->count(),
             'categories' => $series->categories->map(fn ($c) => [
                 'id' => $c->id,
                 'name' => $c->name,
@@ -144,21 +202,17 @@ class SeriesController extends Controller
     /**
      * Format detailed series with episodes and viewing permissions
      */
-    protected function formatSeriesDetail(Series $series, ?User $user): array
+    protected function formatSeriesDetail(Series $series, ?User $user, ?Request $request = null): array
     {
-        $isUserVip = $user ? $user->hasActiveVip() : false;
-
         // User watch history for this series
         $userHistories = $user
             ? $user->watchHistories()->where('series_id', $series->id)->get()->keyBy('episode_id')
             : collect();
 
-        // Check if user liked this series
-        $isLiked = $user
-            ? $user->likes()->where('series_id', $series->id)->whereNull('episode_id')->exists()
-            : false;
+        $likedEpisodeIds = $this->getLikedEpisodeIds($user, $request);
+        $isSeriesLiked = $this->isSeriesLiked($series->id, $user, $request);
 
-        $episodes = $series->publishedEpisodes->map(function ($ep) use ($user, $userHistories, $series) {
+        $episodes = $series->publishedEpisodes->map(function ($ep) use ($user, $userHistories, $series, $likedEpisodeIds) {
             $isFree = $ep->isFreePreview();
             $isAccessible = $ep->isAccessibleBy($user);
 
@@ -180,6 +234,7 @@ class SeriesController extends Controller
                 'last_position' => $history ? $history->last_position : 0,
                 'thumbnail_url' => $series->thumbnail_url,
                 'likes_count' => $ep->likes_count,
+                'is_liked' => isset($likedEpisodeIds[$ep->id]),
                 // Only provide stream URL if accessible
                 'stream_url' => $isAccessible ? url('/api/v1/files/stream/' . $ep->id) : null,
             ];
@@ -194,8 +249,8 @@ class SeriesController extends Controller
             'thumbnail_url' => $series->thumbnail_url,
             'catalog_order' => $series->catalog_order,
             'is_featured' => $series->is_featured,
-            'is_liked' => $isLiked,
-            'likes_count' => $series->likes()->count(),
+            'is_liked' => $isSeriesLiked,
+            'likes_count' => $series->likes()->whereNull('episode_id')->count(),
             'total_episodes' => $episodes->count(),
             'categories' => $series->categories->map(fn ($c) => [
                 'id' => $c->id,

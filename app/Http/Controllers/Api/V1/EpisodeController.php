@@ -53,6 +53,22 @@ class EpisodeController extends Controller
             ? $user->watchHistories()->where('episode_id', $episode->id)->first()
             : null;
 
+        $sessionId = $request->header('X-Session-ID') ?: $request->header('X-Guest-ID') ?: session()->getId();
+        $ip = $request->ip();
+
+        $isLiked = $user
+            ? $user->likes()->where('episode_id', $episode->id)->exists()
+            : \App\Models\Like::whereNull('user_id')
+                ->where('episode_id', $episode->id)
+                ->where(function ($q) use ($sessionId, $ip) {
+                    if ($sessionId) {
+                        $q->where('session_id', $sessionId);
+                    } else {
+                        $q->where('ip_address', $ip);
+                    }
+                })
+                ->exists();
+
         return response()->json([
             'success' => true,
             'message' => 'Detail episode berhasil diambil.',
@@ -72,7 +88,7 @@ class EpisodeController extends Controller
                 'progress_percent' => $watchHistory ? $watchHistory->progress_percent : 0,
                 'thumbnail_url' => $episode->series->thumbnail_url,
                 'likes_count' => $episode->likes_count,
-                'is_liked' => $user ? $user->likes()->where('episode_id', $episode->id)->exists() : false,
+                'is_liked' => $isLiked,
                 'stream_url' => url('/api/v1/files/stream/' . $episode->id),
             ],
         ]);

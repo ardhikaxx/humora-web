@@ -37,6 +37,10 @@ Route::prefix('v1')->group(function () {
     Route::post('/videos/track-view', [VideoTrackingController::class, 'track']);
     Route::get('/analytics/realtime', [AnalyticsController::class, 'realtimeData']);
 
+    // Social Likes (Public / Guest & Authenticated)
+    Route::post('/series/{id}/like', [LikeController::class, 'toggleSeriesLike']);
+    Route::post('/episodes/{id}/like', [LikeController::class, 'toggleEpisodeLike']);
+
     // 3. Subscription Plans & Payment Information (Public)
     Route::get('/subscription/plans', [SubscriptionController::class, 'plans']);
     Route::get('/settings/payment-info', [SubscriptionController::class, 'paymentInfo']);
@@ -65,10 +69,6 @@ Route::prefix('v1')->group(function () {
         Route::get('/watch-history', [WatchHistoryController::class, 'index']);
         Route::post('/watch-history/progress', [WatchHistoryController::class, 'updateProgress']);
         Route::delete('/watch-history', [WatchHistoryController::class, 'destroy']);
-
-        // Social Likes
-        Route::post('/series/{id}/like', [LikeController::class, 'toggleSeriesLike']);
-        Route::post('/episodes/{id}/like', [LikeController::class, 'toggleEpisodeLike']);
 
         // In-App Notifications
         Route::get('/notifications', [NotificationController::class, 'index']);

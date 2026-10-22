@@ -119,6 +119,26 @@ class AuthController extends Controller
 
         $token = $user->createToken('mobile-app')->plainTextToken;
 
+        // Merge guest likes from this device/session to the logged-in user
+        $sessionId = $request->header('X-Session-ID') ?: $request->header('X-Guest-ID');
+        if ($sessionId) {
+            \App\Models\Like::whereNull('user_id')
+                ->where('session_id', $sessionId)
+                ->get()
+                ->each(function ($guestLike) use ($user) {
+                    $hasExisting = \App\Models\Like::where('user_id', $user->id)
+                        ->when($guestLike->episode_id, fn ($q) => $q->where('episode_id', $guestLike->episode_id))
+                        ->when(!$guestLike->episode_id, fn ($q) => $q->where('series_id', $guestLike->series_id)->whereNull('episode_id'))
+                        ->exists();
+
+                    if (!$hasExisting) {
+                        $guestLike->update(['user_id' => $user->id]);
+                    } else {
+                        $guestLike->delete();
+                    }
+                });
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Login berhasil.',
