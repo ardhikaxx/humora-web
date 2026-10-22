@@ -33,6 +33,15 @@ class TransactionController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
 
+        // Add-on plan requires an active weekly package
+        if ($plan->isAddon() && !$user->hasActiveWeeklySubscription()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Paket Add-on hanya dapat dibeli jika Anda memiliki Paket Akses Mingguan yang masih aktif.',
+                'error_code' => 'WEEKLY_PACKAGE_REQUIRED',
+            ], 422);
+        }
+
         // Generate unique transaction code
         $trxCode = 'TRX-' . date('Ymd') . '-' . strtoupper(Str::random(6));
 
@@ -88,6 +97,14 @@ class TransactionController extends Controller
             $plan = SubscriptionPlan::where('id', $validated['plan_id'])
                 ->where('is_active', true)
                 ->firstOrFail();
+
+            if ($plan->isAddon() && !$user->hasActiveWeeklySubscription()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Paket Add-on hanya dapat dibeli jika Anda memiliki Paket Akses Mingguan yang masih aktif.',
+                    'error_code' => 'WEEKLY_PACKAGE_REQUIRED',
+                ], 422);
+            }
 
             $trxCode = 'TRX-' . date('Ymd') . '-' . strtoupper(Str::random(6));
 
@@ -184,7 +201,9 @@ class TransactionController extends Controller
             'trx_code' => $trx->trx_code,
             'plan_id' => $trx->plan_id,
             'plan_name' => $trx->plan ? $trx->plan->name : 'Paket Langganan',
-            'duration_days' => $trx->plan ? $trx->plan->duration_days : 30,
+            'plan_type' => $trx->plan ? ($trx->plan->plan_type ?? 'weekly') : 'weekly',
+            'video_quota' => $trx->plan ? $trx->plan->video_quota : null,
+            'duration_days' => $trx->plan ? $trx->plan->duration_days : 7,
             'payment_method' => $trx->payment_method,
             'payment_method_label' => $trx->payment_method_label,
             'amount' => $trx->amount,

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Subscription extends Model
 {
@@ -14,6 +15,8 @@ class Subscription extends Model
     protected $fillable = [
         'user_id',
         'plan_id',
+        'plan_type',
+        'video_quota',
         'transaction_id',
         'start_date',
         'end_date',
@@ -21,6 +24,7 @@ class Subscription extends Model
     ];
 
     protected $casts = [
+        'video_quota' => 'integer',
         'start_date' => 'datetime',
         'end_date' => 'datetime',
     ];
@@ -40,9 +44,29 @@ class Subscription extends Model
         return $this->belongsTo(Transaction::class);
     }
 
+    public function videoAccesses(): HasMany
+    {
+        return $this->hasMany(UserVideoAccess::class);
+    }
+
     public function isActive(): bool
     {
         return $this->status === 'active' && Carbon::now()->lessThanOrEqualTo($this->end_date);
+    }
+
+    public function isWeekly(): bool
+    {
+        return $this->plan_type === 'weekly';
+    }
+
+    public function isAddon(): bool
+    {
+        return $this->plan_type === 'addon';
+    }
+
+    public function isFullAccess(): bool
+    {
+        return $this->plan_type === 'full';
     }
 
     public function getRemainingDaysAttribute(): int

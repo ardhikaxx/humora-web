@@ -164,6 +164,15 @@
                             <span class="badge bg-light text-dark border px-2 py-1" style="font-size: 0.75rem;">
                                 {{ $trx->plan?->name ?? 'Paket' }}
                             </span>
+                            @if ($trx->plan?->video_quota)
+                                <small class="d-block text-muted mt-1 fw-semibold" style="font-size: 0.7rem;">
+                                    Kuota: {{ $trx->plan->video_quota }} Video ({{ $trx->plan->duration_days > 0 ? $trx->plan->duration_days . ' Hari' : 'Ikuti Paket Mingguan' }})
+                                </small>
+                            @elseif ($trx->plan?->plan_type === 'full')
+                                <small class="d-block text-primary mt-1 fw-semibold" style="font-size: 0.7rem;">
+                                    Full Access 30 Hari
+                                </small>
+                            @endif
                         </td>
                         <td>
                             <span class="fw-bold text-dark" style="font-size: 0.84rem;">{{ $trx->formatted_amount }}</span>

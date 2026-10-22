@@ -313,6 +313,8 @@ class AuthController extends Controller
             ->latest('end_date')
             ->first();
 
+        $accessibleIds = $user->activeAccessibleEpisodeIds();
+
         return [
             'id' => $user->id,
             'name' => $user->name,
@@ -325,6 +327,12 @@ class AuthController extends Controller
             'valid_until' => $user->valid_until ? $user->valid_until->toIso8601String() : null,
             'remaining_days' => $user->remaining_days,
             'active_plan_name' => $activeSub ? $activeSub->plan->name : null,
+            'plan_type' => $activeSub ? ($activeSub->plan_type ?? $activeSub->plan->plan_type) : null,
+            'has_full_access' => $user->hasActiveFullAccess(),
+            'has_weekly_active' => $user->hasActiveWeeklySubscription(),
+            'can_purchase_addon' => $user->canPurchaseAddon(),
+            'accessible_episodes_count' => count($accessibleIds),
+            'accessible_episode_ids' => $accessibleIds,
             'initials' => $user->initials,
             'status' => $user->status,
             'member_since' => $user->created_at ? $user->created_at->format('d F Y') : null,

@@ -105,6 +105,113 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if user currently has active Full Access to entire catalog
+     */
+    public function hasActiveFullAccess(): bool
+    {
+        if (!$this->hasActiveVip()) {
+            return false;
+        }
+
+        return $this->subscriptions()
+            ->where('status', 'active')
+            ->where('end_date', '>=', Carbon::now())
+            ->where(function ($q) {
+                $q->where('plan_type', 'full')
+                  ->orWhereHas('plan', fn ($pq) => $pq->where('plan_type', 'full'));
+            })
+            ->exists();
+    }
+
+    /**
+     * Check if user currently has active Weekly Subscription
+     */
+    public function hasActiveWeeklySubscription(): bool
+    {
+        if (!$this->hasActiveVip()) {
+            return false;
+        }
+
+        return $this->subscriptions()
+            ->where('status', 'active')
+            ->where('end_date', '>=', Carbon::now())
+            ->where(function ($q) {
+                $q->where('plan_type', 'weekly')
+                  ->orWhereHas('plan', fn ($pq) => $pq->where('plan_type', 'weekly'));
+            })
+            ->exists();
+    }
+
+    /**
+     * Get the currently active weekly subscription (if any)
+     */
+    public function activeWeeklySubscription(): ?Subscription
+    {
+        return $this->subscriptions()
+            ->with('plan')
+            ->where('status', 'active')
+            ->where('end_date', '>=', Carbon::now())
+            ->where(function ($q) {
+                $q->where('plan_type', 'weekly')
+                  ->orWhereHas('plan', fn ($pq) => $pq->where('plan_type', 'weekly'));
+            })
+            ->latest('end_date')
+            ->first();
+    }
+
+    /**
+     * User can purchase Add-on only if they have an active Weekly package
+     */
+    public function canPurchaseAddon(): bool
+    {
+        return $this->hasActiveWeeklySubscription();
+    }
+
+    /**
+     * Check if user currently has active access to a specific episode
+     */
+    public function hasActiveAccessToEpisode(int $episodeId): bool
+    {
+        if ($this->hasActiveFullAccess()) {
+            return true;
+        }
+
+        return $this->userVideoAccesses()
+            ->where('episode_id', $episodeId)
+            ->where('expires_at', '>=', Carbon::now())
+            ->exists();
+    }
+
+    /**
+     * Get list of all episode IDs currently accessible by user
+     */
+    public function activeAccessibleEpisodeIds(): array
+    {
+        if ($this->hasActiveFullAccess()) {
+            return Episode::where('status', 'published')->pluck('id')->all();
+        }
+
+        return $this->userVideoAccesses()
+            ->where('expires_at', '>=', Carbon::now())
+            ->pluck('episode_id')
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Get list of all episode IDs historically granted to this user (prevents repeats)
+     */
+    public function allHistoricallyGrantedEpisodeIds(): array
+    {
+        return $this->userVideoAccesses()
+            ->pluck('episode_id')
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    /**
      * Remaining days of VIP subscription
      */
     public function getRemainingDaysAttribute(): int
@@ -115,6 +222,11 @@ class User extends Authenticatable
 
         $diff = Carbon::now()->diffInDays($this->valid_until, false);
         return max(0, (int) ceil($diff));
+    }
+
+    public function userVideoAccesses(): HasMany
+    {
+        return $this->hasMany(UserVideoAccess::class);
     }
 
     public function subscriptions(): HasMany

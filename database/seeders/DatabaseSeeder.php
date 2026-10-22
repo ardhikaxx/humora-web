@@ -52,56 +52,85 @@ class DatabaseSeeder extends Seeder
         ], 'json');
         SystemSetting::set('qris_official_image', '', 'text');
 
-        // 3. Subscription Plans
-        SubscriptionPlan::firstOrCreate(
-            ['code' => 'monthly'],
+        // 3. Subscription Plans (New Client Business Model)
+        // Deactivate or delete old legacy plans if they have no active foreign key constraints
+        SubscriptionPlan::whereNotIn('code', ['weekly_15', 'addon_5', 'addon_10', 'full_30'])->update(['is_active' => false]);
+
+        SubscriptionPlan::updateOrCreate(
+            ['code' => 'weekly_15'],
             [
-                'name' => 'Paket Bulanan',
+                'plan_type' => 'weekly',
+                'name' => 'Paket Akses Mingguan (15 Video)',
+                'duration_days' => 7,
+                'video_quota' => 15,
+                'original_price' => 25000,
+                'price' => 15000,
+                'badge_text' => 'Akses Mingguan',
+                'benefits' => [
+                    'Akses 15 video sketsa komedi selama 7 hari',
+                    'Bebas tonton ulang video dalam paket sepuasnya',
+                    'Streaming HD tanpa jeda buffering',
+                    'Dukungan pembelian Add-on video tambahan',
+                ],
+                'is_active' => true,
+            ]
+        );
+
+        SubscriptionPlan::updateOrCreate(
+            ['code' => 'addon_5'],
+            [
+                'plan_type' => 'addon',
+                'name' => 'Add-on 5 Video',
+                'duration_days' => 0,
+                'video_quota' => 5,
+                'original_price' => 10000,
+                'price' => 7500,
+                'badge_text' => 'Ekstra 5 Video',
+                'benefits' => [
+                    'Tambahan 5 video katalog baru',
+                    'Masa aktif mengikuti paket mingguan aktif',
+                    'Bebas tonton ulang selama masa aktif',
+                    'Video baru tidak pernah mengulang',
+                ],
+                'is_active' => true,
+            ]
+        );
+
+        SubscriptionPlan::updateOrCreate(
+            ['code' => 'addon_10'],
+            [
+                'plan_type' => 'addon',
+                'name' => 'Add-on 10 Video',
+                'duration_days' => 0,
+                'video_quota' => 10,
+                'original_price' => 15000,
+                'price' => 12500,
+                'badge_text' => 'Paling Populer',
+                'benefits' => [
+                    'Tambahan 10 video katalog baru',
+                    'Masa aktif mengikuti paket mingguan aktif',
+                    'Bebas tonton ulang selama masa aktif',
+                    'Video baru tidak pernah mengulang',
+                ],
+                'is_active' => true,
+            ]
+        );
+
+        SubscriptionPlan::updateOrCreate(
+            ['code' => 'full_30'],
+            [
+                'plan_type' => 'full',
+                'name' => 'Full Access Seluruh Katalog',
                 'duration_days' => 30,
-                'original_price' => 29000,
-                'price' => 19000,
-                'badge_text' => null,
-                'benefits' => [
-                    'Akses seluruh episode VIP',
-                    'Streaming kualitas HD tanpa buffer',
-                    'Nonton tanpa jeda iklan',
-                ],
-                'is_active' => true,
-            ]
-        );
-
-        SubscriptionPlan::firstOrCreate(
-            ['code' => 'quarterly'],
-            [
-                'name' => 'Paket 3 Bulan',
-                'duration_days' => 90,
-                'original_price' => 87000,
+                'video_quota' => null,
+                'original_price' => 99000,
                 'price' => 49000,
-                'badge_text' => 'Favorit Pengguna',
+                'badge_text' => 'Akses Penuh 30 Hari',
                 'benefits' => [
-                    'Akses seluruh episode VIP',
-                    'Streaming kualitas HD tanpa buffer',
-                    'Nonton tanpa jeda iklan',
-                    'Akses rilis episode lebih awal',
-                ],
-                'is_active' => true,
-            ]
-        );
-
-        SubscriptionPlan::firstOrCreate(
-            ['code' => 'yearly'],
-            [
-                'name' => 'Paket Tahunan',
-                'duration_days' => 365,
-                'original_price' => 228000,
-                'price' => 179000,
-                'badge_text' => 'VIP Emas',
-                'benefits' => [
-                    'Akses seluruh episode VIP 1 Tahun Penuh',
-                    'Streaming kualitas HD tanpa buffer',
-                    'Nonton tanpa jeda iklan',
-                    'Akses rilis episode lebih awal',
-                    'Hemat hingga 40% dari paket bulanan',
+                    'Akses tanpa batas seluruh video katalog (~68+ video)',
+                    'Bebas nonton ulang sepuasnya selama 30 hari',
+                    'Tidak perlu membeli paket mingguan atau add-on',
+                    'Streaming HD tercepat tanpa hambatan',
                 ],
                 'is_active' => true,
             ]

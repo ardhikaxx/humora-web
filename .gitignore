@@ -20,6 +20,8 @@
 /public/storage
 /storage/*.key
 /storage/pail
+/storage/uploads/proofs/*
+!/storage/uploads/proofs/.gitkeep
 /vendor
 _ide_helper.php
 Homestead.json

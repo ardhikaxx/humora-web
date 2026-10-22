@@ -92,32 +92,151 @@ class TransactionController extends Controller
             $plan = $transaction->plan;
 
             $now = Carbon::now();
+            $planType = $plan ? ($plan->plan_type ?? 'weekly') : 'weekly';
+            $quota = $plan ? $plan->video_quota : null;
 
-            // Calculate subscription duration:
-            // If user currently has active VIP, extend from current valid_until so no remaining days are lost!
-            if ($user->hasActiveVip() && $user->valid_until && $user->valid_until->greaterThan($now)) {
-                $startDate = $now;
-                $endDate = $user->valid_until->copy()->addDays($plan->duration_days);
+            $startDate = $now;
+            $endDate = null;
+            $grantedCount = 0;
+
+            if ($planType === 'full') {
+                // Skenario Full Access:
+                // Akses seluruh katalog video selama 30 hari tanpa batas kuota.
+                $endDate = $now->copy()->addDays(30);
+
+                Subscription::create([
+                    'user_id' => $user->id,
+                    'plan_id' => $plan->id,
+                    'plan_type' => 'full',
+                    'video_quota' => null,
+                    'transaction_id' => $transaction->id,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                    'status' => 'active',
+                ]);
+
+                $user->update([
+                    'tier' => 'premium',
+                    'valid_until' => $endDate,
+                ]);
+
+                $notifTitle = 'Akses Penuh Seluruh Katalog Aktif!';
+                $notifMsg = "Selamat! Pembayaran transaksi {$transaction->trx_code} ({$plan->name}) berhasil diverifikasi. Anda mendapatkan akses penuh tanpa batas ke seluruh video katalog selama 30 hari hingga {$endDate->isoFormat('D MMMM Y')}.";
+                $successMsg = "Transaksi {$transaction->trx_code} berhasil disetujui. Full Access untuk {$user->name} aktif hingga {$endDate->format('d/m/Y')}.";
+
+            } elseif ($planType === 'addon') {
+                // Skenario Add-on:
+                // Masa aktif mengikuti paket mingguan aktif.
+                $activeWeekly = $user->activeWeeklySubscription();
+                $endDate = $activeWeekly ? $activeWeekly->end_date : ($user->valid_until && $user->valid_until->greaterThan($now) ? $user->valid_until : $now->copy()->addDays(7));
+
+                // Cari video yang belum pernah dialokasikan kepada pengguna
+                $alreadyGrantedIds = \App\Models\UserVideoAccess::where('user_id', $user->id)->pluck('episode_id')->all();
+
+                $allocatedEpisodes = \App\Models\Episode::with('series')
+                    ->where('status', 'published')
+                    ->whereNotIn('id', $alreadyGrantedIds)
+                    ->get()
+                    ->filter(fn (\App\Models\Episode $ep) => !$ep->isFreePreview())
+                    ->sortBy([
+                        fn ($a, $b) => ($a->series->catalog_order ?? 999) <=> ($b->series->catalog_order ?? 999),
+                        fn ($a, $b) => $a->series_id <=> $b->series_id,
+                        fn ($a, $b) => $a->episode_number <=> $b->episode_number,
+                    ])
+                    ->take($quota ?: 5)
+                    ->values();
+
+                $grantedCount = $allocatedEpisodes->count();
+
+                $subscription = Subscription::create([
+                    'user_id' => $user->id,
+                    'plan_id' => $plan->id,
+                    'plan_type' => 'addon',
+                    'video_quota' => $grantedCount,
+                    'transaction_id' => $transaction->id,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                    'status' => 'active',
+                ]);
+
+                foreach ($allocatedEpisodes as $ep) {
+                    \App\Models\UserVideoAccess::create([
+                        'user_id' => $user->id,
+                        'episode_id' => $ep->id,
+                        'subscription_id' => $subscription->id,
+                        'transaction_id' => $transaction->id,
+                        'granted_at' => $now,
+                        'expires_at' => $endDate,
+                    ]);
+                }
+
+                $user->update([
+                    'tier' => 'premium',
+                    'valid_until' => $endDate,
+                ]);
+
+                $notifTitle = 'Paket Add-on Berhasil Aktif!';
+                $notifMsg = "Selamat! Pembayaran transaksi {$transaction->trx_code} ({$plan->name}) berhasil diverifikasi. {$grantedCount} video tambahan telah aktif di akun Anda hingga {$endDate->isoFormat('D MMMM Y')}.";
+                $successMsg = "Transaksi {$transaction->trx_code} berhasil disetujui. {$grantedCount} video add-on untuk {$user->name} aktif hingga {$endDate->format('d/m/Y')}.";
+
             } else {
-                $startDate = $now;
-                $endDate = $now->copy()->addDays($plan->duration_days);
+                // Skenario Mingguan (15 Video):
+                // Masa aktif 7 hari sejak transaksi disetujui.
+                if ($user->hasActiveVip() && $user->valid_until && $user->valid_until->greaterThan($now)) {
+                    $endDate = $user->valid_until->copy()->addDays(7);
+                } else {
+                    $endDate = $now->copy()->addDays(7);
+                }
+
+                // Cari 15 video yang belum pernah diberikan sebelumnya
+                $alreadyGrantedIds = \App\Models\UserVideoAccess::where('user_id', $user->id)->pluck('episode_id')->all();
+
+                $allocatedEpisodes = \App\Models\Episode::with('series')
+                    ->where('status', 'published')
+                    ->whereNotIn('id', $alreadyGrantedIds)
+                    ->get()
+                    ->filter(fn (\App\Models\Episode $ep) => !$ep->isFreePreview())
+                    ->sortBy([
+                        fn ($a, $b) => ($a->series->catalog_order ?? 999) <=> ($b->series->catalog_order ?? 999),
+                        fn ($a, $b) => $a->series_id <=> $b->series_id,
+                        fn ($a, $b) => $a->episode_number <=> $b->episode_number,
+                    ])
+                    ->take($quota ?: 15)
+                    ->values();
+
+                $grantedCount = $allocatedEpisodes->count();
+
+                $subscription = Subscription::create([
+                    'user_id' => $user->id,
+                    'plan_id' => $plan->id,
+                    'plan_type' => 'weekly',
+                    'video_quota' => $grantedCount,
+                    'transaction_id' => $transaction->id,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                    'status' => 'active',
+                ]);
+
+                foreach ($allocatedEpisodes as $ep) {
+                    \App\Models\UserVideoAccess::create([
+                        'user_id' => $user->id,
+                        'episode_id' => $ep->id,
+                        'subscription_id' => $subscription->id,
+                        'transaction_id' => $transaction->id,
+                        'granted_at' => $now,
+                        'expires_at' => $endDate,
+                    ]);
+                }
+
+                $user->update([
+                    'tier' => 'premium',
+                    'valid_until' => $endDate,
+                ]);
+
+                $notifTitle = 'Paket Akses Mingguan Aktif!';
+                $notifMsg = "Selamat! Pembayaran transaksi {$transaction->trx_code} ({$plan->name}) berhasil diverifikasi. {$grantedCount} video sketsa komedi telah aktif di akun Anda selama 7 hari hingga {$endDate->isoFormat('D MMMM Y')}.";
+                $successMsg = "Transaksi {$transaction->trx_code} berhasil disetujui. {$grantedCount} video mingguan untuk {$user->name} aktif hingga {$endDate->format('d/m/Y')}.";
             }
-
-            // Create exactly one Subscription record linked to this transaction
-            Subscription::create([
-                'user_id' => $user->id,
-                'plan_id' => $plan->id,
-                'transaction_id' => $transaction->id,
-                'start_date' => $startDate,
-                'end_date' => $endDate,
-                'status' => 'active',
-            ]);
-
-            // Update user tier and validity
-            $user->update([
-                'tier' => 'premium',
-                'valid_until' => $endDate,
-            ]);
 
             // Update transaction to success
             $transaction->update([
@@ -129,15 +248,15 @@ class TransactionController extends Controller
             // Create notification for user
             Notification::create([
                 'user_id' => $user->id,
-                'title' => 'Pembayaran VIP Disetujui!',
-                'message' => "Selamat! Pembayaran transaksi {$transaction->trx_code} ({$plan->name}) berhasil diverifikasi. Akun Premium VIP Anda aktif hingga {$endDate->isoFormat('D MMMM Y')}.",
+                'title' => $notifTitle,
+                'message' => $notifMsg,
                 'type' => 'transaction',
                 'is_read' => false,
             ]);
 
             DB::commit();
 
-            return back()->with('success', "Transaksi {$transaction->trx_code} berhasil disetujui. Akses VIP untuk {$user->name} telah aktif hingga {$endDate->format('d/m/Y')}.");
+            return back()->with('success', $successMsg);
         } catch (\Throwable $e) {
             DB::rollBack();
             return back()->with('error', 'Gagal memproses persetujuan transaksi: ' . $e->getMessage());

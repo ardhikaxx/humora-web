@@ -93,9 +93,9 @@ class SeriesController extends Controller
     {
         $isUserVip = $user ? $user->hasActiveVip() : false;
 
-        $episodes = $series->publishedEpisodes->map(function ($ep) use ($isUserVip, $series) {
+        $episodes = $series->publishedEpisodes->map(function ($ep) use ($user, $series) {
             $isFree = $ep->isFreePreview();
-            $isAccessible = $isFree || $isUserVip;
+            $isAccessible = $ep->isAccessibleBy($user);
 
             return [
                 'id' => $ep->id,
@@ -158,9 +158,9 @@ class SeriesController extends Controller
             ? $user->likes()->where('series_id', $series->id)->whereNull('episode_id')->exists()
             : false;
 
-        $episodes = $series->publishedEpisodes->map(function ($ep) use ($isUserVip, $userHistories, $series) {
+        $episodes = $series->publishedEpisodes->map(function ($ep) use ($user, $userHistories, $series) {
             $isFree = $ep->isFreePreview();
-            $isAccessible = $isFree || $isUserVip;
+            $isAccessible = $ep->isAccessibleBy($user);
 
             $history = $userHistories->get($ep->id);
 

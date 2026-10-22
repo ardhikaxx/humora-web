@@ -12,8 +12,10 @@ class SubscriptionPlan extends Model
 
     protected $fillable = [
         'code',
+        'plan_type',
         'name',
         'duration_days',
+        'video_quota',
         'original_price',
         'price',
         'badge_text',
@@ -23,6 +25,7 @@ class SubscriptionPlan extends Model
 
     protected $casts = [
         'duration_days' => 'integer',
+        'video_quota' => 'integer',
         'original_price' => 'float',
         'price' => 'float',
         'benefits' => 'array',
@@ -32,6 +35,7 @@ class SubscriptionPlan extends Model
     protected $appends = [
         'formatted_price',
         'formatted_original_price',
+        'formatted_quota',
     ];
 
     public function subscriptions(): HasMany
@@ -42,6 +46,21 @@ class SubscriptionPlan extends Model
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class, 'plan_id');
+    }
+
+    public function isWeekly(): bool
+    {
+        return $this->plan_type === 'weekly';
+    }
+
+    public function isAddon(): bool
+    {
+        return $this->plan_type === 'addon';
+    }
+
+    public function isFullAccess(): bool
+    {
+        return $this->plan_type === 'full';
     }
 
     public function getFormattedPriceAttribute(): string
@@ -55,5 +74,13 @@ class SubscriptionPlan extends Model
             return '';
         }
         return 'Rp' . number_format($this->original_price, 0, ',', '.');
+    }
+
+    public function getFormattedQuotaAttribute(): string
+    {
+        if ($this->isFullAccess() || $this->video_quota === null) {
+            return 'Seluruh Katalog (~68 Video)';
+        }
+        return "{$this->video_quota} Video";
     }
 }

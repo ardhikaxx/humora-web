@@ -54,11 +54,29 @@ class Episode extends Model
         return $this->hasMany(ViewingEvent::class);
     }
 
+    public function userVideoAccesses(): HasMany
+    {
+        return $this->hasMany(UserVideoAccess::class);
+    }
+
     /**
-     * Policy: Episodes 1 & 2 are ALWAYS FREE preview episodes.
+     * Free trial videos policy:
+     * - If a series has <= 2 total published episodes, only Episode 1 is free trial (Episode 2 is paid).
+     * - If a series has > 2 published episodes, Episode 1 & 2 are free trial (Episode 3+ are paid).
      */
     public function isFreePreview(): bool
     {
+        $series = $this->relationLoaded('series') ? $this->series : $this->series()->first();
+        if ($series) {
+            $totalCount = $series->relationLoaded('publishedEpisodes')
+                ? $series->publishedEpisodes->count()
+                : ($series->published_episodes_count ?? $series->publishedEpisodes()->count());
+
+            if ($totalCount <= 2) {
+                return $this->episode_number <= 1;
+            }
+        }
+
         return $this->episode_number <= 2;
     }
 
@@ -82,16 +100,35 @@ class Episode extends Model
      */
     public function isAccessibleBy(?User $user): bool
     {
-        // Episodes 1 and 2 of published series are free for everyone
+        // Free preview episodes are accessible by everyone (guest, free, expired)
         if ($this->isFreePreview()) {
             return true;
         }
 
-        // Episode 3 and above requires an authenticated user with an active VIP subscription
         if (!$user) {
             return false;
         }
 
-        return $user->hasActiveVip();
+        // Account must be active
+        if ($user->status !== 'active') {
+            return false;
+        }
+
+        // 1. User has active Full Access (seluruh katalog)?
+        if ($user->hasActiveFullAccess()) {
+            return true;
+        }
+
+        // 2. User has an active grant for this specific episode (weekly or add-on)?
+        if ($user->hasActiveAccessToEpisode($this->id)) {
+            return true;
+        }
+
+        // Fallback for legacy users before quota system:
+        if ($user->hasActiveVip() && !$user->userVideoAccesses()->exists()) {
+            return true;
+        }
+
+        return false;
     }
 }

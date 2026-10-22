@@ -3,32 +3,43 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Episode;
 use App\Models\SubscriptionPlan;
 use App\Models\SystemSetting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SubscriptionController extends Controller
 {
     /**
      * Get active VIP subscription plans
      */
-    public function plans(): JsonResponse
+    public function plans(Request $request): JsonResponse
     {
+        $user = Auth::guard('sanctum')->user() ?? $request->user('sanctum');
+        $canPurchaseAddon = $user ? $user->canPurchaseAddon() : false;
+
         $plans = SubscriptionPlan::where('is_active', true)
             ->orderBy('price')
             ->get()
             ->map(fn (SubscriptionPlan $p) => [
                 'id' => $p->id,
                 'code' => $p->code,
+                'plan_type' => $p->plan_type ?? 'weekly',
                 'name' => $p->name,
                 'duration_days' => $p->duration_days,
+                'video_quota' => $p->video_quota,
+                'formatted_quota' => $p->formatted_quota,
                 'original_price' => $p->original_price,
                 'price' => $p->price,
                 'formatted_price' => $p->formatted_price,
                 'formatted_original_price' => $p->formatted_original_price,
                 'badge_text' => $p->badge_text,
                 'benefits' => $p->benefits ?? [],
+                'is_addon' => $p->isAddon(),
+                'requires_weekly' => $p->isAddon(),
+                'can_purchase' => $p->isAddon() ? $canPurchaseAddon : true,
             ]);
 
         return response()->json([
@@ -123,6 +134,10 @@ class SubscriptionController extends Controller
             ->latest()
             ->first();
 
+        $accessibleIds = $user->activeAccessibleEpisodeIds();
+        $totalCatalog = Episode::where('status', 'published')->count();
+        $historicallyGrantedCount = count($user->allHistoricallyGrantedEpisodeIds());
+
         return response()->json([
             'success' => true,
             'message' => 'Status langganan berhasil diambil.',
@@ -131,9 +146,18 @@ class SubscriptionController extends Controller
                 'effective_tier' => $user->effective_tier,
                 'valid_until' => $user->valid_until ? $user->valid_until->toIso8601String() : null,
                 'remaining_days' => $user->remaining_days,
+                'has_full_access' => $user->hasActiveFullAccess(),
+                'has_weekly_active' => $user->hasActiveWeeklySubscription(),
+                'can_purchase_addon' => $user->canPurchaseAddon(),
+                'accessible_episodes_count' => count($accessibleIds),
+                'accessible_episode_ids' => $accessibleIds,
+                'total_catalog_episodes' => $totalCatalog,
+                'historically_granted_count' => $historicallyGrantedCount,
                 'active_plan' => $activeSub ? [
                     'id' => $activeSub->plan->id,
                     'name' => $activeSub->plan->name,
+                    'plan_type' => $activeSub->plan_type ?? $activeSub->plan->plan_type,
+                    'video_quota' => $activeSub->video_quota ?? $activeSub->plan->video_quota,
                     'start_date' => $activeSub->start_date->toIso8601String(),
                     'end_date' => $activeSub->end_date->toIso8601String(),
                 ] : null,

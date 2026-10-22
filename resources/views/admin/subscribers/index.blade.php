@@ -117,7 +117,13 @@
                             <span class="badge bg-light text-dark border px-2 py-1" style="font-size: 0.78rem;">
                                 {{ $sub->plan?->name ?? 'Paket' }}
                             </span>
-                            <small class="d-block text-muted" style="font-size: 0.7rem;">{{ $sub->plan?->duration_days }} Hari</small>
+                            @if ($sub->video_quota)
+                                <small class="d-block text-muted" style="font-size: 0.7rem;">Kuota: {{ $sub->video_quota }} Video</small>
+                            @elseif ($sub->plan_type === 'full' || $sub->plan?->plan_type === 'full')
+                                <small class="d-block text-primary fw-semibold" style="font-size: 0.7rem;">Full Access Seluruh Video</small>
+                            @else
+                                <small class="d-block text-muted" style="font-size: 0.7rem;">{{ $sub->plan?->duration_days }} Hari</small>
+                            @endif
                         </td>
                         <td>
                             <div style="font-size: 0.8rem;">
