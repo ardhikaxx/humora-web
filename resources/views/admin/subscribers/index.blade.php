@@ -169,7 +169,7 @@
     </div>
     @if ($subscriptions->hasPages())
     <div class="p-3 border-top d-flex justify-content-end">
-        {{ $subscriptions->links() }}
+        {{ $subscriptions->links('vendor.pagination.humora') }}
     </div>
     @endif
 </div>

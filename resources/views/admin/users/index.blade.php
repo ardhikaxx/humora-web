@@ -204,7 +204,7 @@
     </div>
     @if ($users->hasPages())
     <div class="p-3 border-top d-flex justify-content-end">
-        {{ $users->links() }}
+        {{ $users->links('vendor.pagination.humora') }}
     </div>
     @endif
 </div>

@@ -4,10 +4,15 @@ use App\Models\Category;
 use App\Models\Episode;
 use App\Models\Series;
 use App\Models\User;
+use App\Services\FileStorageService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 
 beforeEach(function () {
+    $this->streamFile = 'test-stream.webm';
+    $this->streamPath = FileStorageService::getUploadPath('videos') . DIRECTORY_SEPARATOR . $this->streamFile;
+    copy(base_path('tests/fixtures/test-stream.webm'), $this->streamPath);
+
     $this->category = Category::create([
         'name' => 'Sketsa Kantor',
         'slug' => 'sketsa-kantor',
@@ -35,7 +40,7 @@ beforeEach(function () {
         'synopsis' => 'Budi pertama kali masuk kerja',
         'duration' => '02:54',
         'duration_seconds' => 174,
-        'video_file' => 'tipe-penumpang-taxi-online-ep1-bawel.webm',
+        'video_file' => $this->streamFile,
         'access_type' => 'free',
         'status' => 'published',
     ]);
@@ -48,7 +53,7 @@ beforeEach(function () {
         'synopsis' => 'Insiden kopi panas berujung promosi jabatan',
         'duration' => '02:53',
         'duration_seconds' => 173,
-        'video_file' => 'tipe-penumpang-taxi-online-ep2-kepo.webm',
+        'video_file' => $this->streamFile,
         'access_type' => 'free',
         'status' => 'published',
     ]);
@@ -61,10 +66,16 @@ beforeEach(function () {
         'synopsis' => 'Negosiasi gaji yang berubah jadi kompetisi stand-up',
         'duration' => '02:43',
         'duration_seconds' => 163,
-        'video_file' => 'tipe-penumpang-taxi-online-ep3-baper.webm',
+        'video_file' => $this->streamFile,
         'access_type' => 'premium',
         'status' => 'published',
     ]);
+});
+
+afterEach(function () {
+    if (!empty($this->streamPath) && is_file($this->streamPath)) {
+        @unlink($this->streamPath);
+    }
 });
 
 test('guest can list series catalog and see published series', function () {

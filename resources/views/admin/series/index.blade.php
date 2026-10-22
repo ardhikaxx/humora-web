@@ -206,7 +206,7 @@
     </div>
     @if ($seriesList->hasPages())
     <div class="p-3 border-top d-flex justify-content-end">
-        {{ $seriesList->links() }}
+        {{ $seriesList->links('vendor.pagination.humora') }}
     </div>
     @endif
 </div>

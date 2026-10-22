@@ -168,7 +168,7 @@
     </div>
     @if ($admins->hasPages())
     <div class="p-3 border-top d-flex justify-content-end">
-        {{ $admins->links() }}
+        {{ $admins->links('vendor.pagination.humora') }}
     </div>
     @endif
 </div>

@@ -201,7 +201,7 @@
     </div>
     @if ($episodes->hasPages())
     <div class="p-3 border-top d-flex justify-content-end">
-        {{ $episodes->links() }}
+        {{ $episodes->links('vendor.pagination.humora') }}
     </div>
     @endif
 </div>

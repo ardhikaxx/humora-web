@@ -120,7 +120,7 @@
     </div>
     @if ($categories->hasPages())
     <div class="p-3 border-top d-flex justify-content-end">
-        {{ $categories->links() }}
+        {{ $categories->links('vendor.pagination.humora') }}
     </div>
     @endif
 </div>
