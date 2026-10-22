@@ -185,10 +185,27 @@ class EpisodeController extends Controller
     public function edit(int $id): View
     {
         $episode = Episode::with('series')->findOrFail($id);
-        $seriesList = Series::orderBy('title')->get();
+        $seriesList = Series::with('categories')->orderBy('title')->get();
 
-        $minutes = floor($episode->duration_seconds / 60);
-        $seconds = $episode->duration_seconds % 60;
+        // Pre-calculate next episode numbers and existing counts for every series
+        $epStats = Episode::select('series_id', DB::raw('MAX(episode_number) as max_ep'), DB::raw('COUNT(*) as total_ep'))
+            ->groupBy('series_id')
+            ->get()
+            ->keyBy('series_id');
+
+        $nextEpisodeNumbers = [];
+        $seriesEpisodeCounts = [];
+        foreach ($seriesList as $s) {
+            $stat = $epStats->get($s->id);
+            // If it's the current series of this episode, preserve its current episode number
+            $nextEpisodeNumbers[$s->id] = ($s->id === $episode->series_id)
+                ? $episode->episode_number
+                : ($stat ? ($stat->max_ep + 1) : 1);
+            $seriesEpisodeCounts[$s->id] = $stat ? (int) $stat->total_ep : 0;
+        }
+
+        $minutes = (int) floor($episode->duration_seconds / 60);
+        $seconds = (int) ($episode->duration_seconds % 60);
 
         $durationPresets = [
             ['label' => '1m 55s', 'minutes' => 1, 'seconds' => 55],
@@ -199,7 +216,15 @@ class EpisodeController extends Controller
             ['label' => '2m 20s', 'minutes' => 2, 'seconds' => 20],
         ];
 
-        return view('admin.videos.edit', compact('episode', 'seriesList', 'minutes', 'seconds', 'durationPresets'));
+        return view('admin.videos.edit', compact(
+            'episode',
+            'seriesList',
+            'minutes',
+            'seconds',
+            'durationPresets',
+            'nextEpisodeNumbers',
+            'seriesEpisodeCounts'
+        ));
     }
 
     /**
@@ -208,6 +233,15 @@ class EpisodeController extends Controller
     public function update(Request $request, int $id): RedirectResponse
     {
         $episode = Episode::findOrFail($id);
+
+        $seriesId = (int) $request->input('series_id', $episode->series_id);
+        $autoEpisodeNumber = ($seriesId === $episode->series_id)
+            ? $episode->episode_number
+            : ((Episode::where('series_id', $seriesId)->max('episode_number') ?? 0) + 1);
+
+        if (!$request->filled('episode_number')) {
+            $request->merge(['episode_number' => $autoEpisodeNumber]);
+        }
 
         $validated = $request->validate([
             'series_id' => ['required', 'exists:series,id'],
@@ -221,16 +255,40 @@ class EpisodeController extends Controller
             ],
             'title' => ['required', 'string', 'max:200'],
             'synopsis' => ['nullable', 'string'],
-            'duration_minutes' => ['required', 'integer', 'min:0', 'max:60'],
+            'duration_minutes' => ['nullable', 'integer', 'min:0', 'max:60'],
             'duration_seconds' => ['nullable', 'integer', 'min:0', 'max:59'],
             'access_type' => ['required', 'in:free,premium'],
             'status' => ['required', 'in:draft,published'],
             'video_file' => ['nullable', 'file', 'mimetypes:video/mp4,video/webm,video/quicktime', 'max:104857600'],
         ]);
 
-        $seconds = (int) ($validated['duration_seconds'] ?? 0);
-        $totalSeconds = ($validated['duration_minutes'] * 60) + $seconds;
-        $formattedDuration = sprintf('%dm %02ds', $validated['duration_minutes'], $seconds);
+        // Auto-detect duration from uploaded video master file if available
+        $detectedDuration = null;
+        if ($request->hasFile('video_file')) {
+            $tempPath = $request->file('video_file')->getRealPath();
+            $detectedDuration = FileStorageService::getVideoDurationSeconds($tempPath);
+        }
+
+        if ($detectedDuration !== null && $detectedDuration > 0) {
+            $totalSeconds = $detectedDuration;
+            $minutes = (int) floor($totalSeconds / 60);
+            $seconds = (int) ($totalSeconds % 60);
+            $formattedDuration = sprintf('%dm %02ds', $minutes, $seconds);
+        } else {
+            $minutes = isset($validated['duration_minutes']) && $validated['duration_minutes'] !== null
+                ? (int) $validated['duration_minutes']
+                : (int) floor($episode->duration_seconds / 60);
+            $seconds = isset($validated['duration_seconds']) && $validated['duration_seconds'] !== null
+                ? (int) $validated['duration_seconds']
+                : (int) ($episode->duration_seconds % 60);
+            $totalSeconds = ($minutes * 60) + $seconds;
+            if ($totalSeconds <= 0) {
+                $totalSeconds = $episode->duration_seconds > 0 ? $episode->duration_seconds : 120;
+                $minutes = (int) floor($totalSeconds / 60);
+                $seconds = (int) ($totalSeconds % 60);
+            }
+            $formattedDuration = sprintf('%dm %02ds', $minutes, $seconds);
+        }
 
         // Access Type: Admin can explicitly choose 'free' or 'premium', or fallback to trial policy
         if (!empty($validated['access_type'])) {

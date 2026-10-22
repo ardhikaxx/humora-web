@@ -13,21 +13,24 @@
     </small>
 </div>
 
-<!-- Header & Actions -->
+<!-- Header & Action Buttons -->
 <form id="formEditVideo" action="{{ route('admin.videos.update', $episode->id) }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
         <div>
             <h1 class="page-title mb-1">Edit Episode #{{ $episode->episode_number }}: {{ $episode->title }}</h1>
-            <p class="page-subtitle mb-0">Series: <strong>{{ $episode->series?->title ?? '-' }}</strong>. Anda dapat mengubah tipe akses episode ini menjadi Gratis atau Premium VIP.</p>
+            <p class="page-subtitle mb-0">Series: <strong>{{ $episode->series?->title ?? '-' }}</strong>. Anda dapat menentukan tipe akses Gratis atau Premium VIP serta durasi episode secara otomatis.</p>
         </div>
         <div class="d-flex align-items-center gap-2">
             <a href="{{ route('admin.videos.index') }}" class="btn btn-humora-secondary">
                 <i data-lucide="arrow-left"></i>
                 <span>Batal</span>
             </a>
-            <button type="submit" class="btn btn-humora-primary">
+            <button type="submit" name="status" value="draft" class="btn btn-outline-secondary">
+                <span>Simpan Draf</span>
+            </button>
+            <button type="submit" name="status" value="published" class="btn btn-humora-primary">
                 <i data-lucide="save"></i>
                 <span>Simpan Perubahan</span>
             </button>
@@ -40,14 +43,28 @@
             <!-- 1. PILIH SERIES INDUK -->
             <div class="humora-card mb-4">
                 <div class="humora-card-body p-4">
-                    <h5 class="fw-bold text-dark mb-3" style="font-size: 0.95rem;">1. SERIES INDUK</h5>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold text-dark mb-0" style="font-size: 0.95rem;">1. PILIH SERIES INDUK</h5>
+                        <a href="{{ route('admin.series.create') }}" class="text-decoration-none fw-semibold" style="color: #43135C; font-size: 0.78rem;">+ Buat Series Baru</a>
+                    </div>
 
                     <div class="mb-3">
                         <label for="seriesSelect" class="form-label-custom">Series Induk <span class="text-danger">*</span></label>
                         <select id="seriesSelect" name="series_id" class="form-select-custom @error('series_id') is-invalid @enderror" required>
                             @foreach ($seriesList as $s)
-                                <option value="{{ $s->id }}" {{ old('series_id', $episode->series_id) == $s->id ? 'selected' : '' }}>
-                                    {{ $s->title }}
+                                @php
+                                    $nextEp = $nextEpisodeNumbers[$s->id] ?? 1;
+                                    $count = $seriesEpisodeCounts[$s->id] ?? 0;
+                                    $isCurrent = ($s->id === $episode->series_id);
+                                @endphp
+                                <option value="{{ $s->id }}" 
+                                        data-next-ep="{{ $nextEp }}"
+                                        data-ep-count="{{ $count }}"
+                                        data-title="{{ $s->title }}"
+                                        data-is-current="{{ $isCurrent ? '1' : '0' }}"
+                                        data-current-ep="{{ $episode->episode_number }}"
+                                        {{ old('series_id', $episode->series_id) == $s->id ? 'selected' : '' }}>
+                                    {{ $s->title }} ({{ $s->categories->pluck('name')->implode(', ') ?: 'Umum' }}) — {{ $count }} Episode tersimpan
                                 </option>
                             @endforeach
                         </select>
@@ -58,29 +75,37 @@
                 </div>
             </div>
 
-            <!-- 2. DETAIL EPISODE -->
+            <!-- 2. INFORMASI & DETAIL EPISODE -->
             <div class="humora-card mb-4">
                 <div class="humora-card-body p-4">
                     <h5 class="fw-bold text-dark mb-4" style="font-size: 0.95rem;">2. DETAIL EPISODE</h5>
 
                     <div class="row g-3 mb-3">
-                        <div class="col-12 col-md-4">
-                            <div class="humora-field-group mb-0">
-                                <div class="humora-field @error('episode_number') is-error @enderror">
-                                    <input type="number" id="episodeNumberInput" name="episode_number" class="form-control-custom @error('episode_number') is-invalid @enderror" value="{{ old('episode_number', $episode->episode_number) }}" placeholder=" " min="1" required>
-                                    <label for="episodeNumberInput" class="humora-floating-label">Nomor Episode <span class="text-danger">*</span></label>
+                        <div class="col-12 col-md-6">
+                            <div class="px-3 rounded-3 border bg-light d-flex align-items-center justify-content-between" style="min-height: 52px; height: 52px; border-color: #E2E8F0 !important;">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="d-flex align-items-center justify-content-center rounded-2 flex-shrink-0" style="width: 32px; height: 32px; background: #FAF5FF; color: #43135C;">
+                                        <i data-lucide="hash" style="width: 16px; height: 16px;"></i>
+                                    </div>
+                                    <div>
+                                        <span class="d-block fw-bold text-dark" style="font-size: 0.82rem; line-height: 1.2; white-space: nowrap;">Nomor Episode</span>
+                                        <small class="text-muted d-block" id="epNumberNotice" style="font-size: 0.72rem; white-space: nowrap;">Otomatis Urutan ke-{{ $episode->episode_number }}</small>
+                                    </div>
                                 </div>
-                                <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Ep 1 & 2 Gratis, Ep 3+ Premium</small>
-                                @error('episode_number')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <span class="badge py-1 px-2.5 rounded-pill fw-bold flex-shrink-0" id="epNumberBadge" style="background: #FAF5FF; color: #43135C; border: 1px solid #E9D5FF; font-size: 0.78rem;">
+                                    Auto Ep #{{ $episode->episode_number }}
+                                </span>
                             </div>
+                            <input type="hidden" id="episodeNumberInput" name="episode_number" value="{{ old('episode_number', $episode->episode_number) }}">
+                            @error('episode_number')
+                                <div class="text-danger mt-1" style="font-size: 0.75rem;">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="col-12 col-md-8">
+                        <div class="col-12 col-md-6">
                             <div class="humora-field-group mb-0">
                                 <div class="humora-field @error('title') is-error @enderror">
-                                    <input type="text" id="title" name="title" class="form-control-custom @error('title') is-invalid @enderror" placeholder=" " value="{{ old('title', $episode->title) }}" required>
-                                    <label for="title" class="humora-floating-label">Judul Episode <span class="text-danger">*</span></label>
+                                    <input type="text" id="videoTitleInput" name="title" class="form-control-custom @error('title') is-invalid @enderror" placeholder=" " value="{{ old('title', $episode->title) }}" required>
+                                    <label for="videoTitleInput" class="humora-floating-label">Judul Episode <span class="text-danger">*</span></label>
                                 </div>
                                 @error('title')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -91,70 +116,100 @@
 
                     <div class="humora-field-group mb-4">
                         <div class="humora-field is-textarea @error('synopsis') is-error @enderror">
-                            <textarea id="synopsis" rows="3" name="synopsis" class="form-control-custom @error('synopsis') is-invalid @enderror" placeholder=" ">{{ old('synopsis', $episode->synopsis) }}</textarea>
-                            <label for="synopsis" class="humora-floating-label">Sinopsis Cerita / Sketsa</label>
+                            <textarea id="synopsisInput" rows="3" name="synopsis" class="form-control-custom @error('synopsis') is-invalid @enderror" placeholder=" ">{{ old('synopsis', $episode->synopsis) }}</textarea>
+                            <label for="synopsisInput" class="humora-floating-label">Sinopsis Cerita / Sketsa</label>
                         </div>
                         @error('synopsis')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <!-- Durasi -->
+                    <!-- Durasi Episode Otomatis -->
                     <div class="mb-3">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <label class="form-label-custom mb-0">Durasi Video <span class="text-danger">*</span></label>
-                            <small class="text-purple fw-semibold d-flex align-items-center gap-1" style="color: #7C3AED; font-size: 0.72rem;">
-                                <i data-lucide="clock"></i> Standar HUMORA ~2m
-                            </small>
-                        </div>
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <div class="input-group">
-                                    <input type="number" name="duration_minutes" class="form-control-custom" value="{{ old('duration_minutes', $minutes) }}" id="minuteInput" min="0" max="60" required>
-                                    <span class="input-group-text bg-light text-muted">Menit</span>
+                        <div class="p-3 rounded-3 border bg-light d-flex align-items-center justify-content-between mb-2" id="durationCard" style="border-color: #E2E8F0 !important;">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="d-flex align-items-center justify-content-center rounded-2" id="durationIconBox" style="width: 36px; height: 36px; background: #FAF5FF; color: #43135C;">
+                                    <i data-lucide="timer" style="width: 18px; height: 18px;"></i>
+                                </div>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="fw-bold text-dark" style="font-size: 0.85rem; line-height: 1.2;">Durasi Episode Otomatis</span>
+                                        <span class="badge py-0.5 px-2 rounded-pill fw-bold" id="durationBadge" style="background: #FAF5FF; color: #43135C; border: 1px solid #E9D5FF; font-size: 0.72rem;">
+                                            Auto: {{ $episode->duration }}
+                                        </span>
+                                    </div>
+                                    <small class="text-muted d-block mt-0.5" id="durationStatusText" style="font-size: 0.73rem;">
+                                        Durasi saat ini: <strong>{{ $episode->duration }}</strong> ({{ $episode->duration_seconds }} detik). Akan dihitung otomatis jika berkas baru dipilih.
+                                    </small>
                                 </div>
                             </div>
-                            <div class="col-6">
-                                <div class="input-group">
-                                    <input type="number" name="duration_seconds" class="form-control-custom" value="{{ old('duration_seconds', ($seconds != 0 ? $seconds : '')) }}" id="secondInput" min="0" max="59" placeholder="0">
-                                    <span class="input-group-text bg-light text-muted">Detik</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-wrap gap-1 mt-2 align-items-center">
-                            <small class="text-muted me-1" style="font-size: 0.72rem;">Preset Cepat:</small>
-                            @foreach ($durationPresets as $preset)
-                                <button type="button" class="btn btn-sm btn-light border py-0 px-2 rounded-pill preset-btn" data-min="{{ $preset['minutes'] }}" data-sec="{{ $preset['seconds'] }}" style="font-size: 0.72rem;">
-                                    {{ $preset['label'] }}
+                            <div class="text-end">
+                                <button type="button" class="btn btn-sm text-muted p-0 d-flex align-items-center gap-1" id="toggleManualDurationBtn" style="font-size: 0.72rem; text-decoration: underline;" title="Klik jika ingin melakukan penyesuaian manual">
+                                    <i data-lucide="sliders-horizontal" style="width: 12px; height: 12px;"></i>
+                                    <span id="toggleManualDurationText">Atur Manual</span>
                                 </button>
-                            @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Hidden Form Inputs for automatic submission -->
+                        <input type="hidden" name="duration_minutes" id="minuteInput" value="{{ old('duration_minutes', $minutes) }}">
+                        <input type="hidden" name="duration_seconds" id="secondInput" value="{{ old('duration_seconds', $seconds) }}">
+
+                        <!-- Optional Manual Duration Panel (Collapsed by default) -->
+                        <div id="manualDurationPanel" style="display: none;" class="p-3 bg-white rounded-3 border mb-2">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="fw-semibold text-dark" style="font-size: 0.78rem;">Penyesuaian Manual Durasi:</span>
+                                <small class="text-muted" style="font-size: 0.72rem;">Format: Menit &amp; Detik</small>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="input-group">
+                                        <input type="number" id="manualMinuteInput" class="form-control-custom" value="{{ old('duration_minutes', $minutes) }}" min="0" max="60">
+                                        <span class="input-group-text bg-light text-muted">Menit</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="input-group">
+                                        <input type="number" id="manualSecondInput" class="form-control-custom" value="{{ old('duration_seconds', $seconds) }}" min="0" max="59" placeholder="0">
+                                        <span class="input-group-text bg-light text-muted">Detik</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-wrap gap-1 mt-2 align-items-center">
+                                <small class="text-muted me-1" style="font-size: 0.72rem;">Preset Cepat:</small>
+                                @foreach ($durationPresets as $preset)
+                                    <button type="button" class="btn btn-sm btn-light border py-0 px-2 rounded-pill preset-btn" data-min="{{ $preset['minutes'] }}" data-sec="{{ $preset['seconds'] }}" style="font-size: 0.72rem;">
+                                        {{ $preset['label'] }}
+                                    </button>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 3. BERKAS VIDEO MASTER -->
+            <!-- 3. UNGGAH BERKAS VIDEO MASTER -->
             <div class="humora-card mb-0">
                 <div class="humora-card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h5 class="fw-bold text-dark mb-0" style="font-size: 0.95rem;">3. BERKAS VIDEO MASTER</h5>
                         <span class="badge py-1 px-2" style="background: rgba(67, 19, 92, 0.1); color: #43135C; font-size: 0.75rem;">Auto-Kompres & WebM</span>
                     </div>
-                    <p class="text-muted mb-2" style="font-size: 0.76rem;">File saat ini: <code>{{ $episode->video_file ?? 'sample-skit.mp4' }}</code></p>
+                    <p class="text-muted mb-2" style="font-size: 0.76rem;">Berkas aktif: <code>{{ $episode->video_file ?? 'sample-skit.mp4' }}</code></p>
                     <div class="p-2 px-3 rounded-2 mb-3" style="background: #F8FAFC; border: 1px dashed #CBD5E1; font-size: 0.75rem; color: #475569;">
                         <i data-lucide="sparkles" class="text-warning me-1" style="width: 13px; height: 13px;"></i>
-                        <strong>Optimalisasi Mobile:</strong> Berkas baru otomatis dikompresi & dikonversi ke format <strong>WebM (.webm)</strong> dengan <u>tetap mempertahankan resolusi aslinya 100% tanpa penurunan resolusi</u>.
+                        <strong>Optimalisasi Mobile:</strong> Berkas baru otomatis dikompresi dan dikonversi ke format <strong>WebM (.webm)</strong> dengan <u>tetap mempertahankan resolusi aslinya 100% tanpa penurunan resolusi</u>, agar pemutaran video di aplikasi mobile menjadi sangat ringan, hemat kuota, dan bebas *buffering*.
                     </div>
 
-                    <label class="form-label-custom">Ganti File Video (Opsional, MP4/WEBM/MOV, Maks 100MB)</label>
+                    <label class="form-label-custom">Ganti Berkas Video (Opsional, MP4/WEBM/MOV, Maksimal 100MB)</label>
                     <input type="file" name="video_file" id="videoUpload" class="form-control-custom @error('video_file') is-invalid @enderror" accept="video/mp4,video/webm,video/quicktime">
                     @error('video_file')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
 
-                    <!-- Pratinjau Video HTML5 -->
-                    <div class="mt-3 p-3 bg-light rounded-3 border">
-                        <div class="fw-semibold text-dark mb-2" style="font-size: 0.8rem;">Pratinjau Video:</div>
+                    <!-- Pratinjau Pemutar Video HTML5 -->
+                    <div class="mt-3 p-3 bg-light rounded-3 border" id="videoPreviewContainer">
+                        <div class="fw-semibold text-dark mb-2" id="previewTitle" style="font-size: 0.8rem;">Pratinjau Video Saat Ini:</div>
                         <video id="videoPreviewPlayer" controls class="w-100 rounded" style="max-height: 240px; background-color: #000;" src="{{ route('file.stream', $episode->id) }}"></video>
                     </div>
                 </div>
@@ -208,6 +263,11 @@
                     @error('access_type')
                         <div class="text-danger mb-2" style="font-size: 0.75rem;">{{ $message }}</div>
                     @enderror
+
+                    <div class="p-2.5 rounded-2" style="background: #FAF5FF; border: 1px dashed #E9D5FF; font-size: 0.72rem; color: #581C87;">
+                        <i data-lucide="sparkles" class="me-1" style="width: 12px; height: 12px;"></i>
+                        <strong>Rekomendasi Otomatis:</strong> <span id="accessNoticeText">Ep 1 &amp; 2 Gratis, Ep 3+ Premium.</span>
+                    </div>
                 </div>
             </div>
 
@@ -216,9 +276,10 @@
                 <div class="humora-card-body p-4">
                     <h6 class="fw-bold text-dark mb-3" style="font-size: 0.85rem; text-transform: uppercase;">Status Publikasi</h6>
                     <select name="status" class="form-select-custom">
-                        <option value="published" {{ old('status', $episode->status) === 'published' ? 'selected' : '' }}>Terpublikasi (Tampil di App)</option>
+                        <option value="published" {{ old('status', $episode->status) === 'published' ? 'selected' : '' }}>Terpublikasi (Siap Ditonton)</option>
                         <option value="draft" {{ old('status', $episode->status) === 'draft' ? 'selected' : '' }}>Draf (Disembunyikan)</option>
                     </select>
+                    <small class="text-muted d-block mt-2" style="font-size: 0.74rem;">Episode draf tidak akan tampil pada katalog pengguna mobile.</small>
                 </div>
             </div>
         </div>
@@ -229,19 +290,17 @@
 @section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // Preset buttons
-    document.querySelectorAll('.preset-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            document.getElementById('minuteInput').value = this.dataset.min;
-            document.getElementById('secondInput').value = this.dataset.sec;
-        });
-    });
-
-    // Access type cards styling
+    // 1. Dynamic Episode Number & Series Selection Sync
+    const seriesSelect = document.getElementById('seriesSelect');
+    const epNumInput = document.getElementById('episodeNumberInput');
+    const epNumberBadge = document.getElementById('epNumberBadge');
+    const epNumberNotice = document.getElementById('epNumberNotice');
     const accessTypeFree = document.getElementById('accessTypeFree');
     const accessTypePremium = document.getElementById('accessTypePremium');
     const accessCardFree = document.getElementById('accessCardFree');
     const accessCardPremium = document.getElementById('accessCardPremium');
+    const accessNoticeText = document.getElementById('accessNoticeText');
+    let hasAdminManuallyChangedAccess = false;
 
     function applyAccessCardStyling() {
         if (!accessCardFree || !accessCardPremium) return;
@@ -259,39 +318,168 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (accessTypeFree && accessTypePremium) {
-        accessTypeFree.addEventListener('change', applyAccessCardStyling);
-        accessTypePremium.addEventListener('change', applyAccessCardStyling);
+        accessTypeFree.addEventListener('change', function () {
+            hasAdminManuallyChangedAccess = true;
+            applyAccessCardStyling();
+        });
+        accessTypePremium.addEventListener('change', function () {
+            hasAdminManuallyChangedAccess = true;
+            applyAccessCardStyling();
+        });
         applyAccessCardStyling();
     }
 
-    // Video preview upload handler & notification
+    function syncSeriesSelection() {
+        if (!seriesSelect) return;
+        const opt = seriesSelect.options[seriesSelect.selectedIndex];
+        if (!opt) return;
+
+        const isCurrent = opt.dataset.isCurrent === '1';
+        const nextEp = isCurrent 
+            ? parseInt(opt.dataset.currentEp || 1, 10) 
+            : parseInt(opt.dataset.nextEp || 1, 10);
+        const count = parseInt(opt.dataset.epCount || 0, 10);
+        const title = opt.dataset.title || 'judul ini';
+
+        if (epNumInput) epNumInput.value = nextEp;
+        if (epNumberBadge) epNumberBadge.textContent = 'Auto Ep #' + nextEp;
+        if (epNumberNotice) {
+            epNumberNotice.textContent = 'Otomatis Urutan ke-' + nextEp;
+        }
+
+        // Calculate suggested access rule
+        const isFreeRecommended = count <= 2 ? (nextEp <= 1) : (nextEp <= 2);
+        if (accessNoticeText) {
+            if (count <= 2) {
+                accessNoticeText.textContent = `Series memiliki ${count} episode. Ep 1 disarankan Gratis, Ep 2+ Premium VIP.`;
+            } else {
+                accessNoticeText.textContent = `Series memiliki ${count} episode. Ep 1 & 2 disarankan Gratis, Ep 3+ Premium VIP.`;
+            }
+        }
+
+        if (window.lucide) lucide.createIcons();
+    }
+
+    if (seriesSelect) {
+        seriesSelect.addEventListener('change', syncSeriesSelection);
+        syncSeriesSelection();
+    }
+
+    // 2. Automatic Video Duration Calculation & Handlers
+    const minuteInput = document.getElementById('minuteInput');
+    const secondInput = document.getElementById('secondInput');
+    const manualMinuteInput = document.getElementById('manualMinuteInput');
+    const manualSecondInput = document.getElementById('manualSecondInput');
+    const durationIconBox = document.getElementById('durationIconBox');
+    const durationBadge = document.getElementById('durationBadge');
+    const durationStatusText = document.getElementById('durationStatusText');
+    const toggleManualBtn = document.getElementById('toggleManualDurationBtn');
+    const manualPanel = document.getElementById('manualDurationPanel');
+    const toggleManualText = document.getElementById('toggleManualDurationText');
+
+    function setDurationValues(mins, secs, fromFile = false) {
+        if (minuteInput) minuteInput.value = mins;
+        if (secondInput) secondInput.value = secs;
+        if (manualMinuteInput) manualMinuteInput.value = mins;
+        if (manualSecondInput) manualSecondInput.value = secs;
+
+        const formatted = mins + 'm ' + (secs < 10 ? '0' : '') + secs + 's';
+        const totalSecs = (mins * 60) + secs;
+
+        if (durationBadge) {
+            if (fromFile) {
+                durationBadge.innerHTML = '<i data-lucide="check" style="width: 12px; height: 12px; vertical-align: -1px;"></i> Auto: ' + formatted;
+                durationBadge.style.background = '#ECFDF5';
+                durationBadge.style.color = '#065F46';
+                durationBadge.style.borderColor = '#A7F3D0';
+                if (durationIconBox) {
+                    durationIconBox.style.background = '#ECFDF5';
+                    durationIconBox.style.color = '#059669';
+                }
+                if (durationStatusText) {
+                    durationStatusText.innerHTML = '<span class="text-success fw-medium"><i data-lucide="sparkles" style="width: 12px; height: 12px; vertical-align: -2px;"></i> Dihitung otomatis dari berkas video: <strong>' + mins + ' Menit ' + secs + ' Detik</strong> (' + totalSecs + ' detik)</span>';
+                }
+            } else {
+                durationBadge.textContent = 'Auto: ' + formatted;
+                if (durationStatusText) {
+                    durationStatusText.innerHTML = 'Durasi tersimpan: <strong>' + formatted + '</strong> (' + totalSecs + ' detik). Akan dihitung otomatis jika berkas baru dipilih.';
+                }
+            }
+        }
+        if (window.lucide) lucide.createIcons();
+    }
+
+    // Toggle optional manual duration controls
+    if (toggleManualBtn && manualPanel) {
+        toggleManualBtn.addEventListener('click', function () {
+            const isHidden = manualPanel.style.display === 'none';
+            manualPanel.style.display = isHidden ? 'block' : 'none';
+            toggleManualText.textContent = isHidden ? 'Sembunyikan' : 'Atur Manual';
+        });
+    }
+
+    // Sync from manual inputs if admin adjusts them
+    if (manualMinuteInput && manualSecondInput) {
+        function syncFromManual() {
+            const mins = parseInt(manualMinuteInput.value, 10) || 0;
+            const secs = parseInt(manualSecondInput.value, 10) || 0;
+            setDurationValues(mins, secs, false);
+        }
+        manualMinuteInput.addEventListener('input', syncFromManual);
+        manualSecondInput.addEventListener('input', syncFromManual);
+    }
+
+    // Preset buttons
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const mins = parseInt(this.dataset.min, 10) || 0;
+            const secs = parseInt(this.dataset.sec, 10) || 0;
+            setDurationValues(mins, secs, false);
+        });
+    });
+
+    // 3. Video Upload Change & In-Browser Duration Extraction
     const videoUpload = document.getElementById('videoUpload');
+    const previewContainer = document.getElementById('videoPreviewContainer');
     const previewPlayer = document.getElementById('videoPreviewPlayer');
+    const previewTitle = document.getElementById('previewTitle');
 
     if (videoUpload && previewPlayer) {
         videoUpload.addEventListener('change', function (e) {
             const file = e.target.files[0];
             if (file) {
-                previewPlayer.src = URL.createObjectURL(file);
+                const url = URL.createObjectURL(file);
+                previewPlayer.src = url;
+                if (previewTitle) {
+                    previewTitle.textContent = 'Pratinjau Berkas Video Baru:';
+                }
+
+                // Automatically calculate duration from video metadata
                 previewPlayer.onloadedmetadata = function () {
                     const totalSecs = Math.round(previewPlayer.duration);
                     if (totalSecs > 0) {
-                        document.getElementById('minuteInput').value = Math.floor(totalSecs / 60);
-                        document.getElementById('secondInput').value = totalSecs % 60;
+                        const mins = Math.floor(totalSecs / 60);
+                        const secs = totalSecs % 60;
+                        setDurationValues(mins, secs, true);
+
+                        if (window.showHumoraToast) {
+                            window.showHumoraToast(`Durasi video otomatis dihitung: ${mins}m ${secs}s (${totalSecs} detik).`, 'success');
+                        }
                     }
                 };
 
+                // Notification toast
                 if (window.showHumoraToast) {
                     const sizeStr = file.size > 1048576 
                         ? (file.size / 1048576).toFixed(1) + ' MB' 
                         : Math.round(file.size / 1024) + ' KB';
-                    window.showHumoraToast(`Video baru dipilih: ${file.name} (${sizeStr}). Akan dikompresi ke WebM saat disimpan.`, 'info');
+                    window.showHumoraToast(`Video baru dipilih: ${file.name} (${sizeStr}). Format WebM otomatis saat disimpan.`, 'info');
                 }
             }
         });
     }
 
-    // Show processing modal during video compression & upload
+    // 4. Show processing modal during video compression & upload
     const formEditVideo = document.getElementById('formEditVideo');
     if (formEditVideo) {
         formEditVideo.addEventListener('submit', function (e) {
@@ -304,8 +492,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     html: `
                         <div class="text-center py-2">
                             <div class="spinner-border text-purple mb-3" style="width: 3rem; height: 3rem; color: #43135C;" role="status"></div>
-                            <p class="mb-1 fw-bold text-dark" style="font-size: 0.95rem;">Sedang mengompresi dan mengonversi video ke WebM</p>
-                            <p class="mb-2 text-muted" style="font-size: 0.82rem;">File video baru akan dikompresi ke format <strong>WebM</strong> dan disimpan ke server lokal.</p>
+                            <p class="mb-1 fw-bold text-dark" style="font-size: 0.95rem;">Sedang mengompresi ukuran dan mengonversi video ke WebM</p>
+                            <p class="mb-2 text-muted" style="font-size: 0.82rem;">Video disimpan ke <code>storage/uploads/videos/</code> dengan codec VP9/Opus agar sangat ringan dan hemat kuota pengguna mobile.</p>
                             <small class="text-warning-emphasis bg-warning-subtle py-1 px-2.5 rounded-pill" style="font-size: 0.75rem;">
                                 &bull; Mohon jangan menutup atau me-refresh browser &bull;
                             </small>

@@ -48,6 +48,28 @@ test('videos create page renders auto episode number and dynamic dataset attribu
     $response->assertSee('data-next-ep=', false);
 });
 
+test('videos edit page renders auto episode number and auto duration card matching create page', function () {
+    $episode = Episode::create([
+        'series_id' => $this->series->id,
+        'episode_number' => 1,
+        'title' => 'Ep Test Edit',
+        'duration' => '2m 14s',
+        'duration_seconds' => 134,
+        'access_type' => 'free',
+        'status' => 'published',
+    ]);
+
+    $response = $this->actingAs($this->admin, 'admin')->get('/admin/videos/' . $episode->id . '/edit');
+
+    $response->assertStatus(200);
+    $response->assertSee('Nomor Episode');
+    $response->assertSee('Otomatis Urutan ke-1');
+    $response->assertSee('Auto Ep #1');
+    $response->assertSee('Durasi Episode Otomatis');
+    $response->assertSee('Auto: 2m 14s');
+    $response->assertSee('data-next-ep=', false);
+});
+
 test('storing video without manual episode number automatically assigns next sequential number', function () {
     // Delete existing episodes for this test series
     Episode::where('series_id', $this->series->id)->delete();
