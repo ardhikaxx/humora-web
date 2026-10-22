@@ -40,6 +40,7 @@ Route::prefix('v1')->group(function () {
     // Social Likes (Public / Guest & Authenticated)
     Route::post('/series/{id}/like', [LikeController::class, 'toggleSeriesLike']);
     Route::post('/episodes/{id}/like', [LikeController::class, 'toggleEpisodeLike']);
+    Route::get('/episodes/{id}/like-status', [LikeController::class, 'episodeLikeStatus']);
 
     // 3. Subscription Plans & Payment Information (Public)
     Route::get('/subscription/plans', [SubscriptionController::class, 'plans']);

@@ -121,4 +121,43 @@ class LikeController extends Controller
             ],
         ]);
     }
+
+    /**
+     * Get current like status and real-time count for an episode
+     */
+    public function episodeLikeStatus(Request $request, int $id): JsonResponse
+    {
+        $user = Auth::guard('sanctum')->user() ?: $request->user();
+        $episode = Episode::findOrFail($id);
+        $sessionId = $request->header('X-Session-ID') ?: $request->header('X-Guest-ID') ?: session()->getId();
+        $ip = $request->ip();
+
+        if ($user) {
+            $isLiked = Like::where('user_id', $user->id)
+                ->where('episode_id', $episode->id)
+                ->exists();
+        } else {
+            $isLiked = Like::whereNull('user_id')
+                ->where('episode_id', $episode->id)
+                ->where(function ($q) use ($sessionId, $ip) {
+                    if ($sessionId) {
+                        $q->where('session_id', $sessionId);
+                    } else {
+                        $q->where('ip_address', $ip);
+                    }
+                })
+                ->exists();
+        }
+
+        $likesCount = Like::where('episode_id', $episode->id)->count();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'episode_id' => $episode->id,
+                'is_liked' => $isLiked,
+                'likes_count' => $likesCount,
+            ],
+        ]);
+    }
 }
