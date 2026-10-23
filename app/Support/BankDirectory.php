@@ -40,7 +40,7 @@ class BankDirectory
                 'logo' => 'mandiri.png',
                 'pattern' => [3, 2, 7, 1],
                 'max_digits' => 13,
-                'placeholder' => '137-00-998822-1',
+                'placeholder' => '137-00-123456-7',
             ],
             [
                 'code' => 'bri',
