@@ -379,6 +379,7 @@ class FileStorageService
         $headers = [
             'Content-Type' => $mimeType,
             'Accept-Ranges' => 'bytes',
+            'Cache-Control' => 'public, max-age=604800, immutable',
             'Access-Control-Allow-Origin' => '*',
             'Access-Control-Allow-Methods' => 'GET, HEAD, OPTIONS',
             'Access-Control-Allow-Headers' => 'Range, Authorization, Content-Type, Accept, X-Requested-With',

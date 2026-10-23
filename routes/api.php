@@ -47,9 +47,15 @@ Route::prefix('v1')->group(function () {
     Route::get('/settings/payment-info', [SubscriptionController::class, 'paymentInfo']);
 
     // 4. Secure File Access & Streaming
-    Route::get('/files/thumbnail/{filename}', [FileStorageController::class, 'publicThumbnail'])->name('file.thumbnail');
-    Route::get('/files/stream/{episodeId}', [FileStorageController::class, 'streamEpisodeVideo'])->name('file.stream');
-    Route::get('/files/system/{filename}', [FileStorageController::class, 'systemFile'])->name('file.system');
+    Route::get('/files/thumbnail/{filename}', [FileStorageController::class, 'publicThumbnail'])
+        ->withoutMiddleware([\Illuminate\Routing\Middleware\ThrottleRequests::class])
+        ->name('file.thumbnail');
+    Route::get('/files/stream/{episodeId}', [FileStorageController::class, 'streamEpisodeVideo'])
+        ->withoutMiddleware([\Illuminate\Routing\Middleware\ThrottleRequests::class])
+        ->name('file.stream');
+    Route::get('/files/system/{filename}', [FileStorageController::class, 'systemFile'])
+        ->withoutMiddleware([\Illuminate\Routing\Middleware\ThrottleRequests::class])
+        ->name('file.system');
 
     // 5. Authenticated Mobile Routes (Requires Sanctum Token)
     Route::middleware('auth:sanctum')->group(function () {

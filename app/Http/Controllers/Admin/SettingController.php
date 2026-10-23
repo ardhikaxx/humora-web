@@ -66,7 +66,79 @@ class SettingController extends Controller
         $groupedBanks = BankDirectory::grouped();
         $qrisImage = SystemSetting::get('qris_official_image', '');
 
-        $plans = SubscriptionPlan::orderBy('duration_days')->get()->keyBy('code');
+        // Ensure default 4 plans exist with exact client parameters
+        $defaultPlansData = [
+            'weekly_15' => [
+                'plan_type' => 'weekly',
+                'name' => 'Paket Akses Mingguan (15 Video)',
+                'duration_days' => 7,
+                'video_quota' => 15,
+                'original_price' => 25000,
+                'price' => 15000,
+                'badge_text' => 'Akses Mingguan',
+                'benefits' => [
+                    'Akses 15 video sketsa komedi selama 7 hari',
+                    'Bebas tonton ulang video dalam paket sepuasnya',
+                    'Streaming HD tanpa jeda buffering',
+                    'Dukungan pembelian Add-on video tambahan',
+                ],
+                'is_active' => true,
+            ],
+            'addon_5' => [
+                'plan_type' => 'addon',
+                'name' => 'Add-on 5 Video',
+                'duration_days' => 0,
+                'video_quota' => 5,
+                'original_price' => 10000,
+                'price' => 7500,
+                'badge_text' => 'Ekstra 5 Video',
+                'benefits' => [
+                    'Tambahan 5 video katalog baru',
+                    'Masa aktif mengikuti paket mingguan aktif',
+                    'Bebas tonton ulang selama masa aktif',
+                    'Video baru tidak pernah mengulang',
+                ],
+                'is_active' => true,
+            ],
+            'addon_10' => [
+                'plan_type' => 'addon',
+                'name' => 'Add-on 10 Video',
+                'duration_days' => 0,
+                'video_quota' => 10,
+                'original_price' => 15000,
+                'price' => 12500,
+                'badge_text' => 'Paling Populer',
+                'benefits' => [
+                    'Tambahan 10 video katalog baru',
+                    'Masa aktif mengikuti paket mingguan aktif',
+                    'Bebas tonton ulang selama masa aktif',
+                    'Video baru tidak pernah mengulang',
+                ],
+                'is_active' => true,
+            ],
+            'full_30' => [
+                'plan_type' => 'full',
+                'name' => 'Full Access Seluruh Katalog',
+                'duration_days' => 30,
+                'video_quota' => null,
+                'original_price' => 99000,
+                'price' => 49000,
+                'badge_text' => 'Akses Penuh 30 Hari',
+                'benefits' => [
+                    'Akses tanpa batas seluruh video katalog (~68+ video)',
+                    'Bebas nonton ulang sepuasnya selama 30 hari',
+                    'Tidak perlu membeli paket mingguan atau add-on',
+                    'Streaming HD tercepat tanpa hambatan',
+                ],
+                'is_active' => true,
+            ],
+        ];
+
+        foreach ($defaultPlansData as $code => $data) {
+            SubscriptionPlan::firstOrCreate(['code' => $code], $data);
+        }
+
+        $plans = SubscriptionPlan::orderBy('id')->get()->keyBy('code');
 
         return view('admin.settings.index', compact(
             'freeEpisodes',
@@ -95,9 +167,14 @@ class SettingController extends Controller
             'bank_accounts.*.bank_code' => ['nullable', 'string', 'max:50'],
             'bank_accounts.*.account_number' => ['required', 'string', 'max:50'],
             'bank_accounts.*.account_name' => ['required', 'string', 'max:100'],
-            'price_monthly' => ['required', 'numeric', 'min:0'],
-            'price_quarterly' => ['required', 'numeric', 'min:0'],
-            'price_yearly' => ['required', 'numeric', 'min:0'],
+            'plans' => ['nullable', 'array'],
+            'plans.*.price' => ['nullable', 'numeric', 'min:0'],
+            'plans.*.video_quota' => ['nullable'],
+            'plans.*.duration_days' => ['nullable', 'integer', 'min:0'],
+            'plans.*.is_active' => ['nullable'],
+            'price_monthly' => ['nullable', 'numeric', 'min:0'],
+            'price_quarterly' => ['nullable', 'numeric', 'min:0'],
+            'price_yearly' => ['nullable', 'numeric', 'min:0'],
             'qris_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'remove_qris' => ['nullable', 'boolean'],
         ]);
@@ -141,10 +218,41 @@ class SettingController extends Controller
             }
         }
 
-        // Update plan prices
-        SubscriptionPlan::where('code', 'monthly')->update(['price' => $validated['price_monthly']]);
-        SubscriptionPlan::where('code', 'quarterly')->update(['price' => $validated['price_quarterly']]);
-        SubscriptionPlan::where('code', 'yearly')->update(['price' => $validated['price_yearly']]);
+        // Update dynamic client plans if submitted
+        if (!empty($validated['plans']) && is_array($validated['plans'])) {
+            foreach ($validated['plans'] as $planCode => $planData) {
+                $plan = SubscriptionPlan::where('code', $planCode)->first();
+                if ($plan) {
+                    $updatePayload = [];
+                    if (isset($planData['price']) && $planData['price'] !== '') {
+                        $updatePayload['price'] = (float) $planData['price'];
+                    }
+                    if (array_key_exists('video_quota', $planData)) {
+                        $rawQuota = $planData['video_quota'];
+                        $updatePayload['video_quota'] = ($rawQuota !== '' && $rawQuota !== null)
+                            ? (int) $rawQuota
+                            : null;
+                    }
+                    if (isset($planData['duration_days']) && $planData['duration_days'] !== '') {
+                        $updatePayload['duration_days'] = (int) $planData['duration_days'];
+                    }
+                    $updatePayload['is_active'] = !empty($planData['is_active']);
+
+                    $plan->update($updatePayload);
+                }
+            }
+        }
+
+        // Backward compatibility for legacy plan price keys
+        if (isset($validated['price_monthly'])) {
+            SubscriptionPlan::where('code', 'monthly')->update(['price' => $validated['price_monthly']]);
+        }
+        if (isset($validated['price_quarterly'])) {
+            SubscriptionPlan::where('code', 'quarterly')->update(['price' => $validated['price_quarterly']]);
+        }
+        if (isset($validated['price_yearly'])) {
+            SubscriptionPlan::where('code', 'yearly')->update(['price' => $validated['price_yearly']]);
+        }
 
         // Handle QRIS Image Upload or Removal
         $currentQris = SystemSetting::get('qris_official_image', '');
