@@ -54,8 +54,12 @@ class SubscriptionController extends Controller
      */
     public function paymentInfo(): JsonResponse
     {
+        $qrisEnabled = (bool) SystemSetting::get('qris_enabled', true);
         $qrisImage = SystemSetting::get('qris_official_image');
+        $qrisRawPayload = SystemSetting::get('qris_raw_payload', '');
+        $qrisAccountName = SystemSetting::get('qris_account_name', 'PT HUMORA MEDIA KREATIF');
         $qrisUrl = !empty($qrisImage) ? url('/api/v1/files/system/' . $qrisImage) : null;
+        $isConfigured = (!empty($qrisUrl) || !empty($qrisRawPayload));
 
         $rawBankAccounts = SystemSetting::get('official_bank_accounts');
         if (empty($rawBankAccounts) || !is_array($rawBankAccounts)) {
@@ -105,11 +109,54 @@ class SubscriptionController extends Controller
                 'bank_accounts' => $formattedBanks,
                 'qris' => [
                     'code' => 'qris',
-                    'is_configured' => !empty($qrisUrl),
+                    'is_enabled' => $qrisEnabled,
+                    'is_configured' => $isConfigured,
+                    'has_dynamic_support' => !empty($qrisRawPayload),
+                    'raw_payload' => !empty($qrisRawPayload) ? $qrisRawPayload : null,
                     'qris_image_url' => $qrisUrl,
-                    'account_name' => 'HUMORA MEDIA KREATIF',
+                    'account_name' => $qrisAccountName,
                     'instructions' => 'Scan QRIS resmi HUMORA menggunakan aplikasi m-Banking atau e-Wallet apa saja, lalu unggah bukti transaksi.',
                 ],
+            ],
+        ]);
+    }
+
+    /**
+     * Generate dynamic QRIS string for an exact amount
+     */
+    public function dynamicQris(Request $request): JsonResponse
+    {
+        $qrisEnabled = (bool) SystemSetting::get('qris_enabled', true);
+        if (!$qrisEnabled) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Metode QRIS saat ini sedang dinonaktifkan oleh administrator.',
+            ], 422);
+        }
+
+        $validated = $request->validate([
+            'amount' => ['required', 'numeric', 'min:1000'],
+        ]);
+
+        $rawPayload = SystemSetting::get('qris_raw_payload', '');
+        if (empty($rawPayload)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kode dasar QRIS belum dikonfigurasi di sistem.',
+            ], 404);
+        }
+
+        $qrisService = app(\App\Services\QrisService::class);
+        $dynamicPayload = $qrisService->makeDynamic($rawPayload, (float) $validated['amount']);
+        $accountName = SystemSetting::get('qris_account_name', 'PT HUMORA MEDIA KREATIF');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Dynamic QRIS payload berhasil dibuat.',
+            'data' => [
+                'amount' => (int) round($validated['amount']),
+                'account_name' => $accountName,
+                'dynamic_payload' => $dynamicPayload,
             ],
         ]);
     }

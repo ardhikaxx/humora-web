@@ -458,24 +458,80 @@
                 </div>
             </div>
 
-            <!-- QRIS Statis Resmi -->
+            <!-- Konfigurasi QRIS Dinamis & Switch -->
             <div class="humora-card mb-4">
-                <div class="humora-card-header">
+                <div class="humora-card-header d-flex justify-content-between align-items-center">
                     <div>
-                        <div class="humora-card-title">QRIS STATIS RESMI</div>
-                        <div class="humora-card-subtitle">Hanya sediakan QRIS bila file gambar barcode resmi tersedia.</div>
+                        <div class="humora-card-title">KONFIGURASI PEMBAYARAN QRIS DINAMIS</div>
+                        <div class="humora-card-subtitle">Sistem otomatis membaca isi kode QRIS dari gambar untuk menghasilkan QR code dinamis berharga pas di aplikasi mobile.</div>
                     </div>
-                    <div class="text-muted"><i data-lucide="qr-code"></i></div>
+                    <div class="text-primary"><i data-lucide="qr-code"></i></div>
                 </div>
                 <div class="humora-card-body p-4">
-                    @if (!empty($qrisImage))
-                        <div class="text-center p-3 bg-light rounded-3 border mb-3">
-                            <img src="{{ route('file.system', $qrisImage) }}" alt="QRIS Resmi" class="img-fluid rounded mb-2 shadow-sm" style="max-height: 180px;">
-                            <div class="form-check text-center mt-2">
-                                <input class="form-check-input" type="checkbox" name="remove_qris" value="1" id="removeQris">
-                                <label class="form-check-label text-danger fw-semibold" for="removeQris" style="font-size: 0.82rem; cursor: pointer;">
-                                    Hapus QRIS Resmi saat ini (kembalikan ke status belum dikonfigurasi)
-                                </label>
+                    <!-- Switch Aktif / Nonaktif QRIS -->
+                    <div class="d-flex align-items-center justify-content-between p-3 bg-light rounded-3 border mb-3">
+                        <div class="me-3">
+                            <div class="fw-bold d-flex align-items-center gap-2" style="font-size: 0.92rem;">
+                                <span>Status Metode QRIS di Mobile</span>
+                                @if ($qrisEnabled)
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle py-1 px-2" style="font-size: 0.72rem;">
+                                        <i data-lucide="check-circle" class="inline-block" style="width: 12px; height: 12px;"></i> LIVE DI APLIKASI
+                                    </span>
+                                @else
+                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle py-1 px-2" style="font-size: 0.72rem;">
+                                        <i data-lucide="eye-off" class="inline-block" style="width: 12px; height: 12px;"></i> DISEMBUNYIKAN
+                                    </span>
+                                @endif
+                            </div>
+                            <small class="text-muted d-block mt-1" style="font-size: 0.78rem;">
+                                Bila switch dimatikan, opsi QRIS disembunyikan dari aplikasi mobile tanpa menghapus data atau file QRIS yang sudah tersimpan.
+                            </small>
+                        </div>
+                        <div class="form-check form-switch m-0">
+                            <input class="form-check-input" type="checkbox" role="switch" name="qris_enabled" value="1" id="switchQrisEnabled" {{ $qrisEnabled ? 'checked' : '' }} style="width: 2.8rem; height: 1.4rem; cursor: pointer;">
+                        </div>
+                    </div>
+
+                    @if (!empty($qrisImage) || !empty($qrisRawPayload))
+                        <div class="p-3 bg-light rounded-3 border mb-3">
+                            <div class="row align-items-center">
+                                @if (!empty($qrisImage))
+                                    <div class="col-md-4 text-center border-end-md py-2">
+                                        <img src="{{ route('file.system', $qrisImage) }}" alt="QRIS Tersimpan" class="img-fluid rounded mb-2 shadow-sm border bg-white p-2" style="max-height: 160px; object-fit: contain;">
+                                        <div class="text-muted small">File: {{ $qrisImage }}</div>
+                                    </div>
+                                @endif
+                                <div class="{{ !empty($qrisImage) ? 'col-md-8 ps-md-4' : 'col-12' }}">
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <span class="badge {{ !empty($qrisRawPayload) ? 'bg-primary-subtle text-primary border border-primary-subtle' : 'bg-warning-subtle text-warning border border-warning-subtle' }} py-1 px-2" style="font-size: 0.75rem;">
+                                            <i data-lucide="{{ !empty($qrisRawPayload) ? 'sparkles' : 'alert-circle' }}" class="inline-block" style="width: 12px; height: 12px;"></i>
+                                            {{ !empty($qrisRawPayload) ? 'NOMINAL DINAMIS OTOMATIS AKTIF' : 'GAMBAR STATIS (NOMINAL BELUM TERBACA)' }}
+                                        </span>
+                                    </div>
+
+                                    <div class="mb-2">
+                                        <label class="form-label-custom" style="font-size: 0.75rem;">Nama Merchant / Atas Nama Akun QRIS</label>
+                                        <input type="text" name="qris_account_name" class="form-control-custom" value="{{ old('qris_account_name', $qrisAccountName) }}" placeholder="Contoh: PT HUMORA MEDIA KREATIF">
+                                    </div>
+
+                                    <div>
+                                        <label class="form-label-custom d-flex justify-content-between" style="font-size: 0.75rem;">
+                                            <span>Data String QRIS (EMVCo Payload)</span>
+                                            <span class="text-muted fw-normal">Terbaca otomatis oleh sistem</span>
+                                        </label>
+                                        <textarea name="qris_raw_payload" rows="2" class="form-control-custom font-monospace" style="font-size: 0.75rem;" placeholder="000201010211...">{{ old('qris_raw_payload', $qrisRawPayload) }}</textarea>
+                                        <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">
+                                            String di atas digunakan sistem Flutter untuk mengubah QRIS menjadi dinamis sesuai harga paket (Rp15.000, Rp7.500, dsb).
+                                        </small>
+                                    </div>
+
+                                    <div class="form-check mt-3 pt-2 border-top">
+                                        <input class="form-check-input" type="checkbox" name="remove_qris" value="1" id="removeQris">
+                                        <label class="form-check-label text-danger fw-semibold" for="removeQris" style="font-size: 0.8rem; cursor: pointer;">
+                                            Hapus file & data QRIS dari sistem
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     @else
@@ -483,13 +539,17 @@
                             <i data-lucide="alert-circle" class="mb-1 d-block mx-auto text-muted" style="width: 24px; height: 24px;"></i>
                             <strong>QRIS Belum Dikonfigurasi</strong>
                             <p class="mb-0 text-muted mt-1" style="font-size: 0.75rem;">
-                                Aplikasi Flutter akan menampilkan bahwa metode QRIS belum tersedia sampai file gambar QRIS resmi diunggah oleh Admin.
+                                Unggah gambar barcode QRIS resmi toko Anda di bawah ini. Sistem akan otomatis mendeteksi kodenya sehingga aplikasi mobile dapat menampilkan QR code dinamis dengan harga paket terisi otomatis saat pengguna scan.
                             </p>
                         </div>
                     @endif
 
-                    <label class="form-label-custom">Unggah File Gambar QRIS Baru (JPG/PNG, Maks 2MB)</label>
-                    <input type="file" name="qris_image" class="form-control-custom @error('qris_image') is-invalid @enderror" accept="image/jpeg,image/png">
+                    <label class="form-label-custom">Unggah File Gambar QRIS Baru (JPG/PNG/WEBP, Maks 5MB)</label>
+                    <input type="file" name="qris_image" class="form-control-custom @error('qris_image') is-invalid @enderror" accept="image/jpeg,image/png,image/webp">
+                    <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">
+                        <i data-lucide="info" class="inline-block" style="width: 12px; height: 12px;"></i>
+                        Unggah gambar barcode QRIS yang jelas. Sistem akan memindai data EMVCo secara instan.
+                    </small>
                     @error('qris_image')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror

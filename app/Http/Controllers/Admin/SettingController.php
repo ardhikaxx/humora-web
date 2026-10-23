@@ -139,6 +139,9 @@ class SettingController extends Controller
         }
 
         $plans = SubscriptionPlan::orderBy('id')->get()->keyBy('code');
+        $qrisEnabled = (bool) SystemSetting::get('qris_enabled', true);
+        $qrisRawPayload = SystemSetting::get('qris_raw_payload', '');
+        $qrisAccountName = SystemSetting::get('qris_account_name', 'PT HUMORA MEDIA KREATIF');
 
         return view('admin.settings.index', compact(
             'freeEpisodes',
@@ -146,6 +149,9 @@ class SettingController extends Controller
             'allBanks',
             'groupedBanks',
             'qrisImage',
+            'qrisEnabled',
+            'qrisRawPayload',
+            'qrisAccountName',
             'plans'
         ));
     }
@@ -175,6 +181,9 @@ class SettingController extends Controller
             'price_monthly' => ['nullable', 'numeric', 'min:0'],
             'price_quarterly' => ['nullable', 'numeric', 'min:0'],
             'price_yearly' => ['nullable', 'numeric', 'min:0'],
+            'qris_enabled' => ['nullable'],
+            'qris_account_name' => ['nullable', 'string', 'max:100'],
+            'qris_raw_payload' => ['nullable', 'string', 'max:1000'],
             'qris_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'remove_qris' => ['nullable', 'boolean'],
         ]);
@@ -254,20 +263,41 @@ class SettingController extends Controller
             SubscriptionPlan::where('code', 'yearly')->update(['price' => $validated['price_yearly']]);
         }
 
+        // QRIS Switch and settings (persists even when switched off)
+        $qrisEnabled = $request->boolean('qris_enabled');
+        SystemSetting::set('qris_enabled', $qrisEnabled ? 'true' : 'false', 'boolean');
+
+        if ($request->filled('qris_account_name')) {
+            SystemSetting::set('qris_account_name', trim((string) $request->input('qris_account_name')), 'text');
+        }
+
+        if ($request->has('qris_raw_payload') && $request->filled('qris_raw_payload')) {
+            SystemSetting::set('qris_raw_payload', trim((string) $request->input('qris_raw_payload')), 'text');
+        }
+
         // Handle QRIS Image Upload or Removal
         $currentQris = SystemSetting::get('qris_official_image', '');
+        $statusMsg = 'Pengaturan sistem & konfigurasi pembayaran resmi berhasil diperbarui.';
 
         if ($request->boolean('remove_qris')) {
             if (!empty($currentQris)) {
                 $this->fileStorage->deleteFile('system', $currentQris);
                 SystemSetting::set('qris_official_image', '', 'text');
+                SystemSetting::set('qris_raw_payload', '', 'text');
             }
         } elseif ($request->hasFile('qris_image')) {
+            $uploadedImage = $request->file('qris_image');
+            $tempPath = $uploadedImage->getRealPath();
+
+            // Auto-decode QR code from image
+            $qrisService = app(\App\Services\QrisService::class);
+            $decodedText = $qrisService->decodeImage($tempPath);
+
             $newQris = $this->fileStorage->storeUploadedImageAsWebp(
-                $request->file('qris_image'),
+                $uploadedImage,
                 'system',
                 'qris_official',
-                85,
+                90,
                 5242880
             );
 
@@ -276,9 +306,20 @@ class SettingController extends Controller
             }
 
             SystemSetting::set('qris_official_image', $newQris, 'text');
+
+            if (!empty($decodedText)) {
+                SystemSetting::set('qris_raw_payload', $decodedText, 'text');
+                $merchantInfo = $qrisService->parseMerchantInfo($decodedText);
+                if (!empty($merchantInfo['merchant_name'])) {
+                    SystemSetting::set('qris_account_name', $merchantInfo['merchant_name'], 'text');
+                }
+                $statusMsg = "Pengaturan berhasil diperbarui. Gambar QRIS berhasil diunggah dan kode berhasil dibaca otomatis ({$merchantInfo['merchant_name']}).";
+            } else {
+                $statusMsg = "Pengaturan berhasil diperbarui. Gambar QRIS berhasil diunggah (Data QRIS sebelumnya tetap tersimpan).";
+            }
         }
 
         return redirect()->route('admin.settings.index')
-            ->with('success', 'Pengaturan sistem & konfigurasi pembayaran resmi berhasil diperbarui.');
+            ->with('success', $statusMsg);
     }
 }

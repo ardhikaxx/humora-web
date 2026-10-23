@@ -26,8 +26,19 @@ class TransactionController extends Controller
 
         $validated = $request->validate([
             'plan_id' => ['required', 'exists:subscription_plans,id'],
-            'payment_method' => ['required', 'string', 'in:bca,mandiri,qris'],
+            'payment_method' => ['required', 'string', 'max:50'],
         ]);
+
+        if ($validated['payment_method'] === 'qris') {
+            $qrisEnabled = (bool) \App\Models\SystemSetting::get('qris_enabled', true);
+            if (!$qrisEnabled) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Metode pembayaran QRIS sedang dinonaktifkan sementara oleh administrator. Silakan pilih metode transfer bank.',
+                    'error_code' => 'QRIS_DISABLED',
+                ], 422);
+            }
+        }
 
         $plan = SubscriptionPlan::where('id', $validated['plan_id'])
             ->where('is_active', true)

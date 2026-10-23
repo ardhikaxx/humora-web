@@ -45,6 +45,7 @@ Route::prefix('v1')->group(function () {
     // 3. Subscription Plans & Payment Information (Public)
     Route::get('/subscription/plans', [SubscriptionController::class, 'plans']);
     Route::get('/settings/payment-info', [SubscriptionController::class, 'paymentInfo']);
+    Route::get('/subscription/qris-dynamic', [SubscriptionController::class, 'dynamicQris']);
 
     // 4. Secure File Access & Streaming
     Route::get('/files/thumbnail/{filename}', [FileStorageController::class, 'publicThumbnail'])
