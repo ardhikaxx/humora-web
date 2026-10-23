@@ -380,6 +380,9 @@ class FileStorageService
             'Content-Type' => $mimeType,
             'Accept-Ranges' => 'bytes',
             'Cache-Control' => 'public, max-age=604800, immutable',
+            'Connection' => 'keep-alive',
+            'Keep-Alive' => 'timeout=60, max=1000',
+            'X-Content-Type-Options' => 'nosniff',
             'Access-Control-Allow-Origin' => '*',
             'Access-Control-Allow-Methods' => 'GET, HEAD, OPTIONS',
             'Access-Control-Allow-Headers' => 'Range, Authorization, Content-Type, Accept, X-Requested-With',
@@ -391,6 +394,13 @@ class FileStorageService
         }
 
         $response = response()->file($filePath, $headers);
+        $response->setAutoEtag();
+        $response->setAutoLastModified();
+
+        if ($response->isNotModified(request())) {
+            return $response;
+        }
+
         $response->prepare(request());
         return $response;
     }
