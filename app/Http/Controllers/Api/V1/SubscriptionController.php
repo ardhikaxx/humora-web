@@ -54,10 +54,10 @@ class SubscriptionController extends Controller
      */
     public function paymentInfo(): JsonResponse
     {
-        $qrisEnabled = (bool) SystemSetting::get('qris_enabled', true);
+        $qrisEnabled = (bool) SystemSetting::get('qris_enabled', false);
         $qrisImage = SystemSetting::get('qris_official_image');
         $qrisRawPayload = SystemSetting::get('qris_raw_payload', '');
-        $qrisAccountName = SystemSetting::get('qris_account_name', 'PT HUMORA MEDIA KREATIF');
+        $qrisAccountName = SystemSetting::get('qris_account_name', 'Global Mobile Content');
         $qrisUrl = !empty($qrisImage) ? url('/api/v1/files/system/' . $qrisImage) : null;
         $isConfigured = (!empty($qrisUrl) || !empty($qrisRawPayload));
 
@@ -65,14 +65,10 @@ class SubscriptionController extends Controller
         if (empty($rawBankAccounts) || !is_array($rawBankAccounts)) {
             $rawBankAccounts = [
                 [
+                    'bank_code' => 'bca',
                     'bank_name' => 'Bank Central Asia (BCA)',
-                    'account_number' => SystemSetting::get('bca_account_number', '8830-192-888'),
-                    'account_name' => SystemSetting::get('bca_account_name', 'PT HUMORA MEDIA KREATIF'),
-                ],
-                [
-                    'bank_name' => 'Bank Mandiri',
-                    'account_number' => SystemSetting::get('mandiri_account_number', '137-00-998822-1'),
-                    'account_name' => SystemSetting::get('mandiri_account_name', 'HUMORA'),
+                    'account_number' => SystemSetting::get('bca_account_number', '2103039177'),
+                    'account_name' => SystemSetting::get('bca_account_name', 'Global Mobile Content'),
                 ],
             ];
         }
@@ -148,7 +144,7 @@ class SubscriptionController extends Controller
 
         $qrisService = app(\App\Services\QrisService::class);
         $dynamicPayload = $qrisService->makeDynamic($rawPayload, (float) $validated['amount']);
-        $accountName = SystemSetting::get('qris_account_name', 'PT HUMORA MEDIA KREATIF');
+        $accountName = SystemSetting::get('qris_account_name', 'Global Mobile Content');
 
         return response()->json([
             'success' => true,

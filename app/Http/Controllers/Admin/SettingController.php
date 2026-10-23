@@ -31,14 +31,8 @@ class SettingController extends Controller
                 [
                     'bank_code' => 'bca',
                     'bank_name' => 'Bank Central Asia (BCA)',
-                    'account_number' => SystemSetting::get('bca_account_number', '8830-192-888'),
-                    'account_name' => SystemSetting::get('bca_account_name', 'PT HUMORA MEDIA KREATIF'),
-                ],
-                [
-                    'bank_code' => 'mandiri',
-                    'bank_name' => 'Bank Mandiri',
-                    'account_number' => SystemSetting::get('mandiri_account_number', '137-00-998822-1'),
-                    'account_name' => SystemSetting::get('mandiri_account_name', 'HUMORA'),
+                    'account_number' => SystemSetting::get('bca_account_number', '2103039177'),
+                    'account_name' => SystemSetting::get('bca_account_name', 'Global Mobile Content'),
                 ],
             ];
         }
@@ -139,9 +133,9 @@ class SettingController extends Controller
         }
 
         $plans = SubscriptionPlan::orderBy('id')->get()->keyBy('code');
-        $qrisEnabled = (bool) SystemSetting::get('qris_enabled', true);
+        $qrisEnabled = (bool) SystemSetting::get('qris_enabled', false);
         $qrisRawPayload = SystemSetting::get('qris_raw_payload', '');
-        $qrisAccountName = SystemSetting::get('qris_account_name', 'PT HUMORA MEDIA KREATIF');
+        $qrisAccountName = SystemSetting::get('qris_account_name', 'Global Mobile Content');
 
         return view('admin.settings.index', compact(
             'freeEpisodes',
