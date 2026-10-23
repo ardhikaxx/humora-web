@@ -196,7 +196,7 @@
                         <strong>Optimalisasi Mobile:</strong> Berkas video otomatis dikompresi dan dikonversi ke format <strong>WebM (.webm)</strong> dengan <u>tetap mempertahankan resolusi aslinya 100% tanpa penurunan resolusi</u>, agar pemutaran video di aplikasi mobile menjadi sangat ringan, hemat kuota, dan bebas *buffering*.
                     </div>
 
-                    <label class="form-label-custom">Pilih Berkas Video (Opsional, fallback ke sample video jika kosong)</label>
+                    <label class="form-label-custom">Pilih Berkas Video (Opsional jika ingin diunggah nanti)</label>
                     <input type="file" name="video_file" id="videoUpload" class="form-control-custom @error('video_file') is-invalid @enderror" accept="video/mp4,video/webm,video/quicktime">
                     @error('video_file')
                         <div class="invalid-feedback d-block">{{ $message }}</div>

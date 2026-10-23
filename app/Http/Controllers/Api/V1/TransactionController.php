@@ -147,7 +147,7 @@ class TransactionController extends Controller
         Notification::create([
             'user_id' => $user->id,
             'title' => 'Bukti Pembayaran Diunggah',
-            'message' => "Bukti pembayaran untuk transaksi {$transaction->trx_code} ({$transaction->plan->name}) telah diterima dan sedang menunggu verifikasi oleh tim admin.",
+            'message' => "Bukti pembayaran untuk transaksi {$transaction->trx_code} ({$transaction->plan->name}) telah diterima dan sedang menunggu proses verifikasi.",
             'type' => 'transaction',
             'is_read' => false,
         ]);

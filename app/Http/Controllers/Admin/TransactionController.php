@@ -101,7 +101,7 @@ class TransactionController extends Controller
 
             if ($planType === 'full') {
                 // Skenario Full Access:
-                // Akses seluruh katalog video selama 30 hari tanpa batas kuota.
+                // Akses seluruh katalog video selama 30 hari.
                 $endDate = $now->copy()->addDays(30);
 
                 Subscription::create([
@@ -121,7 +121,7 @@ class TransactionController extends Controller
                 ]);
 
                 $notifTitle = 'Akses Penuh Seluruh Katalog Aktif!';
-                $notifMsg = "Selamat! Pembayaran transaksi {$transaction->trx_code} ({$plan->name}) berhasil diverifikasi. Anda mendapatkan akses penuh tanpa batas ke seluruh video katalog selama 30 hari hingga {$endDate->isoFormat('D MMMM Y')}.";
+                $notifMsg = "Selamat! Pembayaran transaksi {$transaction->trx_code} ({$plan->name}) berhasil diverifikasi. Anda mendapatkan akses penuh ke seluruh video katalog selama 30 hari hingga {$endDate->isoFormat('D MMMM Y')}.";
                 $successMsg = "Transaksi {$transaction->trx_code} berhasil disetujui. Full Access untuk {$user->name} aktif hingga {$endDate->format('d/m/Y')}.";
 
             } elseif ($planType === 'addon') {
@@ -299,8 +299,8 @@ class TransactionController extends Controller
             // Create notification for user
             Notification::create([
                 'user_id' => $user->id,
-                'title' => 'Pembayaran Ditolak',
-                'message' => "Pembayaran transaksi {$transaction->trx_code} ditolak oleh tim admin. Alasan: {$validated['reject_reason']}. Silakan ajukan transaksi ulang dengan bukti yang sah.",
+                'title' => 'Pembayaran Belum Disetujui',
+                'message' => "Pembayaran transaksi {$transaction->trx_code} belum dapat disetujui. Alasan: {$validated['reject_reason']}. Silakan ajukan transaksi ulang dengan bukti yang sah.",
                 'type' => 'transaction',
                 'is_read' => false,
             ]);

@@ -30,7 +30,7 @@ class BankDirectory
                 'logo' => 'bca.png',
                 'pattern' => [4, 3, 3],
                 'max_digits' => 10,
-                'placeholder' => '8830-192-888',
+                'placeholder' => '2103-039-177',
             ],
             [
                 'code' => 'mandiri',

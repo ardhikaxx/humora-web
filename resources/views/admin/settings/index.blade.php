@@ -205,7 +205,7 @@
                     <div class="text-muted"><i data-lucide="gem"></i></div>
                 </div>
                 <div class="humora-card-body p-4">
-                    <!-- Hidden fallbacks for legacy tests -->
+                    <!-- Kompatibilitas skema harga paket -->
                     <input type="hidden" name="price_monthly" value="{{ $plans['weekly_15']->price ?? 15000 }}">
                     <input type="hidden" name="price_quarterly" value="{{ $plans['full_30']->price ?? 49000 }}">
                     <input type="hidden" name="price_yearly" value="179000">
@@ -321,7 +321,7 @@
                                 <label class="form-check-label" for="switchFull" style="font-size: 0.75rem;">Aktif</label>
                             </div>
                         </div>
-                        <small class="text-muted d-block mb-2" style="font-size: 0.72rem;">Akses penuh ke seluruh katalog video tanpa batas kuota (~68 video) selama 30 hari.</small>
+                        <small class="text-muted d-block mb-2" style="font-size: 0.72rem;">Akses penuh ke seluruh katalog video (~68 video) selama 30 hari.</small>
                         
                         <div class="row g-2">
                             <div class="col-12 col-sm-6">
@@ -366,7 +366,7 @@
                             $currentCode = $bank['bank_code'] ?? 'bca';
                             $currentLogo = !empty($bank['bank_logo']) ? asset('images/banks/' . $bank['bank_logo']) : null;
                         @endphp
-                        <div class="bank-account-card" data-index="{{ $index }}" data-pattern="{{ $bank['pattern'] ?? '4,3,3' }}" data-placeholder="{{ $bank['placeholder'] ?? '8830-192-888' }}">
+                        <div class="bank-account-card" data-index="{{ $index }}" data-pattern="{{ $bank['pattern'] ?? '4,3,3' }}" data-placeholder="{{ $bank['placeholder'] ?? '2103-039-177' }}">
                             <div class="bank-card-header">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="bank-order-badge">
@@ -427,7 +427,7 @@
                                         <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 12px 0 0 12px;">
                                             <i data-lucide="hash" style="width: 15px; height: 15px;"></i>
                                         </span>
-                                        <input type="text" name="bank_accounts[{{ $index }}][account_number]" class="form-control-custom input-bank-number border-start-0" placeholder="Contoh: {{ $bank['placeholder'] ?? '8830-192-888' }}" value="{{ $bank['account_number'] ?? '' }}" required style="border-radius: 0 12px 12px 0; font-family: 'JetBrains Mono', 'Courier New', monospace; font-weight: 600; letter-spacing: 0.04em;">
+                                        <input type="text" name="bank_accounts[{{ $index }}][account_number]" class="form-control-custom input-bank-number border-start-0" placeholder="Contoh: {{ $bank['placeholder'] ?? '2103-039-177' }}" value="{{ $bank['account_number'] ?? '' }}" required style="border-radius: 0 12px 12px 0; font-family: 'JetBrains Mono', 'Courier New', monospace; font-weight: 600; letter-spacing: 0.04em;">
                                     </div>
                                     <small class="text-muted d-block mt-1 bank-mask-hint" style="font-size: 0.7rem;">
                                         Ketik angka saja, format tanda hubung otomatis terbentuk.
@@ -439,7 +439,7 @@
                                         <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 12px 0 0 12px;">
                                             <i data-lucide="user-check" style="width: 15px; height: 15px;"></i>
                                         </span>
-                                        <input type="text" name="bank_accounts[{{ $index }}][account_name]" class="form-control-custom input-bank-holder border-start-0" placeholder="Misal: PT HUMORA MEDIA KREATIF" value="{{ $bank['account_name'] ?? '' }}" required style="border-radius: 0 12px 12px 0;">
+                                        <input type="text" name="bank_accounts[{{ $index }}][account_name]" class="form-control-custom input-bank-holder border-start-0" placeholder="Misal: Global Mobile Content" value="{{ $bank['account_name'] ?? '' }}" required style="border-radius: 0 12px 12px 0;">
                                     </div>
                                 </div>
                             </div>
@@ -511,7 +511,7 @@
 
                                     <div class="mb-2">
                                         <label class="form-label-custom" style="font-size: 0.75rem;">Nama Merchant / Atas Nama Akun QRIS</label>
-                                        <input type="text" name="qris_account_name" class="form-control-custom" value="{{ old('qris_account_name', $qrisAccountName) }}" placeholder="Contoh: PT HUMORA MEDIA KREATIF">
+                                        <input type="text" name="qris_account_name" class="form-control-custom" value="{{ old('qris_account_name', $qrisAccountName) }}" placeholder="Contoh: Global Mobile Content">
                                     </div>
 
                                     <div>
@@ -639,7 +639,7 @@ function initBankSelect2($select) {
         const card = $(this).closest('.bank-account-card');
         const selected = $(this).find(':selected');
         const pattern = selected.data('pattern') || '4,3,3';
-        const placeholder = selected.data('placeholder') || '8830-192-888';
+        const placeholder = selected.data('placeholder') || '2103-039-177';
         const code = selected.data('code') || '';
         const logo = selected.data('logo') || '';
 
@@ -776,7 +776,7 @@ $(document).ready(function () {
             newCard.className = 'bank-account-card';
             newCard.setAttribute('data-index', newIndex);
             newCard.setAttribute('data-pattern', '4,3,3');
-            newCard.setAttribute('data-placeholder', '8830-192-888');
+            newCard.setAttribute('data-placeholder', '2103-039-177');
             newCard.innerHTML = `
                 <div class="bank-card-header">
                     <div class="d-flex align-items-center gap-2">
@@ -831,7 +831,7 @@ $(document).ready(function () {
                             <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 12px 0 0 12px;">
                                 <i data-lucide="user-check" style="width: 15px; height: 15px;"></i>
                             </span>
-                            <input type="text" name="bank_accounts[${newIndex}][account_name]" class="form-control-custom input-bank-holder border-start-0" placeholder="Misal: PT HUMORA MEDIA KREATIF" required style="border-radius: 0 12px 12px 0;">
+                            <input type="text" name="bank_accounts[${newIndex}][account_name]" class="form-control-custom input-bank-holder border-start-0" placeholder="Misal: Global Mobile Content" required style="border-radius: 0 12px 12px 0;">
                         </div>
                     </div>
                 </div>

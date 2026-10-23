@@ -154,7 +154,7 @@ class EpisodeController extends Controller
             $accessType = $validated['episode_number'] <= 2 ? 'free' : 'premium';
         }
 
-        $videoFilename = 'sample-skit.mp4'; // default fallback
+        $videoFilename = null;
         if ($request->hasFile('video_file')) {
             $videoFilename = $this->fileStorage->storeUploadedVideoAsWebm(
                 $request->file('video_file'),
@@ -305,7 +305,7 @@ class EpisodeController extends Controller
                 'vid_ep' . $validated['episode_number']
             );
 
-            if ($episode->video_file && $episode->video_file !== 'sample-skit.mp4') {
+            if ($episode->video_file) {
                 $this->fileStorage->deleteFile('videos', $episode->video_file);
             }
 
@@ -335,7 +335,7 @@ class EpisodeController extends Controller
     {
         $episode = Episode::findOrFail($id);
 
-        if ($episode->video_file && $episode->video_file !== 'sample-skit.mp4') {
+        if ($episode->video_file) {
             $this->fileStorage->deleteFile('videos', $episode->video_file);
         }
 

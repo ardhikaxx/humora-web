@@ -123,7 +123,7 @@ class UserSeeder extends Seeder
                 [
                     'user_id' => $user3->id,
                     'plan_id' => $planWeekly->id,
-                    'payment_method' => 'Mandiri Manual Transfer',
+                    'payment_method' => 'BCA Manual Transfer',
                     'amount' => $planWeekly->price,
                     'proof_file' => 'proof_demo_expired.jpg',
                     'status' => 'success',

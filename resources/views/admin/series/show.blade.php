@@ -170,7 +170,7 @@
                         </td>
                         <td>
                             <small class="text-muted d-block font-monospace" style="font-size: 0.72rem;">
-                                {{ $ep->video_file ?? 'sample-skit.mp4' }}
+                                {{ $ep->video_file ?? '-' }}
                             </small>
                         </td>
                         <td class="text-end">

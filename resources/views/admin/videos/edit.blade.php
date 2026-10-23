@@ -195,7 +195,7 @@
                         <h5 class="fw-bold text-dark mb-0" style="font-size: 0.95rem;">3. BERKAS VIDEO MASTER</h5>
                         <span class="badge py-1 px-2" style="background: rgba(67, 19, 92, 0.1); color: #43135C; font-size: 0.75rem;">Auto-Kompres & WebM</span>
                     </div>
-                    <p class="text-muted mb-2" style="font-size: 0.76rem;">Berkas aktif: <code>{{ $episode->video_file ?? 'sample-skit.mp4' }}</code></p>
+                    <p class="text-muted mb-2" style="font-size: 0.76rem;">Berkas aktif: <code>{{ $episode->video_file ?? 'Belum ada video' }}</code></p>
                     <div class="p-2 px-3 rounded-2 mb-3" style="background: #F8FAFC; border: 1px dashed #CBD5E1; font-size: 0.75rem; color: #475569;">
                         <i data-lucide="sparkles" class="text-warning me-1" style="width: 13px; height: 13px;"></i>
                         <strong>Optimalisasi Mobile:</strong> Berkas baru otomatis dikompresi dan dikonversi ke format <strong>WebM (.webm)</strong> dengan <u>tetap mempertahankan resolusi aslinya 100% tanpa penurunan resolusi</u>, agar pemutaran video di aplikasi mobile menjadi sangat ringan, hemat kuota, dan bebas *buffering*.

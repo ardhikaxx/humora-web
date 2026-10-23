@@ -124,7 +124,7 @@ class DatabaseSeeder extends Seeder
                 'price' => 49000,
                 'badge_text' => 'Akses Penuh 30 Hari',
                 'benefits' => [
-                    'Akses tanpa batas seluruh video katalog (~68+ video)',
+                    'Akses seluruh video katalog (~68+ video)',
                     'Bebas nonton ulang sepuasnya selama 30 hari',
                     'Tidak perlu membeli paket mingguan atau add-on',
                     'Streaming HD tercepat tanpa hambatan',
