@@ -13,18 +13,18 @@ use App\Http\Controllers\Admin\SubscriberController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\FileStorageController;
+use App\Http\Controllers\LandingController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes - HUMORA Portal Admin
+| Web Routes - HUMORA Portal Admin & Landing Page
 |--------------------------------------------------------------------------
 */
 
-// Root redirect
-Route::get('/', function () {
-    return redirect()->route('admin.dashboard');
-});
+// Public Landing Page
+Route::get('/', [LandingController::class, 'index'])->name('landing');
+Route::get('/download/app', [LandingController::class, 'downloadApk'])->name('app.download');
 
 // Authentication Routes
 Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
