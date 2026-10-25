@@ -30,6 +30,16 @@ test('public auth pages render successfully', function (string $url) {
     '/admin/login',
 ]);
 
+test('landing page renders successfully with 3 distinct sections and mobile promotion', function () {
+    $response = $this->get('/');
+    $response->assertStatus(200);
+    $response->assertSee('HUMORA');
+    $response->assertSee('hero-card-container');
+    $response->assertSee('about-section');
+    $response->assertSee('thumbnails-section');
+    $response->assertSee('Tertawa Lepas');
+});
+
 test('authenticated admin can access all admin portal pages', function (string $url) {
     $admin = Admin::where('role', 'admin')->first() ?? Admin::factory()->create(['role' => 'admin', 'is_active' => true]);
 

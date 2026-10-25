@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Episode;
 use App\Models\Series;
 use App\Models\SubscriptionPlan;
@@ -29,7 +30,12 @@ class LandingController extends Controller
         $seriesList = Series::with(['categories'])
             ->where('status', 'published')
             ->orderBy('catalog_order')
-            ->take(8)
+            ->get();
+
+        $categories = Category::where('is_active', true)
+            ->whereHas('series', function ($q) {
+                $q->where('status', 'published');
+            })
             ->get();
 
         $plans = SubscriptionPlan::where('is_active', true)
@@ -64,7 +70,7 @@ class LandingController extends Controller
             $heroThumbnails = array_map(fn ($f) => asset('images/thumbnails/'.basename($f)), $files);
         }
 
-        return view('landing', compact('featuredSeries', 'seriesList', 'plans', 'stats', 'apkAvailable', 'apkSize', 'apkFilename', 'heroThumbnails'));
+        return view('landing', compact('featuredSeries', 'seriesList', 'categories', 'plans', 'stats', 'apkAvailable', 'apkSize', 'apkFilename', 'heroThumbnails'));
     }
 
     /**
