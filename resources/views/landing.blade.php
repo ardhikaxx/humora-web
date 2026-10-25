@@ -469,7 +469,6 @@
                 <a href="#about" class="footer-link">Fitur</a>
                 <a href="#katalog" class="footer-link">Katalog</a>
                 <a href="{{ route('app.download') }}" class="footer-link">Download Aplikasi</a>
-                <a href="{{ route('login') }}" class="footer-link">Portal Admin</a>
                 <a href="#hero" class="footer-link">Kembali ke Atas</a>
             </div>
 
