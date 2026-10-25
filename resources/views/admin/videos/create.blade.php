@@ -205,7 +205,7 @@
                     <!-- Pratinjau Pemutar Video HTML5 -->
                     <div class="mt-3 p-3 bg-light rounded-3 border" id="videoPreviewContainer" style="display: none;">
                         <div class="fw-semibold text-dark mb-2" style="font-size: 0.8rem;">Pratinjau Video Lokal:</div>
-                        <video id="videoPreviewPlayer" controls class="w-100 rounded" style="max-height: 240px; background-color: #000;"></video>
+                        <video id="videoPreviewPlayer" controls preload="none" class="w-100 rounded" style="max-height: 240px; background-color: #000;"></video>
                     </div>
                 </div>
             </div>

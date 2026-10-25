@@ -57,7 +57,7 @@ class Transaction extends Model
 
     public function getFormattedAmountAttribute(): string
     {
-        return 'Rp' . number_format($this->amount, 0, ',', '.');
+        return 'Rp'.number_format($this->amount, 0, ',', '.');
     }
 
     public function getProofUrlAttribute(): ?string
@@ -67,7 +67,7 @@ class Transaction extends Model
         }
 
         // Return secure admin file route (auth required)
-        return url('/admin/transactions/proof/' . $this->proof_file);
+        return url('/admin/transactions/proof/'.$this->proof_file);
     }
 
     public function getPaymentMethodLabelAttribute(): string

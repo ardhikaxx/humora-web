@@ -126,7 +126,7 @@
                     <tr>
                         <td>
                             <div class="d-flex align-items-center gap-3">
-                                <img src="{{ $series->thumbnail_url }}" alt="{{ $series->title }}" class="rounded object-fit-cover shadow-sm" style="width: 72px; height: 40px; aspect-ratio: 16/9;" onerror="this.src='{{ asset('images/logo-humora.png') }}'">
+                                <img src="{{ $series->thumbnail_url }}" alt="{{ $series->title }}" loading="lazy" class="rounded object-fit-cover shadow-sm" style="width: 72px; height: 40px; aspect-ratio: 16/9;" onerror="this.src='{{ asset('images/logo-humora.png') }}'">
                                 <div class="overflow-hidden" style="max-width: 260px;">
                                     <a href="{{ route('admin.series.show', $series->id) }}" class="text-decoration-none fw-bold text-dark d-block text-truncate">
                                         {{ $series->title }}

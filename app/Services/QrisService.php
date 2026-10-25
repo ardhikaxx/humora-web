@@ -12,7 +12,7 @@ class QrisService
      */
     public function decodeImage(string $filePath): ?string
     {
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             return null;
         }
 
@@ -20,9 +20,11 @@ class QrisService
             $qrcode = new QrReader($filePath);
             $text = $qrcode->text();
             $trimmed = trim((string) $text);
-            return !empty($trimmed) ? $trimmed : null;
+
+            return ! empty($trimmed) ? $trimmed : null;
         } catch (\Throwable $e) {
-            Log::warning('QRIS decode exception: ' . $e->getMessage());
+            Log::warning('QRIS decode exception: '.$e->getMessage());
+
             return null;
         }
     }
@@ -34,12 +36,12 @@ class QrisService
     {
         $payload = trim($payload);
         // QRIS must start with 000201 (Payload format indicator)
-        if (!str_starts_with($payload, '000201')) {
+        if (! str_starts_with($payload, '000201')) {
             return false;
         }
 
         // Must contain 5802ID (Country code Indonesia) and 6304 (CRC tag)
-        if (!str_contains($payload, '5802ID') || !str_contains($payload, '6304')) {
+        if (! str_contains($payload, '5802ID') || ! str_contains($payload, '6304')) {
             return false;
         }
 
@@ -108,7 +110,7 @@ class QrisService
 
         // Change Tag 01 (Point of Initiation) from 11 (static) to 12 (dynamic)
         if (str_starts_with($payload, '000201010211')) {
-            $payload = '000201010212' . substr($payload, 12);
+            $payload = '000201010212'.substr($payload, 12);
         }
 
         // Remove existing Tag 54 (Transaction Amount) if present
@@ -117,22 +119,22 @@ class QrisService
         // Format amount: integer without decimals for IDR
         $amountStr = (string) (int) round($amount);
         $amountLen = str_pad((string) strlen($amountStr), 2, '0', STR_PAD_LEFT);
-        $tag54 = '54' . $amountLen . $amountStr;
+        $tag54 = '54'.$amountLen.$amountStr;
 
         // Insert Tag 54 right before Tag 58 (5802ID)
         $tag58Pos = strpos($payload, '5802ID');
         if ($tag58Pos !== false) {
-            $payload = substr($payload, 0, $tag58Pos) . $tag54 . substr($payload, $tag58Pos);
+            $payload = substr($payload, 0, $tag58Pos).$tag54.substr($payload, $tag58Pos);
         } else {
             // Append before end if 5802ID not found
             $payload .= $tag54;
         }
 
         // Prepare string to calculate CRC (must include '6304')
-        $dataToSign = $payload . '6304';
+        $dataToSign = $payload.'6304';
         $crc = $this->calculateCrc16($dataToSign);
 
-        return $dataToSign . $crc;
+        return $dataToSign.$crc;
     }
 
     /**

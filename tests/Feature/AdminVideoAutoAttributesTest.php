@@ -59,7 +59,7 @@ test('videos edit page renders auto episode number and auto duration card matchi
         'status' => 'published',
     ]);
 
-    $response = $this->actingAs($this->admin, 'admin')->get('/admin/videos/' . $episode->id . '/edit');
+    $response = $this->actingAs($this->admin, 'admin')->get('/admin/videos/'.$episode->id.'/edit');
 
     $response->assertStatus(200);
     $response->assertSee('Nomor Episode');
@@ -125,7 +125,7 @@ test('storing video with uploaded file automatically extracts video duration via
     expect($ffmpeg)->not->toBeEmpty();
 
     // Generate a 4-second video
-    $tempVideo = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'test_upload_dur_' . uniqid() . '.mp4';
+    $tempVideo = sys_get_temp_dir().DIRECTORY_SEPARATOR.'test_upload_dur_'.uniqid().'.mp4';
     $cmd = sprintf(
         '"%s" -y -f lavfi -i testsrc=duration=4:size=320x180:rate=15 -f lavfi -i sine=frequency=440:duration=4 -c:v libx264 -c:a aac %s 2>&1',
         $ffmpeg,
@@ -209,7 +209,7 @@ test('admin can explicitly set and update episode access_type to free or premium
     expect($epFree->isFreePreview())->toBeTrue();
 
     // 3. Edit epFree and change access_type to premium
-    $resUpdate = $this->actingAs($this->admin, 'admin')->put('/admin/videos/' . $epFree->id, [
+    $resUpdate = $this->actingAs($this->admin, 'admin')->put('/admin/videos/'.$epFree->id, [
         'series_id' => $this->series->id,
         'episode_number' => 4,
         'title' => 'Explicit Free Ep (Now Premium)',

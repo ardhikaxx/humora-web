@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\TransactionResource;
 use App\Models\Notification;
 use App\Models\SubscriptionPlan;
+use App\Models\SystemSetting;
 use App\Models\Transaction;
 use App\Services\FileStorageService;
 use Illuminate\Http\JsonResponse;
@@ -30,8 +32,8 @@ class TransactionController extends Controller
         ]);
 
         if ($validated['payment_method'] === 'qris') {
-            $qrisEnabled = (bool) \App\Models\SystemSetting::get('qris_enabled', true);
-            if (!$qrisEnabled) {
+            $qrisEnabled = (bool) SystemSetting::get('qris_enabled', true);
+            if (! $qrisEnabled) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Metode pembayaran QRIS sedang dinonaktifkan sementara oleh administrator. Silakan pilih metode transfer bank.',
@@ -45,7 +47,7 @@ class TransactionController extends Controller
             ->firstOrFail();
 
         // Add-on plan requires an active weekly package
-        if ($plan->isAddon() && !$user->hasActiveWeeklySubscription()) {
+        if ($plan->isAddon() && ! $user->hasActiveWeeklySubscription()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Paket Add-on hanya dapat dibeli jika Anda memiliki Paket Akses Mingguan yang masih aktif.',
@@ -54,7 +56,7 @@ class TransactionController extends Controller
         }
 
         // Generate unique transaction code
-        $trxCode = 'TRX-' . date('Ymd') . '-' . strtoupper(Str::random(6));
+        $trxCode = 'TRX-'.date('Ymd').'-'.strtoupper(Str::random(6));
 
         $transaction = Transaction::create([
             'trx_code' => $trxCode,
@@ -92,24 +94,24 @@ class TransactionController extends Controller
         // Find existing transaction or create new one
         $transaction = null;
 
-        if (!empty($validated['transaction_id'])) {
+        if (! empty($validated['transaction_id'])) {
             $transaction = Transaction::where('id', $validated['transaction_id'])
                 ->where('user_id', $user->id)
                 ->where('status', 'pending')
                 ->first();
-        } elseif (!empty($validated['trx_code'])) {
+        } elseif (! empty($validated['trx_code'])) {
             $transaction = Transaction::where('trx_code', $validated['trx_code'])
                 ->where('user_id', $user->id)
                 ->where('status', 'pending')
                 ->first();
         }
 
-        if (!$transaction) {
+        if (! $transaction) {
             $plan = SubscriptionPlan::where('id', $validated['plan_id'])
                 ->where('is_active', true)
                 ->firstOrFail();
 
-            if ($plan->isAddon() && !$user->hasActiveWeeklySubscription()) {
+            if ($plan->isAddon() && ! $user->hasActiveWeeklySubscription()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Paket Add-on hanya dapat dibeli jika Anda memiliki Paket Akses Mingguan yang masih aktif.',
@@ -117,7 +119,7 @@ class TransactionController extends Controller
                 ], 422);
             }
 
-            $trxCode = 'TRX-' . date('Ymd') . '-' . strtoupper(Str::random(6));
+            $trxCode = 'TRX-'.date('Ymd').'-'.strtoupper(Str::random(6));
 
             $transaction = Transaction::create([
                 'trx_code' => $trxCode,
@@ -133,7 +135,7 @@ class TransactionController extends Controller
         $proofFilename = $this->fileStorage->storeUploadedFile(
             $request->file('proof_file'),
             'proofs',
-            'proof_' . $transaction->trx_code,
+            'proof_'.$transaction->trx_code,
             ['jpg', 'jpeg', 'png'],
             5242880 // 5MB
         );
@@ -171,13 +173,12 @@ class TransactionController extends Controller
         $transactions = Transaction::where('user_id', $user->id)
             ->with('plan')
             ->orderByDesc('id')
-            ->get()
-            ->map(fn (Transaction $trx) => $this->formatTransaction($trx));
+            ->get();
 
         return response()->json([
             'success' => true,
             'message' => 'Riwayat transaksi berhasil diambil.',
-            'data' => $transactions,
+            'data' => TransactionResource::collection($transactions),
         ]);
     }
 
@@ -197,7 +198,7 @@ class TransactionController extends Controller
             'success' => true,
             'message' => 'Detail transaksi berhasil diambil.',
             'data' => [
-                'transaction' => $this->formatTransaction($transaction),
+                'transaction' => (new TransactionResource($transaction))->toArray($request),
             ],
         ]);
     }
@@ -207,23 +208,6 @@ class TransactionController extends Controller
      */
     protected function formatTransaction(Transaction $trx): array
     {
-        return [
-            'id' => $trx->id,
-            'trx_code' => $trx->trx_code,
-            'plan_id' => $trx->plan_id,
-            'plan_name' => $trx->plan ? $trx->plan->name : 'Paket Langganan',
-            'plan_type' => $trx->plan ? ($trx->plan->plan_type ?? 'weekly') : 'weekly',
-            'video_quota' => $trx->plan ? $trx->plan->video_quota : null,
-            'duration_days' => $trx->plan ? $trx->plan->duration_days : 7,
-            'payment_method' => $trx->payment_method,
-            'payment_method_label' => $trx->payment_method_label,
-            'amount' => $trx->amount,
-            'formatted_amount' => $trx->formatted_amount,
-            'status' => $trx->status, // pending, success, rejected
-            'proof_uploaded' => !empty($trx->proof_file),
-            'verified_at' => $trx->verified_at ? $trx->verified_at->toIso8601String() : null,
-            'reject_reason' => $trx->reject_reason,
-            'created_at' => $trx->created_at ? $trx->created_at->toIso8601String() : null,
-        ];
+        return (new TransactionResource($trx))->toArray(request());
     }
 }

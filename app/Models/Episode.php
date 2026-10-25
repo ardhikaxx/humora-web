@@ -106,12 +106,18 @@ class Episode extends Model
 
     public function getIsPremiumAttribute(): bool
     {
-        return !$this->isFreePreview();
+        return ! $this->isFreePreview();
     }
 
     public function getLikesCountAttribute(): int
     {
-        return $this->likes()->count();
+        if (array_key_exists('likes_count', $this->attributes)) {
+            return (int) $this->attributes['likes_count'];
+        }
+
+        return $this->relationLoaded('likes')
+            ? $this->likes->count()
+            : $this->likes()->count();
     }
 
     /**
@@ -124,7 +130,7 @@ class Episode extends Model
             return true;
         }
 
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
@@ -144,7 +150,7 @@ class Episode extends Model
         }
 
         // Fallback for legacy users before quota system:
-        if ($user->hasActiveVip() && !$user->userVideoAccesses()->exists()) {
+        if ($user->hasActiveVip() && ! $user->userVideoAccesses()->exists()) {
             return true;
         }
 

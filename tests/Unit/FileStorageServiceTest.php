@@ -13,7 +13,7 @@ class FileStorageServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new FileStorageService();
+        $this->service = new FileStorageService;
     }
 
     public function test_image_is_compressed_and_stored_as_webp(): void
@@ -22,7 +22,7 @@ class FileStorageServiceTest extends TestCase
         $tempImg = imagecreatetruecolor(200, 200);
         $bg = imagecolorallocate($tempImg, 255, 230, 0);
         imagefill($tempImg, 0, 0, $bg);
-        $tempPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'test_upload_' . uniqid() . '.png';
+        $tempPath = sys_get_temp_dir().DIRECTORY_SEPARATOR.'test_upload_'.uniqid().'.png';
         imagepng($tempImg, $tempPath);
         imagedestroy($tempImg);
 
@@ -31,7 +31,7 @@ class FileStorageServiceTest extends TestCase
         $storedName = $this->service->storeUploadedImageAsWebp($uploadedFile, 'thumbnails', 'test_thumb', 80);
 
         $this->assertStringEndsWith('.webp', $storedName);
-        $storedPath = FileStorageService::getUploadPath('thumbnails') . DIRECTORY_SEPARATOR . $storedName;
+        $storedPath = FileStorageService::getUploadPath('thumbnails').DIRECTORY_SEPARATOR.$storedName;
         $this->assertFileExists($storedPath);
 
         // Verify stored file is a valid WebP image
@@ -64,7 +64,7 @@ class FileStorageServiceTest extends TestCase
         $this->assertNotEmpty($ffmpeg);
 
         // Generate a 3-second test video
-        $tempVideo = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'test_dur_' . uniqid() . '.mp4';
+        $tempVideo = sys_get_temp_dir().DIRECTORY_SEPARATOR.'test_dur_'.uniqid().'.mp4';
         $cmd = sprintf(
             '"%s" -y -f lavfi -i testsrc=duration=3:size=320x180:rate=15 -f lavfi -i sine=frequency=440:duration=3 -c:v libx264 -c:a aac %s 2>&1',
             $ffmpeg,
@@ -86,7 +86,7 @@ class FileStorageServiceTest extends TestCase
         $ffmpeg = FileStorageService::getFfmpegPath();
         $this->assertNotEmpty($ffmpeg);
 
-        $tempVideo = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'test_vid_' . uniqid() . '.mp4';
+        $tempVideo = sys_get_temp_dir().DIRECTORY_SEPARATOR.'test_vid_'.uniqid().'.mp4';
         $cmd = sprintf(
             '"%s" -y -f lavfi -i testsrc=duration=1:size=320x180:rate=15 -f lavfi -i sine=frequency=440:duration=1 -c:v libx264 -c:a aac %s 2>&1',
             $ffmpeg,
@@ -101,7 +101,7 @@ class FileStorageServiceTest extends TestCase
             $storedName = $this->service->storeUploadedVideoAsWebm($uploaded, 'videos', 'test_vid_unit');
 
             $this->assertStringEndsWith('.webm', $storedName);
-            $storedPath = FileStorageService::getUploadPath('videos') . DIRECTORY_SEPARATOR . $storedName;
+            $storedPath = FileStorageService::getUploadPath('videos').DIRECTORY_SEPARATOR.$storedName;
             $this->assertFileExists($storedPath);
             $this->assertGreaterThan(0, filesize($storedPath));
 

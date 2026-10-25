@@ -30,9 +30,10 @@ class AuthController extends Controller
      */
     public function login(Request $request): RedirectResponse
     {
-        $throttleKey = 'admin-login:' . $request->ip();
+        $throttleKey = 'admin-login:'.$request->ip();
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
+
             return back()->with('error', "Terlalu banyak percobaan login admin. Silakan tunggu {$seconds} detik.");
         }
 
@@ -48,7 +49,7 @@ class AuthController extends Controller
 
             $admin = Auth::guard('admin')->user();
 
-            if (!$admin->is_active) {
+            if (! $admin->is_active) {
                 Auth::guard('admin')->logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
@@ -107,12 +108,12 @@ class AuthController extends Controller
 
         $admin = Admin::where('email', $request->email)->first();
 
-        if (!$admin) {
+        if (! $admin) {
             return back()->withInput($request->only('email'))
                 ->with('error', 'Email administrator tidak ditemukan dalam basis data sistem.');
         }
 
-        if (!$admin->is_active) {
+        if (! $admin->is_active) {
             return back()->withInput($request->only('email'))
                 ->with('error', 'Akun administrator ini berstatus non-aktif. Silakan hubungi super administrator.');
         }
@@ -134,7 +135,7 @@ class AuthController extends Controller
         }
 
         $email = session('admin_reset_email');
-        if (!$email) {
+        if (! $email) {
             return redirect()->route('admin.password.request')
                 ->with('error', 'Sesi verifikasi telah kedaluwarsa. Silakan masukkan email Anda kembali.');
         }
@@ -148,7 +149,7 @@ class AuthController extends Controller
     public function resetPassword(Request $request): RedirectResponse
     {
         $email = session('admin_reset_email');
-        if (!$email) {
+        if (! $email) {
             return redirect()->route('admin.password.request')
                 ->with('error', 'Sesi verifikasi telah kedaluwarsa. Silakan masukkan email Anda kembali.');
         }
@@ -162,8 +163,9 @@ class AuthController extends Controller
         ]);
 
         $admin = Admin::where('email', $email)->first();
-        if (!$admin) {
+        if (! $admin) {
             session()->forget('admin_reset_email');
+
             return redirect()->route('admin.password.request')
                 ->with('error', 'Akun administrator tidak ditemukan.');
         }

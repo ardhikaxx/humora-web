@@ -15,7 +15,7 @@ beforeEach(function () {
 
     $this->series = Series::create([
         'title' => 'Test Series Like Flow',
-        'slug' => 'test-series-like-flow-' . uniqid(),
+        'slug' => 'test-series-like-flow-'.uniqid(),
         'synopsis' => 'Test Series Synopsis',
         'status' => 'published',
         'release_year' => 2026,
@@ -76,8 +76,8 @@ test('guest can toggle like on episode and it increments episode likes count', f
 test('authenticated user can toggle like on episode and series', function () {
     $user = User::create([
         'name' => 'Test Member',
-        'email' => 'member-' . uniqid() . '@example.com',
-        'phone' => '0812' . rand(10000000, 99999999),
+        'email' => 'member-'.uniqid().'@example.com',
+        'phone' => '0812'.rand(10000000, 99999999),
         'password' => Hash::make('password'),
         'status' => 'active',
         'tier' => 'free',
@@ -114,18 +114,18 @@ test('authenticated user can toggle like on episode and series', function () {
 });
 
 test('guest likes are merged to user on login', function () {
-    $userEmail = 'login-merge-' . uniqid() . '@example.com';
+    $userEmail = 'login-merge-'.uniqid().'@example.com';
     $user = User::create([
         'name' => 'Merge Member',
         'email' => $userEmail,
-        'phone' => '0813' . rand(10000000, 99999999),
+        'phone' => '0813'.rand(10000000, 99999999),
         'password' => Hash::make('secret123'),
         'status' => 'active',
         'tier' => 'free',
     ]);
 
     $epId = $this->episode->id;
-    $guestSession = 'merge-session-' . uniqid();
+    $guestSession = 'merge-session-'.uniqid();
 
     // Guest likes episode
     $this->withHeaders(['X-Session-ID' => $guestSession])

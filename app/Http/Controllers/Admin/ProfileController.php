@@ -18,6 +18,7 @@ class ProfileController extends Controller
     public function index(): View
     {
         $admin = Auth::guard('admin')->user();
+
         return view('admin.profile.index', compact('admin'));
     }
 
@@ -62,7 +63,7 @@ class ProfileController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        if (!Hash::check($validated['current_password'], $admin->password)) {
+        if (! Hash::check($validated['current_password'], $admin->password)) {
             return back()->withErrors([
                 'current_password' => 'Password saat ini tidak sesuai.',
             ]);

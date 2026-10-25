@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 beforeEach(function () {
     $this->streamFile = 'test-stream.webm';
-    $this->streamPath = FileStorageService::getUploadPath('videos') . DIRECTORY_SEPARATOR . $this->streamFile;
+    $this->streamPath = FileStorageService::getUploadPath('videos').DIRECTORY_SEPARATOR.$this->streamFile;
     copy(base_path('tests/fixtures/test-stream.webm'), $this->streamPath);
 
     $this->category = Category::create([
@@ -73,7 +73,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    if (!empty($this->streamPath) && is_file($this->streamPath)) {
+    if (! empty($this->streamPath) && is_file($this->streamPath)) {
         @unlink($this->streamPath);
     }
 });
@@ -91,7 +91,7 @@ test('guest can list series catalog and see published series', function () {
 });
 
 test('guest can view series details with all episodes metadata', function () {
-    $response = $this->getJson('/api/v1/series/' . $this->series->slug);
+    $response = $this->getJson('/api/v1/series/'.$this->series->slug);
 
     $response->assertStatus(200)
         ->assertJson([
@@ -113,7 +113,7 @@ test('guest can view series details with all episodes metadata', function () {
 
 test('guest and free user can stream episode 1 and 2 preview', function () {
     // Guest streaming episode 1
-    $guestResponse = $this->get('/api/v1/files/stream/' . $this->episode1->id);
+    $guestResponse = $this->get('/api/v1/files/stream/'.$this->episode1->id);
     $guestResponse->assertStatus(200);
 
     // Free registered user streaming episode 2
@@ -126,14 +126,14 @@ test('guest and free user can stream episode 1 and 2 preview', function () {
     ]);
     $token = $freeUser->createToken('test-token')->plainTextToken;
 
-    $userResponse = $this->withHeader('Authorization', 'Bearer ' . $token)
-        ->get('/api/v1/files/stream/' . $this->episode2->id);
+    $userResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+        ->get('/api/v1/files/stream/'.$this->episode2->id);
     $userResponse->assertStatus(200);
 });
 
 test('guest and free user cannot stream episode 3 (returns 403 PREMIUM_REQUIRED)', function () {
     // Guest attempt
-    $guestResponse = $this->getJson('/api/v1/files/stream/' . $this->episode3->id);
+    $guestResponse = $this->getJson('/api/v1/files/stream/'.$this->episode3->id);
     $guestResponse->assertStatus(403)
         ->assertJson([
             'success' => false,
@@ -150,8 +150,8 @@ test('guest and free user cannot stream episode 3 (returns 403 PREMIUM_REQUIRED)
     ]);
     $token = $freeUser->createToken('test-token')->plainTextToken;
 
-    $userResponse = $this->withHeader('Authorization', 'Bearer ' . $token)
-        ->getJson('/api/v1/files/stream/' . $this->episode3->id);
+    $userResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+        ->getJson('/api/v1/files/stream/'.$this->episode3->id);
     $userResponse->assertStatus(403)
         ->assertJson([
             'success' => false,
@@ -170,8 +170,8 @@ test('active VIP user can stream episode 3 without restriction', function () {
     ]);
     $token = $vipUser->createToken('test-token')->plainTextToken;
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-        ->get('/api/v1/files/stream/' . $this->episode3->id);
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
+        ->get('/api/v1/files/stream/'.$this->episode3->id);
 
     $response->assertStatus(200);
 });

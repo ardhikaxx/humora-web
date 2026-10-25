@@ -96,7 +96,6 @@ test('admin reset password succeeds and updates password in database', function 
     expect(Hash::check('newpassword123', $admin->password))->toBeTrue();
 });
 
-
 // ==========================================
 // 2. MOBILE USER REST API FORGOT PASSWORD FLOW
 // ==========================================

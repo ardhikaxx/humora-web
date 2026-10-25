@@ -71,7 +71,7 @@ class Series extends Model
         }
 
         // Return the secure, non-symlink file route
-        return url('/api/v1/files/thumbnail/' . $this->thumbnail);
+        return url('/api/v1/files/thumbnail/'.$this->thumbnail);
     }
 
     public function getTotalEpisodesAttribute(): int
@@ -81,11 +81,19 @@ class Series extends Model
 
     public function getLikesCountAttribute(): int
     {
-        return $this->likes()->count();
+        if (array_key_exists('likes_count', $this->attributes)) {
+            return (int) $this->attributes['likes_count'];
+        }
+
+        return $this->relationLoaded('likes')
+            ? $this->likes->count()
+            : $this->likes()->count();
     }
 
     public function getGenreAttribute(): string
     {
-        return $this->categories->pluck('name')->implode(', ');
+        return $this->relationLoaded('categories')
+            ? $this->categories->pluck('name')->implode(', ')
+            : $this->categories()->pluck('name')->implode(', ');
     }
 }

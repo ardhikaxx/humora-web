@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Episode;
-use App\Models\SystemSetting;
 use App\Services\FileStorageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +19,12 @@ class FileStorageController extends Controller
      */
     public function publicThumbnail(string $filename): Response
     {
-        return $this->fileStorage->streamFileResponse('thumbnails', $filename);
+        return $this->fileStorage->streamFileResponse(
+            'thumbnails',
+            $filename,
+            null,
+            ['Cache-Control' => 'public, max-age=604800, immutable']
+        );
     }
 
     /**
@@ -29,11 +33,16 @@ class FileStorageController extends Controller
     public function adminProof(string $filename): Response
     {
         $admin = Auth::guard('admin')->user();
-        if (!$admin || !$admin->canManageFinances()) {
+        if (! $admin || ! $admin->canManageFinances()) {
             abort(403, 'Akses ke bukti pembayaran tidak diizinkan.');
         }
 
-        return $this->fileStorage->streamFileResponse('proofs', $filename);
+        return $this->fileStorage->streamFileResponse(
+            'proofs',
+            $filename,
+            null,
+            ['Cache-Control' => 'private, no-cache, no-store, must-revalidate']
+        );
     }
 
     /**
@@ -41,7 +50,12 @@ class FileStorageController extends Controller
      */
     public function systemFile(string $filename): Response
     {
-        return $this->fileStorage->streamFileResponse('system', $filename);
+        return $this->fileStorage->streamFileResponse(
+            'system',
+            $filename,
+            null,
+            ['Cache-Control' => 'public, max-age=604800, immutable']
+        );
     }
 
     /**
@@ -64,7 +78,7 @@ class FileStorageController extends Controller
         $user = Auth::guard('sanctum')->user() ?? Auth::guard('web')->user();
 
         // Check episode accessibility
-        if (!$episode->isAccessibleBy($user)) {
+        if (! $episode->isAccessibleBy($user)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Episode ini terkunci dan memerlukan paket langganan Premium VIP aktif.',
@@ -82,6 +96,7 @@ class FileStorageController extends Controller
         }
 
         $ext = pathinfo($episode->video_file, PATHINFO_EXTENSION) ?: 'webm';
-        return $this->fileStorage->streamFileResponse('videos', $episode->video_file, $episode->series->slug . '-ep' . $episode->episode_number . '.' . $ext);
+
+        return $this->fileStorage->streamFileResponse('videos', $episode->video_file, $episode->series->slug.'-ep'.$episode->episode_number.'.'.$ext);
     }
 }

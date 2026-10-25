@@ -132,7 +132,7 @@ test('authenticated user can access profile me endpoint', function () {
 
     $token = $user->createToken('test-token')->plainTextToken;
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
         ->getJson('/api/v1/auth/me');
 
     $response->assertStatus(200)

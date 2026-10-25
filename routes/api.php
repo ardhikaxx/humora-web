@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\EpisodeController;
@@ -9,9 +10,9 @@ use App\Http\Controllers\Api\V1\SeriesController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
 use App\Http\Controllers\Api\V1\TransactionController;
 use App\Http\Controllers\Api\V1\VideoTrackingController;
-use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Api\V1\WatchHistoryController;
 use App\Http\Controllers\FileStorageController;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,13 +50,13 @@ Route::prefix('v1')->group(function () {
 
     // 4. Secure File Access & Streaming
     Route::get('/files/thumbnail/{filename}', [FileStorageController::class, 'publicThumbnail'])
-        ->withoutMiddleware([\Illuminate\Routing\Middleware\ThrottleRequests::class])
+        ->withoutMiddleware([ThrottleRequests::class])
         ->name('file.thumbnail');
     Route::get('/files/stream/{episodeId}', [FileStorageController::class, 'streamEpisodeVideo'])
-        ->withoutMiddleware([\Illuminate\Routing\Middleware\ThrottleRequests::class])
+        ->withoutMiddleware([ThrottleRequests::class])
         ->name('file.stream');
     Route::get('/files/system/{filename}', [FileStorageController::class, 'systemFile'])
-        ->withoutMiddleware([\Illuminate\Routing\Middleware\ThrottleRequests::class])
+        ->withoutMiddleware([ThrottleRequests::class])
         ->name('file.system');
 
     // 5. Authenticated Mobile Routes (Requires Sanctum Token)

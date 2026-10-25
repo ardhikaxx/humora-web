@@ -12,7 +12,7 @@ class QrisServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->qrisService = new QrisService();
+        $this->qrisService = new QrisService;
     }
 
     public function test_can_validate_standard_qris(): void

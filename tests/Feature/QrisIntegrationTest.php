@@ -2,15 +2,16 @@
 
 namespace Tests\Feature;
 
+use App\Models\SubscriptionPlan;
 use App\Models\SystemSetting;
 use App\Models\User;
-use App\Models\SubscriptionPlan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class QrisIntegrationTest extends TestCase
 {
     use RefreshDatabase;
+
     protected function setUp(): void
     {
         parent::setUp();

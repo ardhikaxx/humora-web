@@ -50,19 +50,28 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        // Chart 1: Daily Viewing Trends for the last 7 days
+        // Chart 1: Daily Viewing Trends for the last 7 days (Aggregated in 1 query)
+        $sevenDaysAgo = Carbon::now()->subDays(6)->startOfDay();
+        $dailyViews = ViewingEvent::where('created_at', '>=', $sevenDaysAgo)
+            ->select(DB::raw('DATE(created_at) as view_date'), DB::raw('COUNT(*) as total'))
+            ->groupBy('view_date')
+            ->pluck('total', 'view_date');
+
         $dailyViewLabels = [];
         $dailyViewCounts = [];
 
         for ($i = 6; $i >= 0; $i--) {
-            $date = Carbon::now()->subDays($i)->format('Y-m-d');
-            $dailyViewLabels[] = Carbon::now()->subDays($i)->isoFormat('dddd, D MMM');
-
-            $views = ViewingEvent::whereDate('created_at', $date)->count();
-            $dailyViewCounts[] = $views;
+            $dateObj = Carbon::now()->subDays($i);
+            $dailyViewLabels[] = $dateObj->isoFormat('dddd, D MMM');
+            $dailyViewCounts[] = (int) ($dailyViews->get($dateObj->format('Y-m-d')) ?? 0);
         }
 
-        // Chart 2: Weekly Subscriber Conversions (Last 4 weeks)
+        // Chart 2: Weekly Subscriber Conversions (Last 4 weeks) (Aggregated in 1 query)
+        $fourWeeksAgo = Carbon::now()->subWeeks(3)->startOfWeek();
+        $successfulTxns = Transaction::where('status', 'success')
+            ->where('verified_at', '>=', $fourWeeksAgo)
+            ->get(['verified_at', 'amount']);
+
         $weeklyLabels = [];
         $weeklyConversions = [];
         $weeklyRevenue = [];
@@ -71,17 +80,14 @@ class DashboardController extends Controller
             $startWeek = Carbon::now()->subWeeks($w)->startOfWeek();
             $endWeek = Carbon::now()->subWeeks($w)->endOfWeek();
 
-            $weeklyLabels[] = 'Mgg ' . $startWeek->format('d M') . ' - ' . $endWeek->format('d M');
+            $weeklyLabels[] = 'Mgg '.$startWeek->format('d M').' - '.$endWeek->format('d M');
 
-            $count = Transaction::where('status', 'success')
-                ->whereBetween('verified_at', [$startWeek, $endWeek])
-                ->count();
-            $weeklyConversions[] = $count;
+            $weekTxns = $successfulTxns->filter(function ($t) use ($startWeek, $endWeek) {
+                return $t->verified_at && $t->verified_at >= $startWeek && $t->verified_at <= $endWeek;
+            });
 
-            $rev = (float) Transaction::where('status', 'success')
-                ->whereBetween('verified_at', [$startWeek, $endWeek])
-                ->sum('amount');
-            $weeklyRevenue[] = $rev;
+            $weeklyConversions[] = $weekTxns->count();
+            $weeklyRevenue[] = (float) $weekTxns->sum('amount');
         }
 
         return view('admin.dashboard', compact(

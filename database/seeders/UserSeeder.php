@@ -3,10 +3,12 @@
 namespace Database\Seeders;
 
 use App\Models\Admin;
+use App\Models\Episode;
 use App\Models\Subscription;
 use App\Models\SubscriptionPlan;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Models\UserVideoAccess;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -21,7 +23,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $planWeekly = SubscriptionPlan::where('code', 'weekly_15')->first() 
+        $planWeekly = SubscriptionPlan::where('code', 'weekly_15')->first()
             ?? SubscriptionPlan::first();
         $admin = Admin::where('email', 'admin@gmail.com')->first();
 
@@ -82,13 +84,13 @@ class UserSeeder extends Seeder
             );
 
             // Grant 15 locked episodes to user2
-            $lockedEpisodes = \App\Models\Episode::where('status', 'published')
+            $lockedEpisodes = Episode::where('status', 'published')
                 ->where('episode_number', '>', 2)
                 ->take(15)
                 ->get();
 
             foreach ($lockedEpisodes as $ep) {
-                \App\Models\UserVideoAccess::updateOrCreate(
+                UserVideoAccess::updateOrCreate(
                     [
                         'user_id' => $user2->id,
                         'episode_id' => $ep->id,
@@ -146,13 +148,13 @@ class UserSeeder extends Seeder
             );
 
             // Grant 15 locked episodes to user3 with expired dates
-            $lockedEpisodesUser3 = \App\Models\Episode::where('status', 'published')
+            $lockedEpisodesUser3 = Episode::where('status', 'published')
                 ->where('episode_number', '>', 2)
                 ->take(15)
                 ->get();
 
             foreach ($lockedEpisodesUser3 as $ep) {
-                \App\Models\UserVideoAccess::updateOrCreate(
+                UserVideoAccess::updateOrCreate(
                     [
                         'user_id' => $user3->id,
                         'episode_id' => $ep->id,

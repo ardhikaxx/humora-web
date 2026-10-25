@@ -9,6 +9,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Models\ViewingEvent;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -21,7 +22,7 @@ class AnalyticsController extends Controller
     public function index(Request $request): View
     {
         $days = (int) $request->input('range', 30);
-        if (!in_array($days, [7, 30, 90], true)) {
+        if (! in_array($days, [7, 30, 90], true)) {
             $days = 30;
         }
 
@@ -33,10 +34,10 @@ class AnalyticsController extends Controller
     /**
      * Provide real-time analytics data as JSON for live updates
      */
-    public function realtimeData(Request $request): \Illuminate\Http\JsonResponse
+    public function realtimeData(Request $request): JsonResponse
     {
         $days = (int) $request->input('range', 30);
-        if (!in_array($days, [7, 30, 90], true)) {
+        if (! in_array($days, [7, 30, 90], true)) {
             $days = 30;
         }
 
@@ -162,7 +163,12 @@ class AnalyticsController extends Controller
             ->limit(5)
             ->get();
 
-        // 8. Daily Views Chart Data across the selected range
+        // 8. Daily Views Chart Data across the selected range (Aggregated in 1 query)
+        $viewsByDate = ViewingEvent::whereBetween('created_at', [$startDate, $endDate])
+            ->select(DB::raw('DATE(created_at) as view_date'), DB::raw('COUNT(*) as total'))
+            ->groupBy('view_date')
+            ->pluck('total', 'view_date');
+
         $chartLabels = [];
         $chartViews = [];
 
@@ -178,8 +184,15 @@ class AnalyticsController extends Controller
             $dateTo = Carbon::now()->subDays($subDaysTo)->endOfDay();
 
             $chartLabels[] = $dateFrom->format('d M');
-            $vCount = ViewingEvent::whereBetween('created_at', [$dateFrom, $dateTo])->count();
-            $chartViews[] = $vCount;
+
+            // Sum views in interval from the pre-aggregated map
+            $intervalViews = 0;
+            $curr = $dateFrom->copy();
+            while ($curr->lte($dateTo)) {
+                $intervalViews += (int) ($viewsByDate->get($curr->format('Y-m-d')) ?? 0);
+                $curr->addDay();
+            }
+            $chartViews[] = $intervalViews;
         }
 
         return compact(

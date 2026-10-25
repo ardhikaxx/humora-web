@@ -234,7 +234,7 @@
                 <div class="d-flex flex-column gap-3">
                     @forelse ($recentSeries as $series)
                     <div class="d-flex align-items-center gap-3 p-2 rounded-3 border bg-white">
-                        <img src="{{ $series->thumbnail_url }}" alt="{{ $series->title }}" class="rounded object-fit-cover" style="width: 60px; height: 45px; aspect-ratio: 16/9;" onerror="this.src='{{ asset('images/logo-humora.png') }}'">
+                        <img src="{{ $series->thumbnail_url }}" alt="{{ $series->title }}" loading="lazy" class="rounded object-fit-cover" style="width: 60px; height: 45px; aspect-ratio: 16/9;" onerror="this.src='{{ asset('images/logo-humora.png') }}'">
                         <div class="flex-grow-1 overflow-hidden">
                             <a href="{{ route('admin.series.show', $series->id) }}" class="fw-bold text-dark text-truncate d-block text-decoration-none" style="font-size: 0.85rem;">
                                 {{ $series->title }}

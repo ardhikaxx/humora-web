@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\WatchHistoryResource;
 use App\Models\Episode;
+use App\Models\ViewingEvent;
 use App\Models\WatchHistory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,27 +22,12 @@ class WatchHistoryController extends Controller
         $history = WatchHistory::where('user_id', $user->id)
             ->with(['series', 'episode'])
             ->orderByDesc('updated_at')
-            ->get()
-            ->map(function (WatchHistory $item) {
-                return [
-                    'id' => $item->id,
-                    'series_id' => $item->series_id,
-                    'series_title' => $item->series ? $item->series->title : '',
-                    'episode_id' => $item->episode_id,
-                    'episode_number' => $item->episode ? $item->episode->episode_number : 1,
-                    'episode_title' => $item->episode ? $item->episode->title : '',
-                    'thumbnail_url' => $item->series ? $item->series->thumbnail_url : '',
-                    'last_position' => $item->last_position,
-                    'progress_percent' => $item->progress_percent,
-                    'is_completed' => $item->is_completed,
-                    'updated_at' => $item->updated_at->toIso8601String(),
-                ];
-            });
+            ->get();
 
         return response()->json([
             'success' => true,
             'message' => 'Riwayat tontonan berhasil diambil.',
-            'data' => $history,
+            'data' => WatchHistoryResource::collection($history),
         ]);
     }
 
@@ -87,9 +74,9 @@ class WatchHistoryController extends Controller
         );
 
         // Also record/sync to ViewingEvent
-        $sessionId = !empty($validated['session_id']) ? $validated['session_id'] : 'hist_' . $user->id . '_' . $episode->id . '_' . date('Ymd');
-        $event = \App\Models\ViewingEvent::firstOrNew(['session_id' => $sessionId]);
-        if (!$event->exists) {
+        $sessionId = ! empty($validated['session_id']) ? $validated['session_id'] : 'hist_'.$user->id.'_'.$episode->id.'_'.date('Ymd');
+        $event = ViewingEvent::firstOrNew(['session_id' => $sessionId]);
+        if (! $event->exists) {
             $event->episode_id = $episode->id;
             $event->series_id = $seriesId;
             $event->user_id = $user->id;

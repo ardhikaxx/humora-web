@@ -57,7 +57,7 @@ class User extends Authenticatable
 
         $parts = preg_split('/\s+/', $name);
         if (count($parts) >= 2) {
-            return strtoupper(mb_substr($parts[0], 0, 1) . mb_substr($parts[count($parts) - 1], 0, 1));
+            return strtoupper(mb_substr($parts[0], 0, 1).mb_substr($parts[count($parts) - 1], 0, 1));
         }
 
         return strtoupper(mb_substr($parts[0], 0, min(2, mb_strlen($parts[0]))));
@@ -79,9 +79,10 @@ class User extends Authenticatable
         }
 
         if ($this->tier === 'premium') {
-            if (!$this->valid_until || Carbon::now()->greaterThan($this->valid_until)) {
+            if (! $this->valid_until || Carbon::now()->greaterThan($this->valid_until)) {
                 return 'expired';
             }
+
             return 'premium';
         }
 
@@ -109,7 +110,7 @@ class User extends Authenticatable
      */
     public function hasActiveFullAccess(): bool
     {
-        if (!$this->hasActiveVip()) {
+        if (! $this->hasActiveVip()) {
             return false;
         }
 
@@ -118,7 +119,7 @@ class User extends Authenticatable
             ->where('end_date', '>=', Carbon::now())
             ->where(function ($q) {
                 $q->where('plan_type', 'full')
-                  ->orWhereHas('plan', fn ($pq) => $pq->where('plan_type', 'full'));
+                    ->orWhereHas('plan', fn ($pq) => $pq->where('plan_type', 'full'));
             })
             ->exists();
     }
@@ -128,7 +129,7 @@ class User extends Authenticatable
      */
     public function hasActiveWeeklySubscription(): bool
     {
-        if (!$this->hasActiveVip()) {
+        if (! $this->hasActiveVip()) {
             return false;
         }
 
@@ -137,7 +138,7 @@ class User extends Authenticatable
             ->where('end_date', '>=', Carbon::now())
             ->where(function ($q) {
                 $q->where('plan_type', 'weekly')
-                  ->orWhereHas('plan', fn ($pq) => $pq->where('plan_type', 'weekly'));
+                    ->orWhereHas('plan', fn ($pq) => $pq->where('plan_type', 'weekly'));
             })
             ->exists();
     }
@@ -153,7 +154,7 @@ class User extends Authenticatable
             ->where('end_date', '>=', Carbon::now())
             ->where(function ($q) {
                 $q->where('plan_type', 'weekly')
-                  ->orWhereHas('plan', fn ($pq) => $pq->where('plan_type', 'weekly'));
+                    ->orWhereHas('plan', fn ($pq) => $pq->where('plan_type', 'weekly'));
             })
             ->latest('end_date')
             ->first();
@@ -216,11 +217,12 @@ class User extends Authenticatable
      */
     public function getRemainingDaysAttribute(): int
     {
-        if (!$this->hasActiveVip() || !$this->valid_until) {
+        if (! $this->hasActiveVip() || ! $this->valid_until) {
             return 0;
         }
 
         $diff = Carbon::now()->diffInDays($this->valid_until, false);
+
         return max(0, (int) ceil($diff));
     }
 

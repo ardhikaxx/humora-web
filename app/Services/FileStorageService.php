@@ -5,7 +5,6 @@ namespace App\Services;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class FileStorageService
@@ -23,16 +22,17 @@ class FileStorageService
     public static function getUploadPath(?string $subfolder = null): string
     {
         $base = storage_path('uploads');
-        if (!File::isDirectory($base)) {
+        if (! File::isDirectory($base)) {
             File::makeDirectory($base, 0755, true);
         }
 
         if ($subfolder) {
             $folder = self::sanitizeFolder($subfolder);
-            $full = $base . DIRECTORY_SEPARATOR . $folder;
-            if (!File::isDirectory($full)) {
+            $full = $base.DIRECTORY_SEPARATOR.$folder;
+            if (! File::isDirectory($full)) {
                 File::makeDirectory($full, 0755, true);
             }
+
             return $full;
         }
 
@@ -45,9 +45,10 @@ class FileStorageService
     public static function sanitizeFolder(string $folder): string
     {
         $clean = strtolower(trim($folder));
-        if (!in_array($clean, self::$allowedFolders, true)) {
+        if (! in_array($clean, self::$allowedFolders, true)) {
             throw new \InvalidArgumentException("Akses ke folder penyimpanan tidak diizinkan: {$folder}");
         }
+
         return $clean;
     }
 
@@ -60,8 +61,9 @@ class FileStorageService
         $cleaned = str_replace(["\0", '/', '\\', '..'], '', $filename);
         $base = basename($cleaned);
         if (empty($base) || $base !== $filename) {
-            throw new \InvalidArgumentException("Nama file tidak valid atau mengandung path traversal.");
+            throw new \InvalidArgumentException('Nama file tidak valid atau mengandung path traversal.');
         }
+
         return $base;
     }
 
@@ -83,7 +85,7 @@ class FileStorageService
         }
 
         $extension = strtolower($file->getClientOriginalExtension());
-        if (!in_array($extension, $allowedExtensions, true)) {
+        if (! in_array($extension, $allowedExtensions, true)) {
             throw new \RuntimeException("Format file .{$extension} tidak diizinkan.");
         }
 
@@ -122,7 +124,7 @@ class FileStorageService
         $output = @shell_exec($testCommand);
         if ($output) {
             $lines = explode("\n", trim($output));
-            if (!empty($lines[0])) {
+            if (! empty($lines[0])) {
                 return trim($lines[0]);
             }
         }
@@ -152,7 +154,7 @@ class FileStorageService
         $output = @shell_exec($testCommand);
         if ($output) {
             $lines = explode("\n", trim($output));
-            if (!empty($lines[0])) {
+            if (! empty($lines[0])) {
                 return trim($lines[0]);
             }
         }
@@ -165,12 +167,12 @@ class FileStorageService
      */
     public static function getVideoDurationSeconds(string $filePath): ?int
     {
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             return null;
         }
 
         $ffprobe = self::getFfprobePath();
-        if (!$ffprobe) {
+        if (! $ffprobe) {
             return null;
         }
 
@@ -183,6 +185,7 @@ class FileStorageService
             $output = @shell_exec($cmd);
             if ($output !== null && is_numeric(trim($output))) {
                 $seconds = (float) trim($output);
+
                 return (int) round($seconds);
             }
         } catch (\Throwable $e) {
@@ -212,7 +215,7 @@ class FileStorageService
         $sourceExt = strtolower($file->getClientOriginalExtension());
         $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'bmp', 'gif'];
 
-        if (!in_array($sourceExt, $allowedExtensions, true)) {
+        if (! in_array($sourceExt, $allowedExtensions, true)) {
             throw new \RuntimeException("Format gambar .{$sourceExt} tidak didukung. Harap gunakan format JPG, PNG, atau WEBP.");
         }
 
@@ -222,7 +225,7 @@ class FileStorageService
             date('Ymd_His'),
             Str::random(12)
         );
-        $targetFilePath = $targetDir . DIRECTORY_SEPARATOR . $uniqueName;
+        $targetFilePath = $targetDir.DIRECTORY_SEPARATOR.$uniqueName;
         $sourcePath = $file->getRealPath();
 
         // Convert & compress via GD if available
@@ -254,6 +257,7 @@ class FileStorageService
         // If input is already webp and conversion was skipped, move directly
         if ($sourceExt === 'webp') {
             $file->move($targetDir, $uniqueName);
+
             return $uniqueName;
         }
 
@@ -281,7 +285,7 @@ class FileStorageService
         $sourceExt = strtolower($file->getClientOriginalExtension());
         $allowedExtensions = ['mp4', 'webm', 'mov', 'mkv', 'avi', 'm4v'];
 
-        if (!in_array($sourceExt, $allowedExtensions, true)) {
+        if (! in_array($sourceExt, $allowedExtensions, true)) {
             throw new \RuntimeException("Format video .{$sourceExt} tidak didukung. Harap gunakan format MP4, WEBM, atau MOV.");
         }
 
@@ -291,7 +295,7 @@ class FileStorageService
             date('Ymd_His'),
             Str::random(12)
         );
-        $targetFilePath = $targetDir . DIRECTORY_SEPARATOR . $uniqueName;
+        $targetFilePath = $targetDir.DIRECTORY_SEPARATOR.$uniqueName;
         $sourcePath = $file->getRealPath();
 
         $ffmpeg = self::getFfmpegPath();
@@ -321,11 +325,71 @@ class FileStorageService
         // Fallback: If input is already webm, move directly
         if ($sourceExt === 'webm') {
             $file->move($targetDir, $uniqueName);
+
             return $uniqueName;
         }
 
         // Fallback to standard storage if conversion fails
         return $this->storeUploadedFile($file, $subfolder, $prefix, $allowedExtensions, $maxSizeBytes);
+    }
+
+    /**
+     * Transcode an already stored video on disk into high-efficiency WebM (VP9 + Opus).
+     * Used by background queue worker so uploads return instantly to the admin interface.
+     */
+    public function transcodeStoredVideoToWebm(
+        string $rawFilename,
+        string $subfolder = 'videos',
+        string $prefix = 'vid'
+    ): ?string {
+        $folder = self::sanitizeFolder($subfolder);
+        $cleanRawName = self::sanitizeFilename($rawFilename);
+        $targetDir = self::getUploadPath($folder);
+        $sourcePath = $targetDir.DIRECTORY_SEPARATOR.$cleanRawName;
+
+        if (! File::exists($sourcePath)) {
+            return null;
+        }
+
+        $sourceExt = strtolower(pathinfo($sourcePath, PATHINFO_EXTENSION));
+
+        // If already webm and not a raw upload, keep as is
+        if ($sourceExt === 'webm' && ! str_starts_with($cleanRawName, 'raw_')) {
+            return $cleanRawName;
+        }
+
+        $ffmpeg = self::getFfmpegPath();
+        if (! $ffmpeg) {
+            return $cleanRawName;
+        }
+
+        $uniqueName = sprintf(
+            '%s_%s_%s.webm',
+            $prefix,
+            date('Ymd_His'),
+            Str::random(12)
+        );
+        $targetFilePath = $targetDir.DIRECTORY_SEPARATOR.$uniqueName;
+
+        $cmd = sprintf(
+            '"%s" -y -i %s -map 0:v:0 -map 0:a? -c:v libvpx-vp9 -crf 32 -b:v 0 -row-mt 1 -deadline good -cpu-used 4 -c:a libopus -b:a 96k %s 2>&1',
+            $ffmpeg,
+            escapeshellarg($sourcePath),
+            escapeshellarg($targetFilePath)
+        );
+
+        $output = [];
+        $returnCode = 0;
+        @exec($cmd, $output, $returnCode);
+
+        if ($returnCode === 0 && file_exists($targetFilePath) && filesize($targetFilePath) > 0) {
+            // Delete original raw file to free up disk space
+            @unlink($sourcePath);
+
+            return $uniqueName;
+        }
+
+        return $cleanRawName;
     }
 
     /**
@@ -340,7 +404,7 @@ class FileStorageService
         try {
             $folder = self::sanitizeFolder($subfolder);
             $cleanName = self::sanitizeFilename($filename);
-            $filePath = self::getUploadPath($folder) . DIRECTORY_SEPARATOR . $cleanName;
+            $filePath = self::getUploadPath($folder).DIRECTORY_SEPARATOR.$cleanName;
 
             if (File::exists($filePath)) {
                 return File::delete($filePath);
@@ -355,13 +419,17 @@ class FileStorageService
     /**
      * Stream file with full HTTP Range support for video players
      */
-    public function streamFileResponse(string $subfolder, string $filename, ?string $downloadName = null): Response
-    {
+    public function streamFileResponse(
+        string $subfolder,
+        string $filename,
+        ?string $downloadName = null,
+        array $customHeaders = []
+    ): Response {
         $folder = self::sanitizeFolder($subfolder);
         $cleanName = self::sanitizeFilename($filename);
-        $filePath = self::getUploadPath($folder) . DIRECTORY_SEPARATOR . $cleanName;
+        $filePath = self::getUploadPath($folder).DIRECTORY_SEPARATOR.$cleanName;
 
-        if (!File::exists($filePath)) {
+        if (! File::exists($filePath)) {
             abort(404, 'File tidak ditemukan di penyimpanan server.');
         }
 
@@ -390,18 +458,30 @@ class FileStorageService
         ];
 
         if ($downloadName) {
-            $headers['Content-Disposition'] = 'inline; filename="' . addslashes($downloadName) . '"';
+            $headers['Content-Disposition'] = 'inline; filename="'.addslashes($downloadName).'"';
+        }
+
+        if (! empty($customHeaders)) {
+            $headers = array_merge($headers, $customHeaders);
         }
 
         $response = response()->file($filePath, $headers);
         $response->setAutoEtag();
         $response->setAutoLastModified();
 
+        if (isset($customHeaders['Cache-Control'])) {
+            if (str_contains($customHeaders['Cache-Control'], 'private')) {
+                $response->setPrivate();
+            }
+            $response->headers->set('Cache-Control', $customHeaders['Cache-Control']);
+        }
+
         if ($response->isNotModified(request())) {
             return $response;
         }
 
         $response->prepare(request());
+
         return $response;
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\SubscriptionPlan;
 use App\Models\SystemSetting;
 use App\Services\FileStorageService;
+use App\Services\QrisService;
 use App\Support\BankDirectory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,7 +27,7 @@ class SettingController extends Controller
     {
         $freeEpisodes = SystemSetting::get('free_preview_episodes', 2);
         $bankAccounts = SystemSetting::get('official_bank_accounts');
-        if (empty($bankAccounts) || !is_array($bankAccounts)) {
+        if (empty($bankAccounts) || ! is_array($bankAccounts)) {
             $bankAccounts = [
                 [
                     'bank_code' => 'bca',
@@ -156,7 +157,7 @@ class SettingController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $admin = Auth::guard('admin')->user();
-        if (!$admin || !$admin->isSuperAdmin()) {
+        if (! $admin || ! $admin->isSuperAdmin()) {
             return back()->with('error', 'Hanya Administrator yang berwenang mengubah pengaturan sistem.');
         }
 
@@ -190,9 +191,9 @@ class SettingController extends Controller
             $accName = trim((string) ($b['account_name'] ?? ''));
 
             $info = BankDirectory::findByCodeOrName($b['bank_code'] ?? $bankName);
-            $bankCode = $info['code'] ?? (!empty($b['bank_code']) ? trim($b['bank_code']) : Str::slug($bankName, '_'));
+            $bankCode = $info['code'] ?? (! empty($b['bank_code']) ? trim($b['bank_code']) : Str::slug($bankName, '_'));
 
-            if (!empty($bankName) && !empty($accNumber) && !empty($accName)) {
+            if (! empty($bankName) && ! empty($accNumber) && ! empty($accName)) {
                 $cleanBankAccounts[] = [
                     'bank_code' => $bankCode,
                     'bank_name' => $bankName,
@@ -222,7 +223,7 @@ class SettingController extends Controller
         }
 
         // Update dynamic client plans if submitted
-        if (!empty($validated['plans']) && is_array($validated['plans'])) {
+        if (! empty($validated['plans']) && is_array($validated['plans'])) {
             foreach ($validated['plans'] as $planCode => $planData) {
                 $plan = SubscriptionPlan::where('code', $planCode)->first();
                 if ($plan) {
@@ -239,7 +240,7 @@ class SettingController extends Controller
                     if (isset($planData['duration_days']) && $planData['duration_days'] !== '') {
                         $updatePayload['duration_days'] = (int) $planData['duration_days'];
                     }
-                    $updatePayload['is_active'] = !empty($planData['is_active']);
+                    $updatePayload['is_active'] = ! empty($planData['is_active']);
 
                     $plan->update($updatePayload);
                 }
@@ -274,7 +275,7 @@ class SettingController extends Controller
         $statusMsg = 'Pengaturan sistem & konfigurasi pembayaran resmi berhasil diperbarui.';
 
         if ($request->boolean('remove_qris')) {
-            if (!empty($currentQris)) {
+            if (! empty($currentQris)) {
                 $this->fileStorage->deleteFile('system', $currentQris);
                 SystemSetting::set('qris_official_image', '', 'text');
                 SystemSetting::set('qris_raw_payload', '', 'text');
@@ -284,7 +285,7 @@ class SettingController extends Controller
             $tempPath = $uploadedImage->getRealPath();
 
             // Auto-decode QR code from image
-            $qrisService = app(\App\Services\QrisService::class);
+            $qrisService = app(QrisService::class);
             $decodedText = $qrisService->decodeImage($tempPath);
 
             $newQris = $this->fileStorage->storeUploadedImageAsWebp(
@@ -295,21 +296,21 @@ class SettingController extends Controller
                 5242880
             );
 
-            if (!empty($currentQris)) {
+            if (! empty($currentQris)) {
                 $this->fileStorage->deleteFile('system', $currentQris);
             }
 
             SystemSetting::set('qris_official_image', $newQris, 'text');
 
-            if (!empty($decodedText)) {
+            if (! empty($decodedText)) {
                 SystemSetting::set('qris_raw_payload', $decodedText, 'text');
                 $merchantInfo = $qrisService->parseMerchantInfo($decodedText);
-                if (!empty($merchantInfo['merchant_name'])) {
+                if (! empty($merchantInfo['merchant_name'])) {
                     SystemSetting::set('qris_account_name', $merchantInfo['merchant_name'], 'text');
                 }
                 $statusMsg = "Pengaturan berhasil diperbarui. Gambar QRIS berhasil diunggah dan kode berhasil dibaca otomatis ({$merchantInfo['merchant_name']}).";
             } else {
-                $statusMsg = "Pengaturan berhasil diperbarui. Gambar QRIS berhasil diunggah (Data QRIS sebelumnya tetap tersimpan).";
+                $statusMsg = 'Pengaturan berhasil diperbarui. Gambar QRIS berhasil diunggah (Data QRIS sebelumnya tetap tersimpan).';
             }
         }
 

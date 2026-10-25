@@ -58,6 +58,7 @@ class SeriesController extends Controller
     {
         $categories = Category::where('is_active', true)->orderBy('name')->get();
         $suggestedOrder = ((Series::max('catalog_order') ?? 0) + 1);
+
         return view('admin.series.create', compact('categories', 'suggestedOrder'));
     }
 
@@ -79,7 +80,7 @@ class SeriesController extends Controller
             'thumbnail' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'], // Max 5MB
         ]);
 
-        $slug = !empty($validated['slug'])
+        $slug = ! empty($validated['slug'])
             ? Str::slug($validated['slug'])
             : Str::slug($validated['title']);
 
@@ -94,12 +95,12 @@ class SeriesController extends Controller
         $thumbnailFile = $this->fileStorage->storeUploadedImageAsWebp(
             $request->file('thumbnail'),
             'thumbnails',
-            'thumb_' . $slug,
+            'thumb_'.$slug,
             82,
             10485760
         );
 
-        $catalogOrder = !empty($validated['catalog_order'])
+        $catalogOrder = ! empty($validated['catalog_order'])
             ? (int) $validated['catalog_order']
             : ((Series::max('catalog_order') ?? 0) + 1);
 
@@ -116,6 +117,7 @@ class SeriesController extends Controller
             ]);
 
             $s->categories()->sync($validated['categories']);
+
             return $s;
         });
 
@@ -131,6 +133,7 @@ class SeriesController extends Controller
         $series = Series::with(['categories', 'episodes' => function ($q) {
             $q->withCount('likes');
         }])->withCount('likes')->findOrFail($id);
+
         return view('admin.series.show', compact('series'));
     }
 
@@ -141,6 +144,7 @@ class SeriesController extends Controller
     {
         $series = Series::with('categories')->findOrFail($id);
         $categories = Category::where('is_active', true)->orderBy('name')->get();
+
         return view('admin.series.edit', compact('series', 'categories'));
     }
 
@@ -153,7 +157,7 @@ class SeriesController extends Controller
 
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:200'],
-            'slug' => ['nullable', 'string', 'max:220', 'unique:series,slug,' . $series->id],
+            'slug' => ['nullable', 'string', 'max:220', 'unique:series,slug,'.$series->id],
             'synopsis' => ['required', 'string'],
             'release_year' => ['required', 'string', 'max:10'],
             'catalog_order' => ['nullable', 'integer', 'min:0'],
@@ -164,7 +168,7 @@ class SeriesController extends Controller
             'thumbnail' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
         ]);
 
-        $slug = !empty($validated['slug'])
+        $slug = ! empty($validated['slug'])
             ? Str::slug($validated['slug'])
             : Str::slug($validated['title']);
 
@@ -175,7 +179,7 @@ class SeriesController extends Controller
             $newThumb = $this->fileStorage->storeUploadedImageAsWebp(
                 $request->file('thumbnail'),
                 'thumbnails',
-                'thumb_' . $slug,
+                'thumb_'.$slug,
                 82,
                 10485760
             );

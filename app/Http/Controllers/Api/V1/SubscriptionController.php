@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Episode;
 use App\Models\SubscriptionPlan;
 use App\Models\SystemSetting;
+use App\Services\QrisService;
+use App\Support\BankDirectory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class SubscriptionController extends Controller
 {
@@ -58,11 +61,11 @@ class SubscriptionController extends Controller
         $qrisImage = SystemSetting::get('qris_official_image');
         $qrisRawPayload = SystemSetting::get('qris_raw_payload', '');
         $qrisAccountName = SystemSetting::get('qris_account_name', 'Global Mobile Content');
-        $qrisUrl = !empty($qrisImage) ? url('/api/v1/files/system/' . $qrisImage) : null;
-        $isConfigured = (!empty($qrisUrl) || !empty($qrisRawPayload));
+        $qrisUrl = ! empty($qrisImage) ? url('/api/v1/files/system/'.$qrisImage) : null;
+        $isConfigured = (! empty($qrisUrl) || ! empty($qrisRawPayload));
 
         $rawBankAccounts = SystemSetting::get('official_bank_accounts');
-        if (empty($rawBankAccounts) || !is_array($rawBankAccounts)) {
+        if (empty($rawBankAccounts) || ! is_array($rawBankAccounts)) {
             $rawBankAccounts = [
                 [
                     'bank_code' => 'bca',
@@ -76,16 +79,16 @@ class SubscriptionController extends Controller
         $formattedBanks = [];
         foreach ($rawBankAccounts as $index => $b) {
             $bankName = trim($b['bank_name'] ?? 'Bank Transfer');
-            $info = \App\Support\BankDirectory::findByCodeOrName($b['bank_code'] ?? $bankName);
-            $code = $b['bank_code'] ?? ($info['code'] ?? \Illuminate\Support\Str::slug($bankName, '_'));
+            $info = BankDirectory::findByCodeOrName($b['bank_code'] ?? $bankName);
+            $code = $b['bank_code'] ?? ($info['code'] ?? Str::slug($bankName, '_'));
             if (empty($code)) {
-                $code = 'bank_' . ($index + 1);
+                $code = 'bank_'.($index + 1);
             }
 
-            $logoFile = $info['logo'] ?? ($code . '.png');
-            $logoPath = public_path('images/banks/' . $logoFile);
+            $logoFile = $info['logo'] ?? ($code.'.png');
+            $logoPath = public_path('images/banks/'.$logoFile);
             $v = file_exists($logoPath) ? filemtime($logoPath) : '1';
-            $logoUrl = asset('images/banks/' . $logoFile) . '?v=' . $v;
+            $logoUrl = asset('images/banks/'.$logoFile).'?v='.$v;
 
             $formattedBanks[] = [
                 'code' => $code,
@@ -107,8 +110,8 @@ class SubscriptionController extends Controller
                     'code' => 'qris',
                     'is_enabled' => $qrisEnabled,
                     'is_configured' => $isConfigured,
-                    'has_dynamic_support' => !empty($qrisRawPayload),
-                    'raw_payload' => !empty($qrisRawPayload) ? $qrisRawPayload : null,
+                    'has_dynamic_support' => ! empty($qrisRawPayload),
+                    'raw_payload' => ! empty($qrisRawPayload) ? $qrisRawPayload : null,
                     'qris_image_url' => $qrisUrl,
                     'account_name' => $qrisAccountName,
                     'instructions' => 'Scan QRIS resmi HUMORA menggunakan aplikasi m-Banking atau e-Wallet apa saja, lalu unggah bukti transaksi.',
@@ -123,7 +126,7 @@ class SubscriptionController extends Controller
     public function dynamicQris(Request $request): JsonResponse
     {
         $qrisEnabled = (bool) SystemSetting::get('qris_enabled', true);
-        if (!$qrisEnabled) {
+        if (! $qrisEnabled) {
             return response()->json([
                 'success' => false,
                 'message' => 'Metode QRIS saat ini sedang dinonaktifkan oleh administrator.',
@@ -142,7 +145,7 @@ class SubscriptionController extends Controller
             ], 404);
         }
 
-        $qrisService = app(\App\Services\QrisService::class);
+        $qrisService = app(QrisService::class);
         $dynamicPayload = $qrisService->makeDynamic($rawPayload, (float) $validated['amount']);
         $accountName = SystemSetting::get('qris_account_name', 'Global Mobile Content');
 

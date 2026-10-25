@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ProcessVideoTranscodingJob;
 use App\Models\Episode;
 use App\Models\Series;
 use App\Services\FileStorageService;
@@ -98,7 +99,7 @@ class EpisodeController extends Controller
         $autoEpisodeNumber = (Episode::where('series_id', $seriesId)->max('episode_number') ?? 0) + 1;
 
         // Automatically assign episode number if omitted or empty
-        if (!$request->filled('episode_number')) {
+        if (! $request->filled('episode_number')) {
             $request->merge(['episode_number' => $autoEpisodeNumber]);
         }
 
@@ -148,7 +149,7 @@ class EpisodeController extends Controller
         }
 
         // Access Type: Admin can explicitly choose 'free' or 'premium', or fallback to trial policy
-        if (!empty($validated['access_type'])) {
+        if (! empty($validated['access_type'])) {
             $accessType = $validated['access_type'];
         } else {
             $accessType = $validated['episode_number'] <= 2 ? 'free' : 'premium';
@@ -156,10 +157,11 @@ class EpisodeController extends Controller
 
         $videoFilename = null;
         if ($request->hasFile('video_file')) {
-            $videoFilename = $this->fileStorage->storeUploadedVideoAsWebm(
+            $videoFilename = $this->fileStorage->storeUploadedFile(
                 $request->file('video_file'),
                 'videos',
-                'vid_ep' . $validated['episode_number']
+                'raw_ep'.$validated['episode_number'],
+                ['mp4', 'webm', 'mov', 'mkv', 'avi']
             );
         }
 
@@ -174,6 +176,10 @@ class EpisodeController extends Controller
             'access_type' => $accessType,
             'status' => $validated['status'],
         ]);
+
+        if ($videoFilename) {
+            ProcessVideoTranscodingJob::dispatch($episode->id, $videoFilename);
+        }
 
         return redirect()->route('admin.videos.index')
             ->with('success', "Episode #{$episode->episode_number} '{$episode->title}' berhasil ditambahkan.");
@@ -239,7 +245,7 @@ class EpisodeController extends Controller
             ? $episode->episode_number
             : ((Episode::where('series_id', $seriesId)->max('episode_number') ?? 0) + 1);
 
-        if (!$request->filled('episode_number')) {
+        if (! $request->filled('episode_number')) {
             $request->merge(['episode_number' => $autoEpisodeNumber]);
         }
 
@@ -291,18 +297,20 @@ class EpisodeController extends Controller
         }
 
         // Access Type: Admin can explicitly choose 'free' or 'premium', or fallback to trial policy
-        if (!empty($validated['access_type'])) {
+        if (! empty($validated['access_type'])) {
             $accessType = $validated['access_type'];
         } else {
             $accessType = $validated['episode_number'] <= 2 ? 'free' : 'premium';
         }
 
         $videoFilename = $episode->video_file;
+        $hasNewVideo = false;
         if ($request->hasFile('video_file')) {
-            $newVid = $this->fileStorage->storeUploadedVideoAsWebm(
+            $newVid = $this->fileStorage->storeUploadedFile(
                 $request->file('video_file'),
                 'videos',
-                'vid_ep' . $validated['episode_number']
+                'raw_ep'.$validated['episode_number'],
+                ['mp4', 'webm', 'mov', 'mkv', 'avi']
             );
 
             if ($episode->video_file) {
@@ -310,6 +318,7 @@ class EpisodeController extends Controller
             }
 
             $videoFilename = $newVid;
+            $hasNewVideo = true;
         }
 
         $episode->update([
@@ -323,6 +332,10 @@ class EpisodeController extends Controller
             'access_type' => $accessType,
             'status' => $validated['status'],
         ]);
+
+        if ($hasNewVideo && $videoFilename) {
+            ProcessVideoTranscodingJob::dispatch($episode->id, $videoFilename);
+        }
 
         return redirect()->route('admin.videos.index')
             ->with('success', "Episode #{$episode->episode_number} '{$episode->title}' berhasil diperbarui.");

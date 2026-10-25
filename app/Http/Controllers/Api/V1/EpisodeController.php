@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\EpisodeResource;
 use App\Models\Episode;
+use App\Models\Like;
 use App\Models\ViewingEvent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,7 +20,7 @@ class EpisodeController extends Controller
     {
         $user = Auth::guard('sanctum')->user();
 
-        $episode = Episode::with('series')->where('status', 'published')->findOrFail($id);
+        $episode = Episode::with('series')->withCount('likes')->where('status', 'published')->findOrFail($id);
 
         if ($episode->series->status !== 'published') {
             return response()->json([
@@ -30,7 +32,7 @@ class EpisodeController extends Controller
         $isFree = $episode->isFreePreview();
         $isAccessible = $episode->isAccessibleBy($user);
 
-        if (!$isAccessible) {
+        if (! $isAccessible) {
             return response()->json([
                 'success' => false,
                 'message' => 'Episode ini terkunci dan memerlukan paket langganan Premium VIP aktif.',
@@ -58,7 +60,7 @@ class EpisodeController extends Controller
 
         $isLiked = $user
             ? $user->likes()->where('episode_id', $episode->id)->exists()
-            : \App\Models\Like::whereNull('user_id')
+            : Like::whereNull('user_id')
                 ->where('episode_id', $episode->id)
                 ->where(function ($q) use ($sessionId, $ip) {
                     if ($sessionId) {
@@ -69,28 +71,17 @@ class EpisodeController extends Controller
                 })
                 ->exists();
 
+        $data = (new EpisodeResource($episode))->additional([
+            'is_liked' => $isLiked,
+            'last_position' => $watchHistory ? $watchHistory->last_position : 0,
+            'watch_progress' => $watchHistory ? ($watchHistory->progress_percent / 100.0) : 0.0,
+            'is_watched' => $watchHistory ? $watchHistory->is_completed : false,
+        ])->toArray($request);
+
         return response()->json([
             'success' => true,
             'message' => 'Detail episode berhasil diambil.',
-            'data' => [
-                'id' => $episode->id,
-                'series_id' => $episode->series_id,
-                'series_title' => $episode->series->title,
-                'episode_number' => $episode->episode_number,
-                'title' => $episode->title,
-                'synopsis' => $episode->synopsis,
-                'duration' => $episode->duration,
-                'duration_seconds' => $episode->duration_seconds,
-                'access_type' => $episode->access_type,
-                'is_free' => $isFree,
-                'is_locked' => false,
-                'last_position' => $watchHistory ? $watchHistory->last_position : 0,
-                'progress_percent' => $watchHistory ? $watchHistory->progress_percent : 0,
-                'thumbnail_url' => $episode->series->thumbnail_url,
-                'likes_count' => $episode->likes_count,
-                'is_liked' => $isLiked,
-                'stream_url' => url('/api/v1/files/stream/' . $episode->id),
-            ],
+            'data' => $data,
         ]);
     }
 
@@ -112,7 +103,7 @@ class EpisodeController extends Controller
                 ->where('created_at', '>=', now()->subMinutes(10))
                 ->exists();
 
-            if (!$recent) {
+            if (! $recent) {
                 ViewingEvent::create([
                     'episode_id' => $episode->id,
                     'series_id' => $episode->series_id,

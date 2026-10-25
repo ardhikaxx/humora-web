@@ -65,7 +65,7 @@ class SubscriptionPlan extends Model
 
     public function getFormattedPriceAttribute(): string
     {
-        return 'Rp' . number_format($this->price, 0, ',', '.');
+        return 'Rp'.number_format($this->price, 0, ',', '.');
     }
 
     public function getFormattedOriginalPriceAttribute(): string
@@ -73,7 +73,8 @@ class SubscriptionPlan extends Model
         if ($this->original_price <= 0) {
             return '';
         }
-        return 'Rp' . number_format($this->original_price, 0, ',', '.');
+
+        return 'Rp'.number_format($this->original_price, 0, ',', '.');
     }
 
     public function getFormattedQuotaAttribute(): string
@@ -81,6 +82,7 @@ class SubscriptionPlan extends Model
         if ($this->isFullAccess() || $this->video_quota === null) {
             return 'Seluruh Katalog (~68 Video)';
         }
+
         return "{$this->video_quota} Video";
     }
 }

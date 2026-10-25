@@ -9,7 +9,7 @@ use App\Models\WatchHistory;
 beforeEach(function () {
     $this->series = Series::create([
         'title' => 'Serial Uji Coba Penayangan',
-        'slug' => 'serial-uji-coba-penayangan-' . uniqid(),
+        'slug' => 'serial-uji-coba-penayangan-'.uniqid(),
         'synopsis' => 'Sinopsis serial uji coba',
         'status' => 'published',
     ]);
@@ -25,7 +25,7 @@ beforeEach(function () {
 });
 
 test('guest mobile user can record viewing event via track-view endpoint', function () {
-    $sessionId = 'sess_guest_mobile_' . uniqid();
+    $sessionId = 'sess_guest_mobile_'.uniqid();
 
     $response = $this->postJson('/api/v1/videos/track-view', [
         'episode_id' => $this->episode->id,
@@ -66,7 +66,7 @@ test('guest mobile user can record viewing event via track-view endpoint', funct
 
 test('authenticated mobile user records viewing event and syncs watch history', function () {
     $user = User::factory()->create(['status' => 'active']);
-    $sessionId = 'sess_auth_user_' . uniqid();
+    $sessionId = 'sess_auth_user_'.uniqid();
 
     $response = $this->actingAs($user, 'sanctum')->postJson('/api/v1/videos/track-view', [
         'episode_id' => $this->episode->id,

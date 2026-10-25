@@ -40,7 +40,7 @@ class CategoryController extends Controller
             'is_active' => ['nullable', 'boolean'],
         ]);
 
-        $slug = !empty($validated['slug'])
+        $slug = ! empty($validated['slug'])
             ? Str::slug($validated['slug'])
             : Str::slug($validated['name']);
 
@@ -72,12 +72,12 @@ class CategoryController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],
-            'slug' => ['nullable', 'string', 'max:120', 'unique:categories,slug,' . $category->id],
+            'slug' => ['nullable', 'string', 'max:120', 'unique:categories,slug,'.$category->id],
             'description' => ['nullable', 'string', 'max:500'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
-        $slug = !empty($validated['slug'])
+        $slug = ! empty($validated['slug'])
             ? Str::slug($validated['slug'])
             : Str::slug($validated['name']);
 

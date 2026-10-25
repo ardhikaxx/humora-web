@@ -23,7 +23,7 @@ class AdminFactory extends Factory
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
-            'phone' => '0812' . fake()->numerify('########'),
+            'phone' => '0812'.fake()->numerify('########'),
             'password' => Hash::make('HumoraAdmin2026!'),
             'role' => 'admin',
             'is_active' => true,

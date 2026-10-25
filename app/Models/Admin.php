@@ -49,7 +49,7 @@ class Admin extends Authenticatable
 
         $parts = preg_split('/\s+/', $name);
         if (count($parts) >= 2) {
-            return strtoupper(mb_substr($parts[0], 0, 1) . mb_substr($parts[count($parts) - 1], 0, 1));
+            return strtoupper(mb_substr($parts[0], 0, 1).mb_substr($parts[count($parts) - 1], 0, 1));
         }
 
         return strtoupper(mb_substr($parts[0], 0, min(2, mb_strlen($parts[0]))));

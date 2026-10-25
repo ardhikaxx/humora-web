@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Like;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -62,9 +62,10 @@ class AuthController extends Controller
      */
     public function login(Request $request): JsonResponse
     {
-        $throttleKey = 'login-attempt:' . $request->ip();
+        $throttleKey = 'login-attempt:'.$request->ip();
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
+
             return response()->json([
                 'success' => false,
                 'message' => "Terlalu banyak percobaan login. Silakan coba lagi dalam {$seconds} detik.",
@@ -85,8 +86,9 @@ class AuthController extends Controller
             ->orWhere('phone', $identifier)
             ->first();
 
-        if (!$user || !Hash::check($validated['password'], $user->password)) {
+        if (! $user || ! Hash::check($validated['password'], $user->password)) {
             RateLimiter::hit($throttleKey, 60);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Kredensial login tidak cocok dengan data kami.',
@@ -122,16 +124,16 @@ class AuthController extends Controller
         // Merge guest likes from this device/session to the logged-in user
         $sessionId = $request->header('X-Session-ID') ?: $request->header('X-Guest-ID');
         if ($sessionId) {
-            \App\Models\Like::whereNull('user_id')
+            Like::whereNull('user_id')
                 ->where('session_id', $sessionId)
                 ->get()
                 ->each(function ($guestLike) use ($user) {
-                    $hasExisting = \App\Models\Like::where('user_id', $user->id)
+                    $hasExisting = Like::where('user_id', $user->id)
                         ->when($guestLike->episode_id, fn ($q) => $q->where('episode_id', $guestLike->episode_id))
-                        ->when(!$guestLike->episode_id, fn ($q) => $q->where('series_id', $guestLike->series_id)->whereNull('episode_id'))
+                        ->when(! $guestLike->episode_id, fn ($q) => $q->where('series_id', $guestLike->series_id)->whereNull('episode_id'))
                         ->exists();
 
-                    if (!$hasExisting) {
+                    if (! $hasExisting) {
                         $guestLike->update(['user_id' => $user->id]);
                     } else {
                         $guestLike->delete();
@@ -155,7 +157,7 @@ class AuthController extends Controller
     public function me(Request $request): JsonResponse
     {
         $user = $request->user();
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
                 'message' => 'Tidak terautentikasi.',
@@ -180,7 +182,7 @@ class AuthController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],
-            'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone,' . $user->id],
+            'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone,'.$user->id],
             'gender' => ['nullable', 'in:Laki-laki,Perempuan'],
         ]);
 
@@ -211,7 +213,7 @@ class AuthController extends Controller
             'new_password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
 
-        if (!Hash::check($validated['current_password'], $user->password)) {
+        if (! Hash::check($validated['current_password'], $user->password)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Password saat ini tidak sesuai.',
@@ -258,7 +260,7 @@ class AuthController extends Controller
 
         $user = User::where('email', $validated['email'])->first();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
                 'message' => 'Alamat email tidak terdaftar dalam basis data sistem.',
@@ -303,7 +305,7 @@ class AuthController extends Controller
 
         $user = User::where('email', $validated['email'])->first();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
                 'message' => 'Pengguna dengan email tersebut tidak ditemukan.',

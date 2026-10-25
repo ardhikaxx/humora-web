@@ -24,8 +24,8 @@ class AdminManagementController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
 
@@ -87,12 +87,12 @@ class AdminManagementController extends Controller
         $isActive = $request->has('is_active');
 
         // Prevent self-deactivation
-        if ($currentAdmin->id === $admin->id && !$isActive) {
+        if ($currentAdmin->id === $admin->id && ! $isActive) {
             return back()->withErrors(['is_active' => 'Anda tidak dapat menonaktifkan akun Anda sendiri.']);
         }
 
         // Prevent deactivating the last active administrator
-        if (!$isActive && Admin::isLastActiveAdmin($admin->id)) {
+        if (! $isActive && Admin::isLastActiveAdmin($admin->id)) {
             return back()->withErrors(['is_active' => 'Sistem harus memiliki setidaknya satu Administrator aktif.']);
         }
 
@@ -102,7 +102,7 @@ class AdminManagementController extends Controller
         $admin->role = 'admin';
         $admin->is_active = $isActive;
 
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $admin->password = Hash::make($validated['password']);
         }
 

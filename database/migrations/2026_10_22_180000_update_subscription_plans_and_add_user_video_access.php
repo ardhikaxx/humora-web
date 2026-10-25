@@ -13,26 +13,26 @@ return new class extends Migration
     {
         // 1. Add plan_type and video_quota to subscription_plans
         Schema::table('subscription_plans', function (Blueprint $table) {
-            if (!Schema::hasColumn('subscription_plans', 'plan_type')) {
+            if (! Schema::hasColumn('subscription_plans', 'plan_type')) {
                 $table->string('plan_type', 30)->default('weekly')->after('code');
             }
-            if (!Schema::hasColumn('subscription_plans', 'video_quota')) {
+            if (! Schema::hasColumn('subscription_plans', 'video_quota')) {
                 $table->unsignedInteger('video_quota')->nullable()->after('duration_days');
             }
         });
 
         // 2. Add plan_type to subscriptions table if needed
         Schema::table('subscriptions', function (Blueprint $table) {
-            if (!Schema::hasColumn('subscriptions', 'plan_type')) {
+            if (! Schema::hasColumn('subscriptions', 'plan_type')) {
                 $table->string('plan_type', 30)->default('weekly')->after('plan_id');
             }
-            if (!Schema::hasColumn('subscriptions', 'video_quota')) {
+            if (! Schema::hasColumn('subscriptions', 'video_quota')) {
                 $table->unsignedInteger('video_quota')->nullable()->after('plan_type');
             }
         });
 
         // 3. Create user_video_accesses table to track allocated videos
-        if (!Schema::hasTable('user_video_accesses')) {
+        if (! Schema::hasTable('user_video_accesses')) {
             Schema::create('user_video_accesses', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('user_id')->constrained('users')->onDelete('cascade');

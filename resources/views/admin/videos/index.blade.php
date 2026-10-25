@@ -131,7 +131,7 @@
                         </td>
                         <td>
                             <div class="d-flex align-items-center gap-2" style="max-width: 220px;">
-                                <img src="{{ $ep->series?->thumbnail_url }}" alt="" class="rounded object-fit-cover shadow-sm" style="width: 44px; height: 26px; aspect-ratio: 16/9;" onerror="this.src='{{ asset('images/logo-humora.png') }}'">
+                                <img src="{{ $ep->series?->thumbnail_url }}" alt="" loading="lazy" class="rounded object-fit-cover shadow-sm" style="width: 44px; height: 26px; aspect-ratio: 16/9;" onerror="this.src='{{ asset('images/logo-humora.png') }}'">
                                 <span class="fw-semibold text-dark text-truncate d-block" style="font-size: 0.82rem;">{{ $ep->series?->title ?? '-' }}</span>
                             </div>
                         </td>

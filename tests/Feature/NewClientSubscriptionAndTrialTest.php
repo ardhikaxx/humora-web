@@ -1,10 +1,8 @@
 <?php
 
 use App\Models\Admin;
-use App\Models\Category;
 use App\Models\Episode;
 use App\Models\Series;
-use App\Models\Subscription;
 use App\Models\SubscriptionPlan;
 use App\Models\Transaction;
 use App\Models\User;
@@ -58,7 +56,7 @@ beforeEach(function () {
     for ($s = 1; $s <= 10; $s++) {
         $series = Series::create([
             'title' => "Series Test $s",
-            'slug' => "series-test-$s-" . uniqid(),
+            'slug' => "series-test-$s-".uniqid(),
             'synopsis' => 'Sinopsis test',
             'release_year' => 2026,
             'catalog_order' => $s,
@@ -81,7 +79,7 @@ test('trial rule: series with 2 episodes has 1 free video, series with >2 episod
     // 1. Series with 2 episodes
     $series2 = Series::create([
         'title' => 'Serial 2 Episode',
-        'slug' => 'serial-2-episode-' . uniqid(),
+        'slug' => 'serial-2-episode-'.uniqid(),
         'synopsis' => 'Test sinopsis',
         'release_year' => 2026,
         'catalog_order' => 100,
@@ -108,7 +106,7 @@ test('trial rule: series with 2 episodes has 1 free video, series with >2 episod
     // 2. Series with 4 episodes
     $series4 = Series::create([
         'title' => 'Serial 4 Episode',
-        'slug' => 'serial-4-episode-' . uniqid(),
+        'slug' => 'serial-4-episode-'.uniqid(),
         'synopsis' => 'Test sinopsis',
         'release_year' => 2026,
         'catalog_order' => 101,
@@ -228,7 +226,7 @@ test('addon plan requires active weekly package at checkout', function () {
     $token = $user->createToken('test')->plainTextToken;
 
     // Attempting checkout without active weekly package -> 422
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
         ->postJson('/api/v1/subscription/checkout', [
             'plan_id' => $this->planAddon->id,
             'payment_method' => 'qris',

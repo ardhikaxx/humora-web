@@ -279,18 +279,18 @@ class BankDirectory
         $grouped = [];
         foreach (self::all() as $bank) {
             $cat = $bank['category'];
-            if (!isset($grouped[$cat])) {
+            if (! isset($grouped[$cat])) {
                 $grouped[$cat] = [];
             }
             $grouped[$cat][] = $bank;
         }
+
         return $grouped;
     }
 
     /**
      * Find bank metadata by code or name (fuzzy match).
      *
-     * @param string|null $val
      * @return array<string, mixed>|null
      */
     public static function findByCodeOrName(?string $val): ?array
@@ -331,9 +331,10 @@ class BankDirectory
     public static function getLogoUrl(?string $val): ?string
     {
         $bank = self::findByCodeOrName($val);
-        if ($bank && !empty($bank['logo'])) {
-            return asset('images/banks/' . $bank['logo']);
+        if ($bank && ! empty($bank['logo'])) {
+            return asset('images/banks/'.$bank['logo']);
         }
+
         return null;
     }
 }

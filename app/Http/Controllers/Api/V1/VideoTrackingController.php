@@ -36,7 +36,7 @@ class VideoTrackingController extends Controller
         $userId = $user?->id;
 
         // Session ID for this continuous playback event
-        $sessionId = !empty($validated['session_id']) ? $validated['session_id'] : Str::uuid()->toString();
+        $sessionId = ! empty($validated['session_id']) ? $validated['session_id'] : Str::uuid()->toString();
 
         $watchedSeconds = max(0, (int) ($validated['watched_seconds'] ?? 0));
         $lastPosition = max(0, (int) ($validated['last_position'] ?? 0));
@@ -44,7 +44,7 @@ class VideoTrackingController extends Controller
 
         // 1. Record or update ViewingEvent
         $event = ViewingEvent::firstOrNew(['session_id' => $sessionId]);
-        $isNew = !$event->exists;
+        $isNew = ! $event->exists;
 
         if ($isNew) {
             $event->episode_id = $episode->id;
@@ -59,7 +59,7 @@ class VideoTrackingController extends Controller
             if ($watchedSeconds > $event->watched_seconds) {
                 $event->watched_seconds = $watchedSeconds;
             }
-            if (!$event->user_id && $userId) {
+            if (! $event->user_id && $userId) {
                 $event->user_id = $userId;
             }
             $event->save();

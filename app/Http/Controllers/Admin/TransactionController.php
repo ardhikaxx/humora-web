@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Episode;
 use App\Models\Notification;
 use App\Models\Subscription;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Models\UserVideoAccess;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -73,7 +75,7 @@ class TransactionController extends Controller
     public function approve(Request $request, int $id): RedirectResponse
     {
         $admin = Auth::guard('admin')->user();
-        if (!$admin || !$admin->canManageFinances()) {
+        if (! $admin || ! $admin->canManageFinances()) {
             return back()->with('error', 'Hanya administrator keuangan (Finance/Super Admin) yang berwenang menyetujui pembayaran.');
         }
 
@@ -85,6 +87,7 @@ class TransactionController extends Controller
 
             if ($transaction->status !== 'pending') {
                 DB::rollBack();
+
                 return back()->with('error', "Transaksi {$transaction->trx_code} sudah berstatus '{$transaction->status}' dan tidak dapat diproses lagi.");
             }
 
@@ -131,13 +134,13 @@ class TransactionController extends Controller
                 $endDate = $activeWeekly ? $activeWeekly->end_date : ($user->valid_until && $user->valid_until->greaterThan($now) ? $user->valid_until : $now->copy()->addDays(7));
 
                 // Cari video yang belum pernah dialokasikan kepada pengguna
-                $alreadyGrantedIds = \App\Models\UserVideoAccess::where('user_id', $user->id)->pluck('episode_id')->all();
+                $alreadyGrantedIds = UserVideoAccess::where('user_id', $user->id)->pluck('episode_id')->all();
 
-                $allocatedEpisodes = \App\Models\Episode::with('series')
+                $allocatedEpisodes = Episode::with('series')
                     ->where('status', 'published')
                     ->whereNotIn('id', $alreadyGrantedIds)
                     ->get()
-                    ->filter(fn (\App\Models\Episode $ep) => !$ep->isFreePreview())
+                    ->filter(fn (Episode $ep) => ! $ep->isFreePreview())
                     ->sortBy([
                         fn ($a, $b) => ($a->series->catalog_order ?? 999) <=> ($b->series->catalog_order ?? 999),
                         fn ($a, $b) => $a->series_id <=> $b->series_id,
@@ -160,7 +163,7 @@ class TransactionController extends Controller
                 ]);
 
                 foreach ($allocatedEpisodes as $ep) {
-                    \App\Models\UserVideoAccess::create([
+                    UserVideoAccess::create([
                         'user_id' => $user->id,
                         'episode_id' => $ep->id,
                         'subscription_id' => $subscription->id,
@@ -189,13 +192,13 @@ class TransactionController extends Controller
                 }
 
                 // Cari 15 video yang belum pernah diberikan sebelumnya
-                $alreadyGrantedIds = \App\Models\UserVideoAccess::where('user_id', $user->id)->pluck('episode_id')->all();
+                $alreadyGrantedIds = UserVideoAccess::where('user_id', $user->id)->pluck('episode_id')->all();
 
-                $allocatedEpisodes = \App\Models\Episode::with('series')
+                $allocatedEpisodes = Episode::with('series')
                     ->where('status', 'published')
                     ->whereNotIn('id', $alreadyGrantedIds)
                     ->get()
-                    ->filter(fn (\App\Models\Episode $ep) => !$ep->isFreePreview())
+                    ->filter(fn (Episode $ep) => ! $ep->isFreePreview())
                     ->sortBy([
                         fn ($a, $b) => ($a->series->catalog_order ?? 999) <=> ($b->series->catalog_order ?? 999),
                         fn ($a, $b) => $a->series_id <=> $b->series_id,
@@ -218,7 +221,7 @@ class TransactionController extends Controller
                 ]);
 
                 foreach ($allocatedEpisodes as $ep) {
-                    \App\Models\UserVideoAccess::create([
+                    UserVideoAccess::create([
                         'user_id' => $user->id,
                         'episode_id' => $ep->id,
                         'subscription_id' => $subscription->id,
@@ -259,7 +262,8 @@ class TransactionController extends Controller
             return back()->with('success', $successMsg);
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal memproses persetujuan transaksi: ' . $e->getMessage());
+
+            return back()->with('error', 'Gagal memproses persetujuan transaksi: '.$e->getMessage());
         }
     }
 
@@ -269,7 +273,7 @@ class TransactionController extends Controller
     public function reject(Request $request, int $id): RedirectResponse
     {
         $admin = Auth::guard('admin')->user();
-        if (!$admin || !$admin->canManageFinances()) {
+        if (! $admin || ! $admin->canManageFinances()) {
             return back()->with('error', 'Hanya administrator keuangan (Finance/Super Admin) yang berwenang menolak transaksi.');
         }
 
@@ -284,6 +288,7 @@ class TransactionController extends Controller
 
             if ($transaction->status !== 'pending') {
                 DB::rollBack();
+
                 return back()->with('error', "Transaksi {$transaction->trx_code} sudah berstatus '{$transaction->status}' dan tidak dapat diproses lagi.");
             }
 
@@ -310,7 +315,8 @@ class TransactionController extends Controller
             return back()->with('info', "Transaksi {$transaction->trx_code} telah ditolak dengan alasan: {$validated['reject_reason']}.");
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal memproses penolakan transaksi: ' . $e->getMessage());
+
+            return back()->with('error', 'Gagal memproses penolakan transaksi: '.$e->getMessage());
         }
     }
 }

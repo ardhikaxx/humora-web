@@ -7,7 +7,6 @@ use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
     $this->plan = SubscriptionPlan::create([
@@ -101,7 +100,7 @@ test('admin can save multiple dynamic bank accounts and API serves them', functi
 test('user can upload payment proof and create pending transaction', function () {
     $file = UploadedFile::fake()->image('bukti_transfer.jpg', 600, 800);
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $this->userToken)
+    $response = $this->withHeader('Authorization', 'Bearer '.$this->userToken)
         ->postJson('/api/v1/transactions/upload-proof', [
             'plan_id' => $this->plan->id,
             'payment_method' => 'bca',
