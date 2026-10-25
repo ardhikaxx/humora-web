@@ -2,6 +2,52 @@
 
 @section('title', 'Tambah Episode Video Baru - HUMORA')
 
+@section('styles')
+<!-- Select2 CSS Lokal -->
+<link href="{{ asset('vendor/select2/css/select2.min.css') }}" rel="stylesheet" />
+<style>
+    /* Select2 custom styling to match Humora admin theme */
+    .select2-container--default .select2-selection--single {
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 6px !important;
+        background: #fff !important;
+        height: auto !important;
+        min-height: 52px !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: #374151 !important;
+        line-height: 50px !important;
+        padding-left: 12px !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        top: 8px !important;
+    }
+    .select2-container--default .select2-dropdown {
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 6px !important;
+        margin-top: 4px !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+    }
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 4px !important;
+        padding: 8px 12px !important;
+    }
+    .select2-container--default .select2-results__option {
+        padding: 8px 12px !important;
+        color: #374151 !important;
+    }
+    .select2-container--default .select2-results__option--highlighted {
+        background-color: #43135C !important;
+        color: #fff !important;
+    }
+    .select2-container--default .select2-results__option--selected {
+        background-color: #F3E8FF !important;
+        color: #43135C !important;
+    }
+</style>
+@endsection
+
 @section('content')
 <!-- Breadcrumbs -->
 <div class="mb-2">
@@ -48,7 +94,7 @@
 
                     <div class="mb-3">
                         <label for="seriesSelect" class="form-label-custom">Series Induk <span class="text-danger">*</span></label>
-                        <select id="seriesSelect" name="series_id" class="form-select-custom @error('series_id') is-invalid @enderror" required>
+                        <select id="seriesSelect" name="series_id" class="select2 @error('series_id') is-invalid @enderror" required data-placeholder="Pilih atau cari Series Induk...">
                             @foreach ($seriesList as $s)
                                 @php
                                     $nextEp = $nextEpisodeNumbers[$s->id] ?? 1;
@@ -67,6 +113,38 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+
+                    <!-- Select2: jQuery + Select2 Lokal + Inisialisasi -->
+                    <script src="{{ asset('vendor/jquery/jquery-3.7.1.min.js') }}"></script>
+                    <script src="{{ asset('vendor/select2/js/select2.min.js') }}"></script>
+                    <script>
+                    (function () {
+                        if (typeof jQuery === 'undefined' || typeof jQuery.fn.select2 === 'undefined') {
+                            return;
+                        }
+
+                        var $el = jQuery('#seriesSelect');
+                        if (!$el.length) {
+                            return;
+                        }
+
+                        $el.select2({
+                            placeholder: 'Pilih atau cari Series Induk...',
+                            allowClear: false,
+                            width: '100%',
+                        });
+
+                        $el.on('change', function () {
+                            if (typeof syncSeriesSelection === 'function') {
+                                syncSeriesSelection();
+                            }
+                        });
+
+                        if (typeof syncSeriesSelection === 'function') {
+                            syncSeriesSelection();
+                        }
+                    })();
+                    </script>
                 </div>
             </div>
 
@@ -505,3 +583,5 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 @endsection
+
+

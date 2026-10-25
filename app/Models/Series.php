@@ -96,4 +96,11 @@ class Series extends Model
             ? $this->categories->pluck('name')->implode(', ')
             : $this->categories()->pluck('name')->implode(', ');
     }
+
+    public function getPublishedEpisodesCountAttribute(): int
+    {
+        return $this->relationLoaded('publishedEpisodes')
+            ? $this->publishedEpisodes->count()
+            : $this->publishedEpisodes()->count();
+    }
 }

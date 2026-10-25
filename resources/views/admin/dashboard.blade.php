@@ -240,7 +240,7 @@
                                 {{ $series->title }}
                             </a>
                             <div class="d-flex align-items-center gap-2 text-muted" style="font-size: 0.72rem;">
-                                <span>{{ $series->published_episodes_count ?? $series->episodes->count() }} Episode</span>
+                                <span>{{ $series->published_episodes_count }} Episode</span>
                                 <span>&bull;</span>
                                 <span>Tahun {{ $series->release_year }}</span>
                                 @if ($series->is_featured)
