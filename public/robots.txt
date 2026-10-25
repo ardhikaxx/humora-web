@@ -1,2 +1,9 @@
 User-agent: *
-Disallow:
+Allow: /
+Allow: /download/app
+Allow: /sitemap.xml
+Disallow: /admin/
+Disallow: /proofs/
+Disallow: /api/
+
+Sitemap: https://humora.id/sitemap.xml

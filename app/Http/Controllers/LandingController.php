@@ -7,6 +7,7 @@ use App\Models\Episode;
 use App\Models\Series;
 use App\Models\SubscriptionPlan;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class LandingController extends Controller
@@ -17,17 +18,20 @@ class LandingController extends Controller
     public function index()
     {
         $featuredSeries = Series::with(['categories'])
+            ->withCount(['publishedEpisodes', 'episodes'])
             ->where('status', 'published')
             ->where('is_featured', true)
             ->first();
 
         if (! $featuredSeries) {
             $featuredSeries = Series::with(['categories'])
+                ->withCount(['publishedEpisodes', 'episodes'])
                 ->where('status', 'published')
                 ->first();
         }
 
         $seriesList = Series::with(['categories'])
+            ->withCount(['publishedEpisodes', 'episodes'])
             ->where('status', 'published')
             ->orderBy('catalog_order')
             ->get();
@@ -92,6 +96,24 @@ class LandingController extends Controller
 
         return response()->download($targetFile, basename($targetFile), [
             'Content-Type' => 'application/vnd.android.package-archive',
+        ]);
+    }
+
+    /**
+     * Generate dynamic sitemap.xml for Googlebot and search engines.
+     */
+    public function sitemap(): Response
+    {
+        $series = Series::where('status', 'published')
+            ->select('id', 'slug', 'updated_at')
+            ->orderBy('catalog_order')
+            ->get();
+
+        $xml = view('sitemap', compact('series'))->render();
+
+        return response($xml, 200, [
+            'Content-Type' => 'application/xml; charset=utf-8',
+            'Cache-Control' => 'public, max-age=86400',
         ]);
     }
 }
