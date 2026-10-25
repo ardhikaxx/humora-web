@@ -73,7 +73,8 @@
                     <a href="#katalog" class="nav-text-link d-none d-sm-inline-block">Katalog</a>
                     <a href="{{ route('app.download') }}" class="btn-pill-yellow">
                         <i class="bi bi-download"></i>
-                        <span>Download Aplikasi</span>
+                        <span class="d-none d-sm-inline">Download Aplikasi</span>
+                        <span class="d-inline d-sm-none">Download</span>
                     </a>
                 </div>
             </header>
@@ -273,7 +274,8 @@
                     <div class="about-card-bottom-actions mt-4">
                         <a href="{{ route('app.download') }}" class="btn-card-pill-cta">
                             <i class="bi bi-download"></i>
-                            <span>Unduh Aplikasi HUMORA (Android)</span>
+                            <span class="d-none d-sm-inline">Unduh Aplikasi HUMORA (Android)</span>
+                            <span class="d-inline d-sm-none">Unduh Aplikasi</span>
                         </a>
 
                         <a href="{{ route('app.download') }}" class="btn-circle-arrow" title="Unduh Sekarang">
@@ -348,6 +350,10 @@
                 $row1 = array_slice($availableThumbs, 0, 5);
                 $row2 = array_slice($availableThumbs, 5, 5);
                 $row3 = array_slice($availableThumbs, 10, 5);
+                // 15 tiles per set (2,790px width) guarantees seamless infinite loop without gaps on large 1440p/4K monitors
+                $row1Set = !empty($row1) ? array_merge($row1, $row1, $row1) : [];
+                $row2Set = !empty($row2) ? array_merge($row2, $row2, $row2) : [];
+                $row3Set = !empty($row3) ? array_merge($row3, $row3, $row3) : [];
             @endphp
 
             <!-- Big Centered Headline with Inline Avatars (Direct match of Section 2 & image.png) -->
@@ -391,14 +397,14 @@
                 <div class="mosaic-row row-stagger-1">
                     <div class="mosaic-track track-left">
                         <div class="mosaic-set">
-                            @foreach(array_merge($row1, $row1) as $thumb)
+                            @foreach($row1Set as $thumb)
                             <div class="mosaic-tile">
                                 <img src="{{ $thumb }}" alt="Serial Komedi HUMORA" loading="lazy">
                             </div>
                             @endforeach
                         </div>
                         <div class="mosaic-set">
-                            @foreach(array_merge($row1, $row1) as $thumb)
+                            @foreach($row1Set as $thumb)
                             <div class="mosaic-tile">
                                 <img src="{{ $thumb }}" alt="Serial Komedi HUMORA" loading="lazy">
                             </div>
@@ -411,14 +417,14 @@
                 <div class="mosaic-row row-stagger-2">
                     <div class="mosaic-track track-right">
                         <div class="mosaic-set">
-                            @foreach(array_merge($row2, $row2) as $thumb)
+                            @foreach($row2Set as $thumb)
                             <div class="mosaic-tile">
                                 <img src="{{ $thumb }}" alt="Serial Komedi HUMORA" loading="lazy">
                             </div>
                             @endforeach
                         </div>
                         <div class="mosaic-set">
-                            @foreach(array_merge($row2, $row2) as $thumb)
+                            @foreach($row2Set as $thumb)
                             <div class="mosaic-tile">
                                 <img src="{{ $thumb }}" alt="Serial Komedi HUMORA" loading="lazy">
                             </div>
@@ -431,14 +437,14 @@
                 <div class="mosaic-row row-stagger-3">
                     <div class="mosaic-track track-left">
                         <div class="mosaic-set">
-                            @foreach(array_merge($row3, $row3) as $thumb)
+                            @foreach($row3Set as $thumb)
                             <div class="mosaic-tile">
                                 <img src="{{ $thumb }}" alt="Serial Komedi HUMORA" loading="lazy">
                             </div>
                             @endforeach
                         </div>
                         <div class="mosaic-set">
-                            @foreach(array_merge($row3, $row3) as $thumb)
+                            @foreach($row3Set as $thumb)
                             <div class="mosaic-tile">
                                 <img src="{{ $thumb }}" alt="Serial Komedi HUMORA" loading="lazy">
                             </div>
@@ -460,11 +466,11 @@
             </div>
 
             <div class="footer-links">
-                <a href="#hero" class="footer-link">Kembali ke Atas</a>
                 <a href="#about" class="footer-link">Fitur</a>
                 <a href="#katalog" class="footer-link">Katalog</a>
                 <a href="{{ route('app.download') }}" class="footer-link">Download Aplikasi</a>
                 <a href="{{ route('login') }}" class="footer-link">Portal Admin</a>
+                <a href="#hero" class="footer-link">Kembali ke Atas</a>
             </div>
 
             <div class="w-100 text-center text-md-start small text-muted pt-2 border-top border-light-subtle">
