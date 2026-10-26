@@ -131,6 +131,15 @@ test('guest and free user can stream episode 1 and 2 preview', function () {
     $userResponse->assertStatus(200);
 });
 
+test('stream endpoint supports HTTP 206 Partial Content for video range requests', function () {
+    $response = $this->withHeader('Range', 'bytes=0-100')
+        ->get('/api/v1/files/stream/'.$this->episode1->id);
+
+    $response->assertStatus(206);
+    $response->assertHeader('Accept-Ranges', 'bytes');
+    $response->assertHeader('Content-Range');
+});
+
 test('guest and free user cannot stream episode 3 (returns 403 PREMIUM_REQUIRED)', function () {
     // Guest attempt
     $guestResponse = $this->getJson('/api/v1/files/stream/'.$this->episode3->id);

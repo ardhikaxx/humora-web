@@ -22,11 +22,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('v1')->group(function () {
-    // 1. Authentication (Public)
-    Route::post('/auth/register', [AuthController::class, 'register']);
-    Route::post('/auth/login', [AuthController::class, 'login']);
-    Route::post('/auth/forgot-password', [AuthController::class, 'forgotPasswordVerify']);
-    Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
+    // 1. Authentication (Public - Protected with Rate Limiting)
+    Route::middleware('throttle:10,1')->group(function () {
+        Route::post('/auth/register', [AuthController::class, 'register']);
+        Route::post('/auth/login', [AuthController::class, 'login']);
+        Route::post('/auth/forgot-password', [AuthController::class, 'forgotPasswordVerify']);
+        Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
+    });
 
     // 2. Catalog & Discovery (Public / Guest Allowed)
     Route::get('/series', [SeriesController::class, 'index']);
@@ -46,7 +48,8 @@ Route::prefix('v1')->group(function () {
     // 3. Subscription Plans & Payment Information (Public)
     Route::get('/subscription/plans', [SubscriptionController::class, 'plans']);
     Route::get('/settings/payment-info', [SubscriptionController::class, 'paymentInfo']);
-    Route::get('/subscription/qris-dynamic', [SubscriptionController::class, 'dynamicQris']);
+    Route::get('/subscription/qris-dynamic', [SubscriptionController::class, 'dynamicQris'])
+        ->middleware('throttle:20,1');
 
     // 4. Secure File Access & Streaming
     Route::get('/files/thumbnail/{filename}', [FileStorageController::class, 'publicThumbnail'])
@@ -70,7 +73,8 @@ Route::prefix('v1')->group(function () {
         // Subscriptions & Transactions
         Route::get('/subscription/status', [SubscriptionController::class, 'status']);
         Route::post('/subscription/checkout', [TransactionController::class, 'checkout']);
-        Route::post('/transactions/upload-proof', [TransactionController::class, 'uploadProof']);
+        Route::post('/transactions/upload-proof', [TransactionController::class, 'uploadProof'])
+            ->middleware('throttle:10,1');
         Route::get('/transactions', [TransactionController::class, 'index']);
         Route::get('/transactions/{id}', [TransactionController::class, 'show']);
 

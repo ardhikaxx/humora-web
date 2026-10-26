@@ -30,12 +30,16 @@ Route::get('/sitemap.xml', [LandingController::class, 'sitemap'])->name('sitemap
 // Authentication Routes
 Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
 Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
-Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
+Route::post('/login', [AdminAuthController::class, 'login'])
+    ->middleware('throttle:5,1')
+    ->name('admin.login.submit');
 Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
 // Forgot & Reset Password Routes (Admin)
 Route::get('/forgot-password', [AdminAuthController::class, 'showForgotPasswordForm'])->name('admin.password.request');
-Route::post('/forgot-password', [AdminAuthController::class, 'verifyForgotPasswordEmail'])->name('admin.password.email');
+Route::post('/forgot-password', [AdminAuthController::class, 'verifyForgotPasswordEmail'])
+    ->middleware('throttle:5,1')
+    ->name('admin.password.email');
 Route::get('/reset-password', [AdminAuthController::class, 'showResetPasswordForm'])->name('admin.password.reset');
 Route::post('/reset-password', [AdminAuthController::class, 'resetPassword'])->name('admin.password.update');
 
