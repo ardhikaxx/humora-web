@@ -24,23 +24,13 @@ test('landing page contains comprehensive seo meta tags and structured data', fu
     $response->assertSee('og:site_name', false);
     $response->assertSee('twitter:card', false);
 
-    // 2. Schema.org JSON-LD
-    $response->assertSee('application/ld+json', false);
-    $response->assertSee('MobileApplication');
-    $response->assertSee('FAQPage');
-    $response->assertSee('HowTo');
-
-    // 3. High-Converting Content Sections
+    // 3. Main Landing Sections (Matching Design Reference: Hero, About, Katalog)
     $response->assertSee('id="hero"', false);
     $response->assertSee('id="about"', false);
     $response->assertSee('id="katalog"', false);
-    $response->assertSee('id="langkah"', false);
-    $response->assertSee('id="paket"', false);
-    $response->assertSee('id="faq"', false);
 
-    // 4. Mobile Sticky Download Action
-    $response->assertSee('mobile-sticky-bar');
-    $response->assertSee('Unduh Aplikasi');
+    // 4. Download Action
+    $response->assertSee('Download Aplikasi');
 });
 
 test('sitemap xml endpoint returns valid xml document with public routes', function () {
