@@ -35,13 +35,19 @@
             <i data-lucide="pencil"></i>
             <span>Edit Series</span>
         </a>
-        <button type="button" class="btn btn-humora-icon danger" title="Hapus Series" onclick="confirmDeleteSeries()">
-            <i data-lucide="trash-2"></i>
-        </button>
-        <form id="deleteSeriesForm" action="{{ route('admin.series.destroy', $series->id) }}" method="POST" class="d-none">
-            @csrf
-            @method('DELETE')
-        </form>
+        @if ($series->episodes->count() > 0)
+            <button type="button" class="btn btn-humora-icon text-muted" style="cursor: not-allowed; opacity: 0.65;" title="Series memiliki {{ $series->episodes->count() }} episode video (tidak dapat dihapus)" onclick="warnCannotDeleteSeries('{{ addslashes($series->title) }}', {{ $series->episodes->count() }})">
+                <i data-lucide="lock"></i>
+            </button>
+        @else
+            <button type="button" class="btn btn-humora-icon danger" title="Hapus Series" onclick="confirmDeleteSeries()">
+                <i data-lucide="trash-2"></i>
+            </button>
+            <form id="deleteSeriesForm" action="{{ route('admin.series.destroy', $series->id) }}" method="POST" class="d-none">
+                @csrf
+                @method('DELETE')
+            </form>
+        @endif
         <a href="{{ route('admin.videos.create', ['series_id' => $series->id]) }}" class="btn btn-humora-primary">
             <i data-lucide="plus"></i>
             <span>Tambah Episode</span>
@@ -211,7 +217,7 @@
 function confirmDeleteSeries() {
     Swal.fire({
         title: 'Hapus Series?',
-        text: 'Apakah Anda yakin ingin menghapus series ini secara permanen? Seluruh data episode di dalamnya akan ikut dihapus.',
+        text: 'Apakah Anda yakin ingin menghapus series ini secara permanen?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#DC2626',
@@ -222,6 +228,16 @@ function confirmDeleteSeries() {
         if (res.isConfirmed) {
             document.getElementById('deleteSeriesForm').submit();
         }
+    });
+}
+
+function warnCannotDeleteSeries(title, count) {
+    Swal.fire({
+        icon: 'warning',
+        title: 'Series Tidak Dapat Dihapus',
+        html: `Series <strong>'${title}'</strong> tidak dapat dihapus karena masih memiliki <strong>${count} episode video</strong>.<br><br><span class="text-muted" style="font-size:0.84rem;">Untuk menjaga integritas konten, Anda harus menghapus seluruh episode video di dalamnya terlebih dahulu sebelum series ini dapat dihapus.</span>`,
+        confirmButtonColor: '#43135C',
+        confirmButtonText: 'Saya Mengerti'
     });
 }
 

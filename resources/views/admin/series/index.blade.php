@@ -177,13 +177,19 @@
                                 <a href="{{ route('admin.series.edit', $series->id) }}" class="btn-humora-icon" title="Edit Series">
                                     <i data-lucide="pencil"></i>
                                 </a>
-                                <button type="button" class="btn-humora-icon danger" title="Hapus Series" onclick="confirmDeleteSeries({{ $series->id }}, '{{ addslashes($series->title) }}')">
-                                    <i data-lucide="trash-2"></i>
-                                </button>
-                                <form id="delete-series-{{ $series->id }}" action="{{ route('admin.series.destroy', $series->id) }}" method="POST" class="d-none">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
+                                @if ($series->episodes_count > 0)
+                                    <button type="button" class="btn-humora-icon text-muted" style="cursor: not-allowed; opacity: 0.6;" title="Series memiliki {{ $series->episodes_count }} episode video (tidak dapat dihapus)" onclick="warnCannotDeleteSeries('{{ addslashes($series->title) }}', {{ $series->episodes_count }})">
+                                        <i data-lucide="lock" style="width: 14px; height: 14px;"></i>
+                                    </button>
+                                @else
+                                    <button type="button" class="btn-humora-icon danger" title="Hapus Series" onclick="confirmDeleteSeries({{ $series->id }}, '{{ addslashes($series->title) }}')">
+                                        <i data-lucide="trash-2"></i>
+                                    </button>
+                                    <form id="delete-series-{{ $series->id }}" action="{{ route('admin.series.destroy', $series->id) }}" method="POST" class="d-none">
+                                        @csrf
+                                        @method('DELETE')
+                                    </form>
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -217,17 +223,27 @@
 function confirmDeleteSeries(id, title) {
     Swal.fire({
         title: 'Hapus Series?',
-        text: `Apakah Anda yakin ingin menghapus series '${title}'? Seluruh episode dan data terkait akan ikut terhapus secara permanen.`,
+        text: `Apakah Anda yakin ingin menghapus series '${title}'?`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#DC2626',
         cancelButtonColor: '#64748B',
-        confirmButtonText: 'Ya, Hapus Permanen',
+        confirmButtonText: 'Ya, Hapus Series',
         cancelButtonText: 'Batal'
     }).then((result) => {
         if (result.isConfirmed) {
             document.getElementById(`delete-series-${id}`).submit();
         }
+    });
+}
+
+function warnCannotDeleteSeries(title, count) {
+    Swal.fire({
+        icon: 'warning',
+        title: 'Series Tidak Dapat Dihapus',
+        html: `Series <strong>'${title}'</strong> tidak dapat dihapus karena masih memiliki <strong>${count} episode video</strong>.<br><br><span class="text-muted" style="font-size:0.84rem;">Untuk menjaga integritas konten, Anda harus menghapus seluruh episode video di dalamnya terlebih dahulu sebelum series ini dapat dihapus.</span>`,
+        confirmButtonColor: '#43135C',
+        confirmButtonText: 'Saya Mengerti'
     });
 }
 </script>

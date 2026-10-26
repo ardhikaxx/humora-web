@@ -212,23 +212,27 @@ class SeriesController extends Controller
     }
 
     /**
-     * Delete series and its associated assets
+     * Delete series if it has no associated episodes
      */
     public function destroy(int $id): RedirectResponse
     {
-        $series = Series::with('episodes')->findOrFail($id);
+        $series = Series::withCount('episodes')->findOrFail($id);
+
+        if ($series->episodes_count > 0) {
+            return redirect()->route('admin.series.index')
+                ->with('error', "Series '{$series->title}' tidak dapat dihapus karena masih memiliki {$series->episodes_count} episode video. Harap hapus seluruh episode video terlebih dahulu.");
+        }
 
         DB::transaction(function () use ($series) {
             // Delete thumbnail file
-            if ($series->thumbnail) {
+            if ($series->thumbnail && ! in_array($series->thumbnail, ['cara-deketin-cewek.jpg', 'drama-warga-grup-rt.jpg'], true)) {
                 $this->fileStorage->deleteFile('thumbnails', $series->thumbnail);
             }
 
-            // Delete series (cascade deletes episodes and histories)
             $series->delete();
         });
 
         return redirect()->route('admin.series.index')
-            ->with('success', "Series '{$series->title}' beserta seluruh episode terkait berhasil dihapus.");
+            ->with('success', "Series '{$series->title}' berhasil dihapus.");
     }
 }

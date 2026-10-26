@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\FileStorageService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -33,6 +34,21 @@ class Series extends Model
         'likes_count',
         'genre',
     ];
+
+    protected static function booted(): void
+    {
+        static::deleting(function (Series $series) {
+            // Prevent deletion if series still has episode video data
+            if ($series->episodes()->exists()) {
+                return false;
+            }
+
+            // Clean up thumbnail file from storage if empty
+            if ($series->thumbnail && ! in_array($series->thumbnail, ['cara-deketin-cewek.jpg', 'drama-warga-grup-rt.jpg'], true)) {
+                app(FileStorageService::class)->deleteFile('thumbnails', $series->thumbnail);
+            }
+        });
+    }
 
     public function categories(): BelongsToMany
     {
