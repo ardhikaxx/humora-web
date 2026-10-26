@@ -593,7 +593,7 @@ function formatBankOption(state) {
     return $(`
         <div class="bank-select-option-row">
             <div class="bank-option-logo-wrapper">
-                ${logo ? `<img src="${logo}" class="bank-option-logo-img" alt="${name}" onerror="this.parentElement.innerHTML='🏦'" />` : '🏦'}
+                ${logo ? `<img src="${logo}" class="bank-option-logo-img" alt="${name}" onerror="this.parentElement.innerHTML='<i data-lucide=\\'landmark\\' style=\\'width:15px;height:15px;\\'></i>'; if(window.lucide) window.lucide.createIcons();" />` : '<i data-lucide="landmark" style="width:15px;height:15px;"></i>'}
             </div>
             <span class="bank-option-name">${name}</span>
             ${category ? `<span class="bank-option-badge ${badgeClass}">${category}</span>` : ''}
@@ -613,13 +613,20 @@ function formatBankSelection(state) {
         return $(`
             <span class="d-inline-flex align-items-center gap-2">
                 <span class="bank-option-logo-wrapper" style="width:26px; height:18px; padding:1px 2px; border-radius:4px;">
-                    <img src="${logo}" class="bank-option-logo-img" alt="${name}" onerror="this.style.display='none'" />
+                    <img src="${logo}" class="bank-option-logo-img" alt="${name}" onerror="this.parentElement.innerHTML='<i data-lucide=\\'landmark\\' style=\\'width:14px;height:14px;\\'></i>'; if(window.lucide) window.lucide.createIcons();" />
                 </span>
                 <span class="fw-semibold text-dark">${name}</span>
             </span>
         `);
     }
-    return name;
+    return $(`
+        <span class="d-inline-flex align-items-center gap-2">
+            <span class="bank-option-logo-wrapper d-inline-flex align-items-center justify-content-center" style="width:26px; height:18px; padding:1px 2px; border-radius:4px;">
+                <i data-lucide="landmark" style="width:14px;height:14px;"></i>
+            </span>
+            <span class="fw-semibold text-dark">${name}</span>
+        </span>
+    `);
 }
 
 // Initialize Select2 on target element
@@ -632,6 +639,22 @@ function initBankSelect2($select) {
         templateResult: formatBankOption,
         templateSelection: formatBankSelection,
         escapeMarkup: function(m) { return m; }
+    });
+
+    $select.on('select2:open', function () {
+        setTimeout(function () {
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+        }, 10);
+    });
+
+    $select.on('select2:select', function () {
+        setTimeout(function () {
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+        }, 10);
     });
 
     // Handle change event

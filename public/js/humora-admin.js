@@ -632,12 +632,13 @@ document.addEventListener('DOMContentLoaded', function () {
                             <span>
                                 <strong>Terkonversi ke WebP:</strong> 
                                 <span class="text-decoration-line-through text-muted">${window.formatBytes(result.originalSize)}</span> 
-                                &rarr; <span class="fw-bold text-success">${window.formatBytes(result.compressedSize)}</span> 
+                                <i data-lucide="arrow-right" style="width: 13px; height: 13px; vertical-align: -2px;" class="mx-1 d-inline-block"></i>
+                                <span class="fw-bold text-success">${window.formatBytes(result.compressedSize)}</span> 
                                 <span class="badge bg-success ms-1">Hemat ${result.savingsPercent}%</span>
                             </span>
                         </div>
                         <span class="badge py-1 px-2 text-uppercase" style="background: rgba(16, 185, 129, 0.2); color: #065F46; font-size: 0.7rem;">
-                            ${result.width} &times; ${result.height} px
+                            ${result.width} x ${result.height} px
                         </span>
                     </div>
                 `;
