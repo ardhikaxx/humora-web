@@ -40,7 +40,7 @@ test('landing page contains comprehensive seo meta tags and structured data', fu
 
     // 4. Mobile Sticky Download Action
     $response->assertSee('mobile-sticky-bar');
-    $response->assertSee('Unduh APK');
+    $response->assertSee('Unduh Aplikasi');
 });
 
 test('sitemap xml endpoint returns valid xml document with public routes', function () {

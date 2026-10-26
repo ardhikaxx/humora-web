@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>HUMORA — Aplikasi Nonton Serial Komedi Indonesia | Streaming Video Sketsa Lucu Singkat APK Gratis</title>
+    <title>HUMORA — Aplikasi Nonton Serial Komedi Indonesia | Streaming Video Sketsa Lucu Singkat Gratis</title>
 
     <!-- Meta SEO Utilitas & Pengindeksan Google (Peringkat #1 Search Engine) -->
-    <meta name="description" content="Nonton puluhan serial sketsa komedi Indonesia lucu berdurasi ~2 menit di aplikasi HUMORA. Cerita lucu to the point, hemat kuota internet hingga 70%, bebas buffering. Episode 1 &amp; 2 GRATIS! Unduh APK Android resmi sekarang!">
-    <meta name="keywords" content="humora, aplikasi humora, download apk humora, humora apk download, aplikasi nonton serial komedi, serial komedi indonesia, sketsa komedi pendek, nonton serial komedi lucu, streaming komedi indonesia, video lucu singkat, serial komedi gratis, nonton komedi hemat kuota, aplikasi streaming komedi indonesia, aplikasi nonton video lucu indonesia, aplikasi komedi android gratis, web series komedi indonesia, film pendek komedi lucu, sitkom indonesia terbaru 2026, sketsa lucu 2 menit, komedi pengusir stres, download video komedi offline, streaming komedi qris murah, rekomendasi tontonan lucu indonesia, drama komedi pendek indonesia, tontonan pengisi waktu luang lucu, komedi situasi indonesia, komedi keluarga indonesia, stand up comedy sketsa">
+    <meta name="description" content="Nonton puluhan serial sketsa komedi Indonesia lucu berdurasi ~2 menit di aplikasi HUMORA. Cerita lucu to the point, hemat kuota internet hingga 70%, bebas buffering. Episode 1 &amp; 2 GRATIS! Unduh aplikasi mobile Android resmi sekarang!">
+    <meta name="keywords" content="humora, aplikasi humora, download aplikasi humora, unduh aplikasi humora, aplikasi mobile humora, aplikasi nonton serial komedi, serial komedi indonesia, sketsa komedi pendek, nonton serial komedi lucu, streaming komedi indonesia, video lucu singkat, serial komedi gratis, nonton komedi hemat kuota, aplikasi streaming komedi indonesia, aplikasi nonton video lucu indonesia, aplikasi komedi android gratis, web series komedi indonesia, film pendek komedi lucu, sitkom indonesia terbaru 2026, sketsa lucu 2 menit, komedi pengusir stres, download video komedi offline, streaming komedi qris murah, rekomendasi tontonan lucu indonesia, drama komedi pendek indonesia, tontonan pengisi waktu luang lucu, komedi situasi indonesia, komedi keluarga indonesia, stand up comedy sketsa">
     <meta name="author" content="HUMORA Indonesia">
     <meta name="news_keywords" content="serial komedi indonesia, sketsa komedi, humora, streaming komedi, video lucu singkat">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -29,7 +29,7 @@
     <meta property="og:locale" content="id_ID">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ route('landing') }}">
-    <meta property="og:title" content="HUMORA — Aplikasi Nonton Serial Komedi Indonesia | Streaming Video Sketsa Lucu APK">
+    <meta property="og:title" content="HUMORA — Aplikasi Nonton Serial Komedi Indonesia | Streaming Video Sketsa Lucu Mobile">
     <meta property="og:description" content="Nonton puluhan serial sketsa komedi lucu khas Indonesia di aplikasi HUMORA. Cerita lucu ~2 menit langsung ke inti lelucon. Episode 1 &amp; 2 GRATIS untuk semua judul serial!">
     <meta property="og:image" content="{{ asset('images/logo-humora.png') }}">
     <meta property="og:image:secure_url" content="{{ asset('images/logo-humora.png') }}">
@@ -42,7 +42,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@humora_id">
     <meta name="twitter:creator" content="@humora_id">
-    <meta name="twitter:title" content="HUMORA — Aplikasi Serial Komedi Indonesia | Streaming Sketsa Lucu APK">
+    <meta name="twitter:title" content="HUMORA — Aplikasi Serial Komedi Indonesia | Streaming Sketsa Lucu Mobile">
     <meta name="twitter:description" content="Tonton serial sketsa komedi lucu khas Indonesia berdurasi ~2 menit. Episode 1 &amp; 2 GRATIS! Hemat kuota data, unduh aplikasi sekarang.">
     <meta name="twitter:image" content="{{ asset('images/logo-humora.png') }}">
     <meta name="twitter:image:alt" content="HUMORA — Platform Serial Komedi Indonesia">
@@ -148,7 +148,7 @@
                     [
                         '@type' => 'ListItem',
                         'position' => 5,
-                        'name' => 'Download APK Android',
+                        'name' => 'Download Aplikasi Mobile Android',
                         'item' => route('app.download'),
                     ],
                 ],
@@ -231,7 +231,7 @@
                         '@type' => 'HowToStep',
                         'position' => 1,
                         'name' => 'Unduh Aplikasi HUMORA',
-                        'text' => 'Klik tombol Download Aplikasi pada halaman ini untuk mengunduh berkas APK HUMORA Android (~15 MB).',
+                        'text' => 'Klik tombol Download Aplikasi pada halaman ini untuk mengunduh aplikasi mobile HUMORA Android (~15 MB).',
                         'url' => route('app.download'),
                     ],
                     [
@@ -291,7 +291,7 @@
                         'name' => 'Bagaimana cara download dan install aplikasi HUMORA di HP Android?',
                         'acceptedAnswer' => [
                             '@type' => 'Answer',
-                            'text' => 'Cukup klik tombol Download Aplikasi pada halaman ini. Setelah berkas APK selesai diunduh (~15 MB), buka file tersebut di HP Anda, pilih Izinkan Instalasi dari Sumber Ini, dan aplikasi HUMORA siap digunakan langsung tanpa ribet.',
+                            'text' => 'Cukup klik tombol Download Aplikasi pada halaman ini. Setelah aplikasi selesai diunduh (~15 MB), buka berkas tersebut di HP Anda, pilih Izinkan Instalasi jika diminta, dan aplikasi HUMORA siap digunakan langsung tanpa ribet.',
                         ],
                     ],
                     [
@@ -299,7 +299,7 @@
                         'name' => 'Apakah aplikasi HUMORA aman untuk diunduh langsung?',
                         'acceptedAnswer' => [
                             '@type' => 'Answer',
-                            'text' => 'Sangat aman. Berkas APK resmi HUMORA dibangun tanpa iklan berbahaya, bebas virus, tidak meminta izin data sensitif ponsel, dan dioptimalkan secara ketat untuk Android 5.0 ke atas.',
+                            'text' => 'Sangat aman. Berkas aplikasi resmi HUMORA dibangun tanpa iklan berbahaya, bebas virus, tidak meminta izin data sensitif ponsel, dan dioptimalkan secara ketat untuk Android 5.0 ke atas.',
                         ],
                     ],
                     [
@@ -331,7 +331,7 @@
 
     <div class="page-canvas">
 
-        <!-- Flash Alert for APK not found (if redirected) -->
+        <!-- Flash Alert for App download (if redirected) -->
         @if(session('apk_not_found'))
         <div class="alert alert-warning alert-dismissible fade show rounded-4 border-0 shadow-sm mb-4" role="alert" style="background: #FEF3C7; color: #92400E;">
             <div class="d-flex align-items-center gap-2">
@@ -367,7 +367,7 @@
                 <div class="nav-right-group">
                     <a href="#about" class="nav-text-link d-none d-lg-inline-block">Tentang</a>
                     <a href="#katalog" class="nav-text-link d-none d-sm-inline-block">Katalog</a>
-                    <a href="{{ route('app.download') }}" class="btn-pill-yellow" title="Download APK HUMORA Android">
+                    <a href="{{ route('app.download') }}" class="btn-pill-yellow" title="Download Aplikasi HUMORA Android">
                         <i class="bi bi-download"></i>
                         <span class="d-none d-sm-inline">Download Aplikasi</span>
                         <span class="d-inline d-sm-none">Download</span>
@@ -395,7 +395,7 @@
                     </p>
 
                     <div class="hero-btn-group">
-                        <a href="{{ route('app.download') }}" class="btn-hero-download" title="Unduh Aplikasi HUMORA Android APK">
+                        <a href="{{ route('app.download') }}" class="btn-hero-download" title="Unduh Aplikasi HUMORA Android">
                             <i class="bi bi-download"></i>
                             <span>Download Aplikasi</span>
                             @if(!empty($apkSize))
@@ -892,7 +892,7 @@
                     </span>
                     <a href="#katalog" class="badge text-decoration-none rounded-pill px-3 py-1.5" style="background: #FFFFFF; color: var(--humora-text-main); border: 1px solid #E5E7EB;">Aplikasi Nonton Serial Komedi Indonesia</a>
                     <a href="#katalog" class="badge text-decoration-none rounded-pill px-3 py-1.5" style="background: #FFFFFF; color: var(--humora-text-main); border: 1px solid #E5E7EB;">Sketsa Komedi Lucu Pendek</a>
-                    <a href="{{ route('app.download') }}" class="badge text-decoration-none rounded-pill px-3 py-1.5" style="background: #FFFFFF; color: var(--humora-text-main); border: 1px solid #E5E7EB;">Download APK HUMORA Android</a>
+                    <a href="{{ route('app.download') }}" class="badge text-decoration-none rounded-pill px-3 py-1.5" style="background: #FFFFFF; color: var(--humora-text-main); border: 1px solid #E5E7EB;">Download Aplikasi HUMORA Android</a>
                     <a href="#about" class="badge text-decoration-none rounded-pill px-3 py-1.5" style="background: #FFFFFF; color: var(--humora-text-main); border: 1px solid #E5E7EB;">Video Komedi Hemat Kuota WebM</a>
                     <a href="#paket" class="badge text-decoration-none rounded-pill px-3 py-1.5" style="background: #FFFFFF; color: var(--humora-text-main); border: 1px solid #E5E7EB;">Langganan Video QRIS Murah</a>
                     <a href="#katalog" class="badge text-decoration-none rounded-pill px-3 py-1.5" style="background: #FFFFFF; color: var(--humora-text-main); border: 1px solid #E5E7EB;">Sitkom Indonesia Lucu 2026</a>
@@ -913,7 +913,7 @@
             <div class="howto-grid">
                 <div class="step-card">
                     <div class="step-badge">1</div>
-                    <h3 class="step-title">Unduh APK HUMORA</h3>
+                    <h3 class="step-title">Unduh Aplikasi HUMORA</h3>
                     <p class="step-desc">
                         Klik tombol download untuk mendapatkan berkas aplikasi resmi (~15 MB). Aplikasi ini sangat ringan, aman, bebas virus, dan langsung kompatibel dengan ponsel Android 5.0+.
                     </p>
@@ -1196,7 +1196,7 @@
                     </button>
                     <div id="faq5" class="collapse">
                         <div class="faq-content-body">
-                            Cukup klik tombol 'Download Aplikasi' pada halaman web ini. Setelah berkas APK selesai diunduh (~15 MB), ketuk file tersebut di HP Anda, pilih Izinkan Instalasi dari Sumber Ini jika diminta, dan aplikasi HUMORA siap dipakai untuk menonton langsung.
+                            Cukup klik tombol 'Download Aplikasi' pada halaman web ini. Setelah aplikasi selesai diunduh (~15 MB), ketuk berkas tersebut di HP Anda, pilih Izinkan Instalasi jika diminta, dan aplikasi HUMORA siap dipakai untuk menonton langsung.
                         </div>
                     </div>
                 </div>
@@ -1210,7 +1210,7 @@
                     </button>
                     <div id="faq6" class="collapse">
                         <div class="faq-content-body">
-                            Sangat aman. Berkas APK resmi HUMORA dibangun tanpa iklan mengganggu, bebas malware/virus, tidak meminta izin data sensitif ponsel, dan telah diuji secara ketat agar bekerja mulus pada sistem operasi Android 5.0 hingga Android versi terbaru.
+                            Sangat aman. Berkas aplikasi resmi HUMORA dibangun tanpa iklan mengganggu, bebas malware/virus, tidak meminta izin data sensitif ponsel, dan telah diuji secara ketat agar bekerja mulus pada sistem operasi Android 5.0 hingga Android versi terbaru.
                         </div>
                     </div>
                 </div>
@@ -1256,7 +1256,7 @@
                     Unduh aplikasi HUMORA sekarang dan nikmati puluhan serial sketsa komedi pendek Indonesia. Episode 1 &amp; 2 GRATIS untuk semua judul!
                 </p>
                 <div class="final-cta-buttons">
-                    <a href="{{ route('app.download') }}" class="btn-final-download" title="Unduh APK HUMORA Sekarang">
+                    <a href="{{ route('app.download') }}" class="btn-final-download" title="Unduh Aplikasi HUMORA Sekarang">
                         <i class="bi bi-download"></i>
                         <span>Unduh Aplikasi HUMORA ({{ $apkSize ?? '~15 MB' }})</span>
                     </a>
@@ -1284,7 +1284,7 @@
                 <a href="#langkah" class="footer-link">Cara Nonton</a>
                 <a href="#paket" class="footer-link">Paket Langganan</a>
                 <a href="#faq" class="footer-link">FAQ</a>
-                <a href="{{ route('app.download') }}" class="footer-link">Download APK</a>
+                <a href="{{ route('app.download') }}" class="footer-link">Download Aplikasi</a>
                 <a href="{{ route('admin.login') }}" class="footer-link text-muted" style="font-size: 0.8rem;">Portal Admin</a>
                 <a href="#hero" class="footer-link">Kembali ke Atas</a>
             </div>
@@ -1297,7 +1297,7 @@
                 <div class="d-flex flex-wrap gap-2 text-muted" style="font-size: 0.76rem; line-height: 1.8;">
                     <a href="#katalog" class="text-secondary text-decoration-none">Aplikasi Nonton Serial Komedi Indonesia</a> &bull;
                     <a href="#katalog" class="text-secondary text-decoration-none">Streaming Sketsa Komedi Pendek Lucu</a> &bull;
-                    <a href="{{ route('app.download') }}" class="text-secondary text-decoration-none">Download APK HUMORA Android Resmi</a> &bull;
+                    <a href="{{ route('app.download') }}" class="text-secondary text-decoration-none">Download Aplikasi HUMORA Android Resmi</a> &bull;
                     <a href="#about" class="text-secondary text-decoration-none">Video Komedi Bebas Buffering WebM</a> &bull;
                     <a href="#about" class="text-secondary text-decoration-none">Episode 1 &amp; 2 Gratis Semua Serial</a> &bull;
                     <a href="#kategori-topik" class="text-secondary text-decoration-none">Sitkom Keluarga Indonesia 2026</a> &bull;
@@ -1330,9 +1330,9 @@
                 <div class="sticky-bar-sub">Ep 1 &amp; 2 Gratis &bull; {{ $apkSize ?? '~15 MB' }}</div>
             </div>
         </div>
-        <a href="{{ route('app.download') }}" class="btn-sticky-download" title="Unduh APK HUMORA">
+        <a href="{{ route('app.download') }}" class="btn-sticky-download" title="Unduh Aplikasi HUMORA">
             <i class="bi bi-download"></i>
-            <span>Unduh APK</span>
+            <span>Unduh Aplikasi</span>
         </a>
     </aside>
 

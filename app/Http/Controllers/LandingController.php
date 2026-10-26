@@ -87,7 +87,7 @@ class LandingController extends Controller
 
         if (empty($apkFiles)) {
             return redirect()->route('landing')
-                ->with('apk_not_found', 'Berkas APK HUMORA Mobile saat ini belum diunggah di folder: storage/uploads/mobile. Silakan tempatkan file .apk Anda di folder tersebut agar dapat diunduh.');
+                ->with('apk_not_found', 'Berkas aplikasi HUMORA Mobile saat ini belum tersedia untuk diunduh. Silakan coba beberapa saat lagi atau hubungi layanan pelanggan kami.');
         }
 
         // Sort descending by modified time (latest file first)
