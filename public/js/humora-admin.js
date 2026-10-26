@@ -3,6 +3,18 @@
  * Fully client-side interactive with backend-ready bindings.
  */
 
+// Global Image Error Fallback: Any broken or unresolvable <img> automatically swaps to default-img.png
+window.addEventListener('error', function (event) {
+    const target = event.target;
+    if (target && target.tagName === 'IMG') {
+        const defaultImg = window.HUMORA_DEFAULT_IMG || '/images/default-img.png';
+        if (target.src && !target.src.endsWith('default-img.png')) {
+            target.onerror = null;
+            target.src = defaultImg;
+        }
+    }
+}, true);
+
 // Toast notification helper
 window.showHumoraToast = function (message, type = 'success', duration = 3500) {
     let container = document.getElementById('humoraToastContainer');

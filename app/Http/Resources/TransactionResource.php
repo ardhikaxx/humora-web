@@ -29,6 +29,7 @@ class TransactionResource extends JsonResource
             'status' => $this->status,
             'proof_uploaded' => ! empty($this->proof_file),
             'proof_file' => $this->proof_file,
+            'proof_url' => $this->proof_url,
             'reject_reason' => $this->reject_reason,
             'created_at' => $this->created_at?->toIso8601String(),
             'verified_at' => $this->verified_at?->toIso8601String(),

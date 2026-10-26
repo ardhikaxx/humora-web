@@ -63,7 +63,7 @@ class Transaction extends Model
     public function getProofUrlAttribute(): ?string
     {
         if (empty($this->proof_file)) {
-            return null;
+            return asset('images/default-img.png');
         }
 
         // Return secure admin file route (auth required)

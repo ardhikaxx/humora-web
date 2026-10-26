@@ -210,7 +210,7 @@
                 </div>
                 <div class="humora-card-body p-3">
                     <div class="rounded-3 p-2 text-center mb-2 position-relative d-flex flex-column align-items-center justify-content-center overflow-hidden bg-light" style="aspect-ratio: 16/9; border: 1px dashed #CBD5E1;">
-                        <img id="imagePreview" src="{{ $series->thumbnail_url }}" alt="Preview" class="w-100 h-100 object-fit-cover rounded" onerror="this.src='{{ asset('images/logo-humora.png') }}'">
+                        <img id="imagePreview" src="{{ $series->thumbnail_url }}" alt="Preview" class="w-100 h-100 object-fit-cover rounded" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';">
                     </div>
                     <small class="text-muted d-block text-center" style="font-size: 0.75rem;">Thumbnail saat ini tersimpan di storage lokal</small>
                 </div>

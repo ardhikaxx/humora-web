@@ -150,7 +150,7 @@
                                 <td class="fw-bold text-muted">{{ $index + 1 }}</td>
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
-                                        <img src="{{ $item->thumbnail_url }}" alt="{{ $item->title }}" loading="lazy" class="rounded" style="width: 44px; height: 32px; object-fit: cover;" onerror="this.src='{{ asset('images/logo-humora.png') }}'">
+                                        <img src="{{ $item->thumbnail_url }}" alt="{{ $item->title }}" loading="lazy" class="rounded" style="width: 44px; height: 32px; object-fit: cover;" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';">
                                         <div class="text-truncate" style="max-width: 200px;">
                                             <a href="{{ route('admin.series.show', $item->id) }}" class="fw-bold text-dark text-decoration-none text-truncate d-block" style="font-size: 0.82rem;">
                                                 {{ $item->title }}
@@ -360,7 +360,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     <td class="fw-bold text-muted">${item.rank}</td>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
-                                            <img src="${item.thumbnail_url}" alt="${item.title}" class="rounded" style="width: 44px; height: 32px; object-fit: cover;" onerror="this.src='/images/logo-humora.png'">
+                                            <img src="${item.thumbnail_url}" alt="${item.title}" class="rounded" style="width: 44px; height: 32px; object-fit: cover;" onerror="this.onerror=null; this.src='/images/default-img.png';">
                                             <div class="text-truncate" style="max-width: 200px;">
                                                 <a href="${item.url}" class="fw-bold text-dark text-decoration-none text-truncate d-block" style="font-size: 0.82rem;">
                                                     ${item.title}

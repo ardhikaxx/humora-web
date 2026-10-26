@@ -373,7 +373,7 @@
                                         <i data-lucide="landmark"></i>
                                         <span>Rekening #<span class="bank-item-number">{{ $index + 1 }}</span></span>
                                     </div>
-                                    <img class="bank-card-logo-preview" src="{{ $currentLogo ?? '' }}" style="{{ empty($currentLogo) ? 'display: none;' : '' }}" alt="Logo Bank" />
+                                    <img class="bank-card-logo-preview" src="{{ $currentLogo ?? '' }}" style="{{ empty($currentLogo) ? 'display: none;' : '' }}" alt="Logo Bank" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';" />
                                 </div>
                                 <button type="button" class="btn-remove-bank-custom btn-remove-bank" title="Hapus Rekening" style="{{ count($bankAccounts) <= 1 ? 'display: none;' : '' }}">
                                     <i data-lucide="trash-2"></i>
@@ -497,7 +497,7 @@
                             <div class="row align-items-center">
                                 @if (!empty($qrisImage))
                                     <div class="col-md-4 text-center border-end-md py-2">
-                                        <img src="{{ route('file.system', $qrisImage) }}" alt="QRIS Tersimpan" class="img-fluid rounded mb-2 shadow-sm border bg-white p-2" style="max-height: 160px; object-fit: contain;">
+                                        <img src="{{ route('file.system', $qrisImage) }}" alt="QRIS Tersimpan" class="img-fluid rounded mb-2 shadow-sm border bg-white p-2" style="max-height: 160px; object-fit: contain;" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';">
                                         <div class="text-muted small">File: {{ $qrisImage }}</div>
                                     </div>
                                 @endif
@@ -807,7 +807,7 @@ $(document).ready(function () {
                             <i data-lucide="landmark"></i>
                             <span>Rekening #<span class="bank-item-number">${newIndex + 1}</span></span>
                         </div>
-                        <img class="bank-card-logo-preview" src="" style="display: none;" alt="Logo Bank" />
+                        <img class="bank-card-logo-preview" src="" style="display: none;" alt="Logo Bank" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';" />
                     </div>
                     <button type="button" class="btn-remove-bank-custom btn-remove-bank" title="Hapus Rekening">
                         <i data-lucide="trash-2"></i>

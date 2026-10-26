@@ -430,6 +430,18 @@ class FileStorageService
         $filePath = self::getUploadPath($folder).DIRECTORY_SEPARATOR.$cleanName;
 
         if (! File::exists($filePath)) {
+            // Gracefully serve default-img.png for image endpoints if the target file is missing
+            $defaultImg = public_path('images/default-img.png');
+            if (in_array($folder, ['thumbnails', 'proofs', 'system']) && File::exists($defaultImg)) {
+                $fallbackHeaders = [
+                    'Content-Type' => 'image/png',
+                    'Cache-Control' => 'public, max-age=86400',
+                    'X-Fallback-Image' => 'default-img.png',
+                ];
+
+                return response()->file($defaultImg, $fallbackHeaders);
+            }
+
             abort(404, 'File tidak ditemukan di penyimpanan server.');
         }
 

@@ -21,7 +21,7 @@
     <div class="auth-wrapper">
         <div class="auth-card">
             <div class="auth-logo-banner">
-                <img src="{{ asset('images/logo-humora.png') }}" alt="HUMORA Logo" class="img-fluid rounded-circle">
+                <img src="{{ asset('images/logo-humora.png') }}" alt="HUMORA Logo" class="img-fluid rounded-circle" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';">
             </div>
             <div>
                 <span class="badge-portal">PORTAL ADMIN</span>

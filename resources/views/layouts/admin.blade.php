@@ -17,6 +17,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        window.HUMORA_DEFAULT_IMG = "{{ asset('images/default-img.png') }}";
+    </script>
     @yield('styles')
 </head>
 <body>

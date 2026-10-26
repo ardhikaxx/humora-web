@@ -9,8 +9,8 @@
     <!-- Brand Logo -->
     <div class="sidebar-brand">
         <a href="{{ route('admin.dashboard') }}" class="sidebar-brand-link text-decoration-none d-block">
-            <img src="{{ asset('images/logo-humora-komersial.png') }}" alt="HUMORA Commercial" class="sidebar-logo-expanded img-fluid">
-            <img src="{{ asset('images/logo-humora.png') }}" alt="HUMORA" class="sidebar-logo-collapsed img-fluid">
+            <img src="{{ asset('images/logo-humora-komersial.png') }}" alt="HUMORA Commercial" class="sidebar-logo-expanded img-fluid" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';">
+            <img src="{{ asset('images/logo-humora.png') }}" alt="HUMORA" class="sidebar-logo-collapsed img-fluid" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';">
         </a>
     </div>
 

@@ -218,7 +218,8 @@
                                     'method' => strtoupper($trx->payment_method),
                                     'status' => $trx->status,
                                     'reject_reason' => $trx->reject_reason,
-                                    'proof_url' => $trx->proof_file ? route('admin.proof.view', $trx->proof_file) : null,
+                                    'has_proof' => !empty($trx->proof_file),
+                                    'proof_url' => $trx->proof_url,
                                     'created_at' => $trx->created_at?->format('d M Y, H:i'),
                                     'verified_by' => $trx->verifier?->name,
                                     'verified_at' => $trx->verified_at?->format('d M Y, H:i')
@@ -258,7 +259,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-3 text-center bg-dark rounded-bottom">
-                <img id="proofModalImg" src="" alt="Bukti Transfer" class="img-fluid rounded" style="max-height: 500px;">
+                <img id="proofModalImg" src="{{ asset('images/default-img.png') }}" alt="Bukti Transfer" class="img-fluid rounded" style="max-height: 500px;" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';">
             </div>
         </div>
     </div>
@@ -278,7 +279,7 @@
                     <div class="col-12 col-md-5">
                         <label class="form-label-custom mb-1">Foto Bukti Transfer</label>
                         <div class="border rounded-3 p-2 bg-light text-center" style="min-height: 250px;">
-                            <img id="detailProofImg" src="" alt="Bukti Pembayaran" class="img-fluid rounded shadow-sm" style="max-height: 280px; object-fit: contain; cursor: pointer;" onclick="zoomCurrentProof()">
+                            <img id="detailProofImg" src="{{ asset('images/default-img.png') }}" alt="Bukti Pembayaran" class="img-fluid rounded shadow-sm" style="max-height: 280px; object-fit: contain; cursor: pointer;" onclick="zoomCurrentProof()" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';">
                             <div id="noProofNotice" class="text-muted py-5" style="display: none;">
                                 <i data-lucide="image-off" class="mb-2" style="width: 32px; height: 32px;"></i>
                                 <div style="font-size: 0.8rem;">Pengguna belum mengunggah foto bukti pembayaran.</div>
@@ -366,7 +367,7 @@ let currentTrxData = null;
 
 function viewProofModal(url, code) {
     document.getElementById('proofModalTrx').innerText = code;
-    document.getElementById('proofModalImg').src = url;
+    document.getElementById('proofModalImg').src = url || '{{ asset('images/default-img.png') }}';
     const modal = new bootstrap.Modal(document.getElementById('proofModal'));
     modal.show();
 }
@@ -389,13 +390,15 @@ function openTrxDetailModal(data) {
 
     const proofImg = document.getElementById('detailProofImg');
     const noProof = document.getElementById('noProofNotice');
+    const defaultImg = '{{ asset('images/default-img.png') }}';
 
-    if (data.proof_url) {
+    if (data.proof_url && data.has_proof) {
         proofImg.src = data.proof_url;
         proofImg.style.display = 'inline-block';
         noProof.style.display = 'none';
     } else {
-        proofImg.style.display = 'none';
+        proofImg.src = defaultImg;
+        proofImg.style.display = 'inline-block';
         noProof.style.display = 'block';
     }
 

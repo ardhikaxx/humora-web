@@ -67,7 +67,7 @@ class Series extends Model
     public function getThumbnailUrlAttribute(): string
     {
         if (empty($this->thumbnail)) {
-            return url('images/thumbnails/default.jpg');
+            return asset('images/default-img.png');
         }
 
         // Return the secure, non-symlink file route

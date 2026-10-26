@@ -370,7 +370,7 @@
                     Katalog serial komedi
                     <span class="inline-avatar-pill">
                         @if(!empty($availableThumbs[0]))
-                            <img src="{{ $availableThumbs[0] }}" class="avatar-img" alt="Serial Komedi">
+                            <img src="{{ $availableThumbs[0] }}" class="avatar-img" alt="Serial Komedi" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';">
                         @else
                             <svg class="avatar-img" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <rect width="40" height="40" fill="#E9D5FF"/>
@@ -379,7 +379,7 @@
                             </svg>
                         @endif
                         @if(!empty($availableThumbs[1]))
-                            <img src="{{ $availableThumbs[1] }}" class="avatar-img" alt="Serial Komedi">
+                            <img src="{{ $availableThumbs[1] }}" class="avatar-img" alt="Serial Komedi" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';">
                         @else
                             <svg class="avatar-img" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <rect width="40" height="40" fill="#FEF08A"/>
@@ -407,14 +407,14 @@
                         <div class="mosaic-set">
                             @foreach($row1Set as $thumb)
                             <div class="mosaic-tile">
-                                <img src="{{ $thumb }}" alt="Serial Komedi HUMORA" loading="lazy">
+                                <img src="{{ $thumb }}" alt="Serial Komedi HUMORA" loading="lazy" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';">
                             </div>
                             @endforeach
                         </div>
                         <div class="mosaic-set">
                             @foreach($row1Set as $thumb)
                             <div class="mosaic-tile">
-                                <img src="{{ $thumb }}" alt="Serial Komedi HUMORA" loading="lazy">
+                                <img src="{{ $thumb }}" alt="Serial Komedi HUMORA" loading="lazy" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';">
                             </div>
                             @endforeach
                         </div>
@@ -427,14 +427,14 @@
                         <div class="mosaic-set">
                             @foreach($row2Set as $thumb)
                             <div class="mosaic-tile">
-                                <img src="{{ $thumb }}" alt="Serial Komedi HUMORA" loading="lazy">
+                                <img src="{{ $thumb }}" alt="Serial Komedi HUMORA" loading="lazy" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';">
                             </div>
                             @endforeach
                         </div>
                         <div class="mosaic-set">
                             @foreach($row2Set as $thumb)
                             <div class="mosaic-tile">
-                                <img src="{{ $thumb }}" alt="Serial Komedi HUMORA" loading="lazy">
+                                <img src="{{ $thumb }}" alt="Serial Komedi HUMORA" loading="lazy" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';">
                             </div>
                             @endforeach
                         </div>
@@ -447,14 +447,14 @@
                         <div class="mosaic-set">
                             @foreach($row3Set as $thumb)
                             <div class="mosaic-tile">
-                                <img src="{{ $thumb }}" alt="Serial Komedi HUMORA" loading="lazy">
+                                <img src="{{ $thumb }}" alt="Serial Komedi HUMORA" loading="lazy" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';">
                             </div>
                             @endforeach
                         </div>
                         <div class="mosaic-set">
                             @foreach($row3Set as $thumb)
                             <div class="mosaic-tile">
-                                <img src="{{ $thumb }}" alt="Serial Komedi HUMORA" loading="lazy">
+                                <img src="{{ $thumb }}" alt="Serial Komedi HUMORA" loading="lazy" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';">
                             </div>
                             @endforeach
                         </div>
@@ -490,5 +490,17 @@
 
     <!-- Bootstrap 5.3.3 JS Bundle CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        window.addEventListener('error', function(event) {
+            const target = event.target;
+            if (target && target.tagName === 'IMG') {
+                const defaultImg = "{{ asset('images/default-img.png') }}";
+                if (target.src !== defaultImg && !target.dataset.fallbackApplied) {
+                    target.dataset.fallbackApplied = 'true';
+                    target.src = defaultImg;
+                }
+            }
+        }, true);
+    </script>
 </body>
 </html>

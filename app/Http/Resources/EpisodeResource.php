@@ -44,9 +44,9 @@ class EpisodeResource extends JsonResource
             }
         }
 
-        $seriesThumbnail = $this->relationLoaded('series') && $this->series
+        $seriesThumbnail = ($this->relationLoaded('series') && $this->series)
             ? $this->series->thumbnail_url
-            : ($this->thumbnail_url ?? null);
+            : ($this->thumbnail_url ?? asset('images/default-img.png'));
 
         return [
             'id' => $this->id,

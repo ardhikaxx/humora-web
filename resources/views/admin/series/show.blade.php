@@ -54,7 +54,7 @@
     <div class="humora-card-body p-4">
         <div class="row g-4 align-items-center">
             <div class="col-12 col-md-5 col-lg-4">
-                <img src="{{ $series->thumbnail_url }}" alt="{{ $series->title }}" class="img-fluid rounded-4 shadow-sm w-100 object-fit-cover" style="aspect-ratio: 16/9;" onerror="this.src='{{ asset('images/logo-humora.png') }}'">
+                <img src="{{ $series->thumbnail_url }}" alt="{{ $series->title }}" class="img-fluid rounded-4 shadow-sm w-100 object-fit-cover" style="aspect-ratio: 16/9;" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';">
             </div>
             <div class="col-12 col-md-7 col-lg-8">
                 <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
