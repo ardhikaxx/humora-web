@@ -27,6 +27,12 @@
         <priority>0.85</priority>
     </url>
     <url>
+        <loc>{{ route('landing') }}#kategori-topik</loc>
+        <lastmod>{{ date('Y-m-d') }}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.85</priority>
+    </url>
+    <url>
         <loc>{{ route('landing') }}#paket</loc>
         <lastmod>{{ date('Y-m-d') }}</lastmod>
         <changefreq>weekly</changefreq>
