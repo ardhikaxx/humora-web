@@ -7,6 +7,7 @@ use App\Models\Admin;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\View\View;
@@ -16,13 +17,16 @@ class AuthController extends Controller
     /**
      * Show admin login view
      */
-    public function showLoginForm(): View|RedirectResponse
+    public function showLoginForm(Request $request): View|RedirectResponse
     {
         if (Auth::guard('admin')->check()) {
             return redirect()->route('admin.dashboard');
         }
 
-        return view('auth.login');
+        $rememberedEmail = (string) $request->cookie('remembered_admin_email', '');
+        $rememberMe = (bool) $request->cookie('remembered_admin_remember', false);
+
+        return view('auth.login', compact('rememberedEmail', 'rememberMe'));
     }
 
     /**
@@ -58,6 +62,14 @@ class AuthController extends Controller
             }
 
             $request->session()->regenerate();
+
+            if ($remember) {
+                Cookie::queue('remembered_admin_email', $request->email, 43200);
+                Cookie::queue('remembered_admin_remember', '1', 43200);
+            } else {
+                Cookie::queue(Cookie::forget('remembered_admin_email'));
+                Cookie::queue(Cookie::forget('remembered_admin_remember'));
+            }
 
             return redirect()->intended(route('admin.dashboard'))
                 ->with('success', "Selamat datang di HUMORA Portal, {$admin->name}!");
