@@ -30,7 +30,7 @@
         </div>
         <div class="text-center mt-4">
             <small class="text-muted" style="font-size: 0.8rem;">
-                &copy; 2026 HUMORA Indonesia. Seluruh hak cipta dilindungi undang-undang.
+                &copy; {{ date('Y') }} PT Global Mobile Content. Seluruh hak cipta dilindungi undang-undang.
             </small>
         </div>
     </div>

@@ -470,7 +470,7 @@
         <footer class="humora-footer">
             <div class="footer-brand">
                 <img src="{{ asset('images/logo-humora-rounded.png') }}" alt="HUMORA Logo">
-                <span>HUMORA — Platform Serial Komedi</span>
+                <span>HUMORA — Platform Serial Komedi oleh PT Global Mobile Content</span>
             </div>
 
             <div class="footer-links">
@@ -481,7 +481,7 @@
             </div>
 
             <div class="w-100 text-center text-md-start small text-muted pt-2 border-top border-light-subtle">
-                &copy; {{ date('Y') }} <strong>HUMORA</strong>. Seluruh Hak Cipta Dilindungi.
+                &copy; {{ date('Y') }} <strong>PT Global Mobile Content</strong>. Seluruh Hak Cipta Dilindungi.
             </div>
         </footer>
 

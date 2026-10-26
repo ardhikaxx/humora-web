@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
         // 2. System Settings
         SystemSetting::set('free_preview_episodes', '2', 'integer');
         SystemSetting::set('bca_account_number', '2103039177', 'text');
-        SystemSetting::set('bca_account_name', 'Global Mobile Content', 'text');
+        SystemSetting::set('bca_account_name', 'PT Global Mobile Content', 'text');
         SystemSetting::set('mandiri_account_number', '', 'text');
         SystemSetting::set('mandiri_account_name', '', 'text');
         SystemSetting::set('official_bank_accounts', [
@@ -40,13 +40,13 @@ class DatabaseSeeder extends Seeder
                 'bank_code' => 'bca',
                 'bank_name' => 'Bank Central Asia (BCA)',
                 'account_number' => '2103039177',
-                'account_name' => 'Global Mobile Content',
+                'account_name' => 'PT Global Mobile Content',
             ],
         ], 'json');
         SystemSetting::set('qris_enabled', 'false', 'boolean');
         SystemSetting::set('qris_official_image', '', 'text');
         SystemSetting::set('qris_raw_payload', '', 'text');
-        SystemSetting::set('qris_account_name', 'Global Mobile Content', 'text');
+        SystemSetting::set('qris_account_name', 'PT Global Mobile Content', 'text');
 
         // 3. Subscription Plans (New Client Business Model)
         // Deactivate or delete old legacy plans if they have no active foreign key constraints

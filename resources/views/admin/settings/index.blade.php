@@ -439,7 +439,7 @@
                                         <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 12px 0 0 12px;">
                                             <i data-lucide="user-check" style="width: 15px; height: 15px;"></i>
                                         </span>
-                                        <input type="text" name="bank_accounts[{{ $index }}][account_name]" class="form-control-custom input-bank-holder border-start-0" placeholder="Misal: Global Mobile Content" value="{{ $bank['account_name'] ?? '' }}" required style="border-radius: 0 12px 12px 0;">
+                                        <input type="text" name="bank_accounts[{{ $index }}][account_name]" class="form-control-custom input-bank-holder border-start-0" placeholder="Misal: PT Global Mobile Content" value="{{ $bank['account_name'] ?? '' }}" required style="border-radius: 0 12px 12px 0;">
                                     </div>
                                 </div>
                             </div>
@@ -511,7 +511,7 @@
 
                                     <div class="mb-2">
                                         <label class="form-label-custom" style="font-size: 0.75rem;">Nama Merchant / Atas Nama Akun QRIS</label>
-                                        <input type="text" name="qris_account_name" class="form-control-custom" value="{{ old('qris_account_name', $qrisAccountName) }}" placeholder="Contoh: Global Mobile Content">
+                                        <input type="text" name="qris_account_name" class="form-control-custom" value="{{ old('qris_account_name', $qrisAccountName) }}" placeholder="Contoh: PT Global Mobile Content">
                                     </div>
 
                                     <div>
@@ -854,7 +854,7 @@ $(document).ready(function () {
                             <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 12px 0 0 12px;">
                                 <i data-lucide="user-check" style="width: 15px; height: 15px;"></i>
                             </span>
-                            <input type="text" name="bank_accounts[${newIndex}][account_name]" class="form-control-custom input-bank-holder border-start-0" placeholder="Misal: Global Mobile Content" required style="border-radius: 0 12px 12px 0;">
+                            <input type="text" name="bank_accounts[${newIndex}][account_name]" class="form-control-custom input-bank-holder border-start-0" placeholder="Misal: PT Global Mobile Content" required style="border-radius: 0 12px 12px 0;">
                         </div>
                     </div>
                 </div>

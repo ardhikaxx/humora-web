@@ -60,7 +60,7 @@ class QrisService
         $merchantCity = $tags['60'] ?? null;
 
         return [
-            'merchant_name' => $merchantName ?: 'Global Mobile Content',
+            'merchant_name' => $merchantName ?: 'PT Global Mobile Content',
             'merchant_city' => $merchantCity ?: 'JAKARTA',
         ];
     }
