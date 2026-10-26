@@ -6,7 +6,7 @@
     <title>HUMORA — Platform Serial Komedi | Aplikasi Mobile</title>
 
     <!-- Meta SEO -->
-    <meta name="description" content="Nonton puluhan serial sketsa komedi khas Indonesia di aplikasi HUMORA. Tontonan lancar, hemat kuota, bebas putus-putus. Episode 1 &amp; 2 GRATIS! Unduh sekarang.">
+    <meta name="description" content="Nonton puluhan serial sketsa komedi khas Indonesia di aplikasi HUMORA. Tontonan lancar bebas putus-putus. Episode 1 &amp; 2 GRATIS! Unduh sekarang.">
     <meta name="keywords" content="humora, serial komedi, serial komedi indonesia, video pendek, sketsa komedi, sketsa komedi pendek, streaming indonesia, download aplikasi humora, video lucu, hiburan singkat">
     <meta name="author" content="HUMORA">
     <link rel="canonical" href="{{ url()->current() }}">
@@ -103,7 +103,7 @@
                     </h1>
 
                     <p class="hero-description">
-                        Serial sketsa komedi pendek pertama di Indonesia dengan cerita lucu langsung ke inti lelucon. Nonton santai, hemat kuota internet, bebas putus-putus, dan <strong>Episode 1 &amp; 2 GRATIS</strong> untuk semua serial!
+                        Serial sketsa komedi pendek dengan cerita lucu langsung ke inti lelucon. Nonton santai bebas putus-putus, dan <strong>Episode 1 &amp; 2 GRATIS</strong> untuk semua serial!
                     </p>
 
                     <div class="hero-btn-group">
@@ -214,7 +214,7 @@
                                             Pengalaman Nonton Paling Asyik
                                         </h5>
                                         <p class="text-muted small mb-3">
-                                            Dibuat khusus agar pas di genggaman tangan: layar tidak redup saat asyik tertawa, getaran tombol halus yang nyaman, dan video yang pernah ditonton bisa diputar ulang tanpa boros kuota.
+                                            Dibuat khusus agar pas di genggaman tangan: layar tidak redup saat asyik tertawa, getaran tombol halus yang nyaman, dan video yang pernah ditonton bisa diputar ulang dengan mudah.
                                         </p>
                                         <div class="d-flex align-items-center gap-2 small text-muted mb-1.5">
                                             <i class="bi bi-check-circle-fill text-success"></i>
@@ -222,7 +222,7 @@
                                         </div>
                                         <div class="d-flex align-items-center gap-2 small text-muted mb-1.5">
                                             <i class="bi bi-check-circle-fill text-success"></i>
-                                            <span>Sangat Hemat Kuota Data Internet</span>
+                                            <span>Performa Ringan &amp; Kualitas Jernih</span>
                                         </div>
                                         <div class="d-flex align-items-center gap-2 small text-muted">
                                             <i class="bi bi-check-circle-fill text-success"></i>
@@ -319,9 +319,9 @@
                         <!-- Item 03 -->
                         <div class="feature-item-row">
                             <span class="feature-number">03</span>
-                            <h3 class="feature-title">Nonton Mulus &amp; Hemat Kuota</h3>
+                            <h3 class="feature-title">Nonton Mulus Bebas Buffering</h3>
                             <p class="feature-desc">
-                                Video langsung terputar tanpa jeda berputar (*buffering*), bisa dimajukan atau dimundurkan dengan mulus, dan sangat ramah kuota internet ponsel.
+                                Video langsung terputar tanpa jeda berputar (*buffering*), bisa dimajukan atau dimundurkan dengan mulus dan responsif di setiap perangkat.
                             </p>
                         </div>
 
@@ -337,7 +337,7 @@
                         <div class="yellow-highlight-card">
                             <div class="stat-big">~2m</div>
                             <div class="stat-label">
-                                Durasi ideal sketsa komedi, punchline instan bikin mood ceria seketika tanpa buang kuota.
+                                Durasi ideal sketsa komedi, punchline instan bikin mood ceria seketika tanpa bertele-tele.
                             </div>
                         </div>
                     </div>
