@@ -145,27 +145,27 @@
                             </tr>
                         </thead>
                         <tbody id="tableTopSeriesBody">
-                            @forelse ($topSeries as $index => $item)
+                            @forelse ($topSeries as $item)
                             <tr>
-                                <td class="fw-bold text-muted">{{ $index + 1 }}</td>
+                                <td class="fw-bold text-muted">{{ $loop->iteration }}</td>
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
-                                        <img src="{{ $item->thumbnail_url }}" alt="{{ $item->title }}" loading="lazy" class="rounded" style="width: 44px; height: 32px; object-fit: cover;" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';">
+                                        <img src="{{ data_get($item, 'thumbnail_url') }}" alt="{{ data_get($item, 'title') }}" loading="lazy" class="rounded" style="width: 44px; height: 32px; object-fit: cover;" onerror="this.onerror=null; this.src='{{ asset('images/default-img.png') }}';">
                                         <div class="text-truncate" style="max-width: 200px;">
-                                            <a href="{{ route('admin.series.show', $item->id) }}" class="fw-bold text-dark text-decoration-none text-truncate d-block" style="font-size: 0.82rem;">
-                                                {{ $item->title }}
+                                            <a href="{{ route('admin.series.show', data_get($item, 'id')) }}" class="fw-bold text-dark text-decoration-none text-truncate d-block" style="font-size: 0.82rem;">
+                                                {{ data_get($item, 'title') }}
                                             </a>
-                                            <small class="text-muted" style="font-size: 0.72rem;">{{ $item->release_year }}</small>
+                                            <small class="text-muted" style="font-size: 0.72rem;">{{ data_get($item, 'release_year') }}</small>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
                                     <span class="badge bg-light text-dark border" style="font-size: 0.72rem;">
-                                        {{ $item->categories->first()?->name ?? 'Komedi' }}
+                                        {{ data_get($item, 'genre', 'Komedi') }}
                                     </span>
                                 </td>
                                 <td class="text-end fw-bold text-purple" style="font-size: 0.85rem;">
-                                    {{ number_format($item->viewing_events_count ?? 0, 0, ',', '.') }}
+                                    {{ number_format(data_get($item, 'viewing_events_count', 0), 0, ',', '.') }}
                                 </td>
                             </tr>
                             @empty
@@ -203,21 +203,21 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($topLikedEpisodes as $idx => $ep)
+                            @forelse ($topLikedEpisodes as $ep)
                             <tr>
-                                <td class="fw-bold text-muted">{{ $idx + 1 }}</td>
+                                <td class="fw-bold text-muted">{{ $loop->iteration }}</td>
                                 <td>
                                     <div class="text-truncate" style="max-width: 220px;">
                                         <div class="fw-bold text-dark text-truncate" style="font-size: 0.82rem;">
-                                            Ep {{ $ep->episode_number }}: {{ $ep->title }}
+                                            Ep {{ data_get($ep, 'episode_number') }}: {{ data_get($ep, 'title') }}
                                         </div>
                                         <small class="text-muted text-truncate d-block" style="font-size: 0.72rem;">
-                                            {{ $ep->series?->title ?? '-' }}
+                                            {{ data_get($ep, 'series_title', '-') }}
                                         </small>
                                     </div>
                                 </td>
                                 <td>
-                                    @if ($ep->is_free)
+                                    @if (data_get($ep, 'is_free'))
                                         <span class="badge bg-success-subtle text-success py-1" style="font-size: 0.7rem;">Gratis</span>
                                     @else
                                         <span class="badge bg-warning-subtle text-warning-emphasis py-1" style="font-size: 0.7rem;">Premium</span>
@@ -225,7 +225,7 @@
                                 </td>
                                 <td class="text-end fw-bold text-danger" style="font-size: 0.85rem;">
                                     <i data-lucide="heart" class="me-1 d-inline" style="width: 14px; height: 14px;"></i>
-                                    {{ number_format($ep->likes_count, 0, ',', '.') }}
+                                    {{ number_format(data_get($ep, 'likes_count', 0), 0, ',', '.') }}
                                 </td>
                             </tr>
                             @empty

@@ -45,30 +45,30 @@ class AnalyticsController extends Controller
         $data = $this->getAnalyticsData($days);
 
         // Format topSeries and topLikedEpisodes for clean JSON serialization
-        $topSeriesList = $data['topSeries']->map(function ($item, $idx) {
+        $topSeriesList = collect($data['topSeries'])->map(function ($item, $idx) {
             return [
                 'rank' => $idx + 1,
-                'id' => $item->id,
-                'title' => $item->title,
-                'release_year' => $item->release_year,
-                'thumbnail_url' => $item->thumbnail_url,
-                'genre' => $item->categories->first()?->name ?? 'Komedi',
-                'views_count' => (int) ($item->viewing_events_count ?? 0),
-                'views_formatted' => number_format($item->viewing_events_count ?? 0, 0, ',', '.'),
-                'url' => route('admin.series.show', $item->id),
+                'id' => data_get($item, 'id'),
+                'title' => data_get($item, 'title'),
+                'release_year' => data_get($item, 'release_year'),
+                'thumbnail_url' => data_get($item, 'thumbnail_url'),
+                'genre' => data_get($item, 'genre', 'Komedi'),
+                'views_count' => (int) data_get($item, 'viewing_events_count', 0),
+                'views_formatted' => number_format(data_get($item, 'viewing_events_count', 0), 0, ',', '.'),
+                'url' => route('admin.series.show', data_get($item, 'id')),
             ];
         });
 
-        $topLikedList = $data['topLikedEpisodes']->map(function ($ep, $idx) {
+        $topLikedList = collect($data['topLikedEpisodes'])->map(function ($ep, $idx) {
             return [
                 'rank' => $idx + 1,
-                'id' => $ep->id,
-                'episode_number' => $ep->episode_number,
-                'title' => $ep->title,
-                'series_title' => $ep->series?->title ?? '-',
-                'is_free' => (bool) $ep->is_free,
-                'likes_count' => (int) $ep->likes_count,
-                'likes_formatted' => number_format($ep->likes_count, 0, ',', '.'),
+                'id' => data_get($ep, 'id'),
+                'episode_number' => data_get($ep, 'episode_number'),
+                'title' => data_get($ep, 'title'),
+                'series_title' => data_get($ep, 'series_title', '-'),
+                'is_free' => (bool) data_get($ep, 'is_free'),
+                'likes_count' => (int) data_get($ep, 'likes_count', 0),
+                'likes_formatted' => number_format(data_get($ep, 'likes_count', 0), 0, ',', '.'),
             ];
         });
 
@@ -149,21 +149,41 @@ class AnalyticsController extends Controller
                 ? round(($successfulTransactionsInRange / $totalUsersInRange) * 100, 1)
                 : 0.0;
 
-            // 6. Top 5 Series by View Count
+            // 6. Top 5 Series by View Count (Mapped to pure arrays for 100% safe, fast serialization)
             $topSeries = Series::withCount(['viewingEvents' => function ($q) use ($startDate, $endDate) {
                 $q->whereBetween('created_at', [$startDate, $endDate]);
             }])
                 ->with(['categories'])
                 ->orderByDesc('viewing_events_count')
                 ->limit(5)
-                ->get();
+                ->get()
+                ->map(fn ($item) => [
+                    'id' => $item->id,
+                    'title' => $item->title,
+                    'release_year' => $item->release_year,
+                    'thumbnail_url' => $item->thumbnail_url,
+                    'genre' => $item->categories->first()?->name ?? 'Komedi',
+                    'viewing_events_count' => (int) ($item->viewing_events_count ?? 0),
+                ])
+                ->values()
+                ->all();
 
-            // 7. Top 5 Episodes by Likes
+            // 7. Top 5 Episodes by Likes (Mapped to pure arrays for 100% safe, fast serialization)
             $topLikedEpisodes = Episode::with('series')
                 ->withCount('likes')
                 ->orderByDesc('likes_count')
                 ->limit(5)
-                ->get();
+                ->get()
+                ->map(fn ($ep) => [
+                    'id' => $ep->id,
+                    'episode_number' => $ep->episode_number,
+                    'title' => $ep->title,
+                    'series_title' => $ep->series?->title ?? '-',
+                    'is_free' => (bool) $ep->is_free,
+                    'likes_count' => (int) $ep->likes_count,
+                ])
+                ->values()
+                ->all();
 
             // 8. Daily Views Chart Data across the selected range (Aggregated in 1 query)
             $viewsByDate = ViewingEvent::whereBetween('created_at', [$startDate, $endDate])
