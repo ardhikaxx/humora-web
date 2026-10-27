@@ -11,19 +11,24 @@
     <meta name="author" content="HUMORA">
     <link rel="canonical" href="{{ url()->current() }}">
 
-    <!-- Open Graph / Social -->
+    <!-- Open Graph / WhatsApp / Facebook -->
+    <meta property="og:type" content="website">
     <meta property="og:site_name" content="HUMORA">
     <meta property="og:title" content="HUMORA — Platform Serial Komedi">
-    <meta property="og:description" content="Nonton serial sketsa komedi khas Indonesia di HUMORA. Episode 1 &amp; 2 GRATIS!">
-    <meta property="og:type" content="website">
+    <meta property="og:description" content="Nonton puluhan serial sketsa komedi Indonesia lucu berdurasi pendek di aplikasi HUMORA. Tontonan lancar bebas putus-putus. Episode 1 &amp; 2 GRATIS!">
     <meta property="og:url" content="{{ route('landing') }}">
-    <meta property="og:image" content="{{ asset('images/logo-humora-rounded.png') }}">
+    <meta property="og:image" content="{{ asset('images/logo-humora-komersial.png') }}">
+    <meta property="og:image:secure_url" content="{{ asset('images/logo-humora-komersial.png') }}">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="600">
+    <meta property="og:image:alt" content="HUMORA — Platform Serial Komedi">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="HUMORA — Platform Serial Komedi">
-    <meta name="twitter:description" content="Nonton serial sketsa komedi khas Indonesia di HUMORA. Episode 1 &amp; 2 GRATIS!">
-    <meta name="twitter:image" content="{{ asset('images/logo-humora-rounded.png') }}">
+    <meta name="twitter:description" content="Nonton puluhan serial sketsa komedi Indonesia lucu berdurasi pendek di aplikasi HUMORA. Tontonan lancar bebas putus-putus. Episode 1 &amp; 2 GRATIS!">
+    <meta name="twitter:image" content="{{ asset('images/logo-humora-komersial.png') }}">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo-humora-rounded.png') }}">
