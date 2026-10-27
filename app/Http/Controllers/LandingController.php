@@ -66,15 +66,7 @@ class LandingController extends Controller
             $apkSize = round(filesize($latestApk) / (1024 * 1024), 1).' MB';
         }
 
-        // Fetch thumbnails from public/images/thumbnails for the hero grid and experience section
-        $thumbDir = public_path('images/thumbnails');
-        $heroThumbnails = [];
-        if (is_dir($thumbDir)) {
-            $files = glob($thumbDir.DIRECTORY_SEPARATOR.'*.{webp,jpg,jpeg,png}', GLOB_BRACE);
-            $heroThumbnails = array_map(fn ($f) => asset('images/thumbnails/'.basename($f)), $files);
-        }
-
-        return view('landing', compact('featuredSeries', 'seriesList', 'categories', 'plans', 'stats', 'apkAvailable', 'apkSize', 'apkFilename', 'heroThumbnails'));
+        return view('landing', compact('featuredSeries', 'seriesList', 'categories', 'plans', 'stats', 'apkAvailable', 'apkSize', 'apkFilename'));
     }
 
     /**

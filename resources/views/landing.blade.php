@@ -353,15 +353,36 @@
              ================================================================== -->
         <section class="thumbnails-section" id="katalog">
             @php
-                $availableThumbs = !empty($heroThumbnails) ? $heroThumbnails : [];
+                $availableThumbs = [
+                    asset('images/thumbnails/thumb_baru-jadian-vs-lama-jadian_20261022_120000_9wAdSP9zrC5Y.webp'),
+                    asset('images/thumbnails/thumb_gue-sih-gitu-orangnya_20261022_120000_apLbVqd4Sh2O.webp'),
+                    asset('images/thumbnails/thumb_jalan-seru-waterboom_20261022_120000_mSSwLa6P0bbV.webp'),
+                    asset('images/thumbnails/thumb_jalan-seru_20261022_120000_yQDWbtgwCBnS.webp'),
+                    asset('images/thumbnails/thumb_jawaban-absurd_20261022_120000_pjSZX63eMqOp.webp'),
+                    asset('images/thumbnails/thumb_juru-parkir-liar_20261022_120000_7DGYrZwBZqip.webp'),
+                    asset('images/thumbnails/thumb_mari-malas-membaca_20261022_120000_cJR95NrNwhs9.webp'),
+                    asset('images/thumbnails/thumb_nunggu-sambil-main_20261022_120000_8CK3pc4ovxOH.webp'),
+                    asset('images/thumbnails/thumb_rafting-katulampa_20261022_120000_gLk4LZD6TICr.webp'),
+                    asset('images/thumbnails/thumb_romantisme-di-ruang-tunggu_20261022_120000_AqvaDRSmIFRb.webp'),
+                    asset('images/thumbnails/thumb_tipe-ibu-ibu_20261022_120000_oyuBQz5HBtwy.webp'),
+                    asset('images/thumbnails/thumb_tipe-pengunjung-cafe_20261022_120000_nPoGTQqVotsS.webp'),
+                    asset('images/thumbnails/thumb_tipe-penonton_20261022_120000_TBGw0ZE97oYi.webp'),
+                    asset('images/thumbnails/thumb_tipe-penumpang-taxi-online_20261022_120000_3TfjjhVt4cLu.webp'),
+                    asset('images/thumbnails/thumb_tips-hindari-begal_20261022_120000_MdilV7XPOgky.webp'),
+                    asset('images/thumbnails/thumb_tips-hindari-polisi_20261022_120000_QtMaztdIMzRr.webp'),
+                    asset('images/thumbnails/thumb_tips-irit-kuota_20261022_120000_hiuUvKSutJU0.webp'),
+                    asset('images/thumbnails/thumb_tips-kentut-di-tempat-umum_20261022_120000_AwEVyClxipCv.webp'),
+                    asset('images/thumbnails/thumb_tips-makan-irit_20261022_120000_rJQCroNpAUSv.webp'),
+                    asset('images/thumbnails/thumb_yokjek_20261022_120000_SUqcDgJLLm8s.webp'),
+                ];
                 // Subset of 15 selected thumbnails (5 per row)
                 $row1 = array_slice($availableThumbs, 0, 5);
                 $row2 = array_slice($availableThumbs, 5, 5);
                 $row3 = array_slice($availableThumbs, 10, 5);
                 // 15 tiles per set (2,790px width) guarantees seamless infinite loop without gaps on large 1440p/4K monitors
-                $row1Set = !empty($row1) ? array_merge($row1, $row1, $row1) : [];
-                $row2Set = !empty($row2) ? array_merge($row2, $row2, $row2) : [];
-                $row3Set = !empty($row3) ? array_merge($row3, $row3, $row3) : [];
+                $row1Set = array_merge($row1, $row1, $row1);
+                $row2Set = array_merge($row2, $row2, $row2);
+                $row3Set = array_merge($row3, $row3, $row3);
             @endphp
 
             <!-- Big Centered Headline with Inline Avatars (Direct match of Section 2 & image.png) -->
