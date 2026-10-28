@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\Like;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 
@@ -124,21 +126,44 @@ class AuthController extends Controller
         // Merge guest likes from this device/session to the logged-in user
         $sessionId = $request->header('X-Session-ID') ?: $request->header('X-Guest-ID');
         if ($sessionId) {
-            Like::whereNull('user_id')
-                ->where('session_id', $sessionId)
-                ->get()
-                ->each(function ($guestLike) use ($user) {
-                    $hasExisting = Like::where('user_id', $user->id)
-                        ->when($guestLike->episode_id, fn ($q) => $q->where('episode_id', $guestLike->episode_id))
-                        ->when(! $guestLike->episode_id, fn ($q) => $q->where('series_id', $guestLike->series_id)->whereNull('episode_id'))
-                        ->exists();
+            DB::transaction(function () use ($user, $sessionId) {
+                Like::whereNull('user_id')
+                    ->where('session_id', $sessionId)
+                    ->get()
+                    ->each(function ($guestLike) use ($user) {
+                        // Cek apakah user sudah memiliki like yang akan conflict dengan unique constraint
+                        // Unique constraint: ['user_id', 'series_id'] dan ['user_id', 'episode_id']
+                        $hasExisting = Like::where('user_id', $user->id)
+                            ->when($guestLike->episode_id, function ($q) use ($guestLike) {
+                                // Jika guest like punya episode_id: cek episode_id sama, ATAU series_id sama tanpa episode_id
+                                $q->where('episode_id', $guestLike->episode_id)
+                                    ->orWhere(function ($q2) use ($guestLike) {
+                                        $q2->where('series_id', $guestLike->series_id)
+                                            ->whereNull('episode_id');
+                                    });
+                            }, function ($q) use ($guestLike) {
+                                // Jika guest like tanpa episode_id: cek series_id sama (terlepas episode_id)
+                                $q->where('series_id', $guestLike->series_id);
+                            })
+                            ->exists();
 
-                    if (! $hasExisting) {
-                        $guestLike->update(['user_id' => $user->id]);
-                    } else {
-                        $guestLike->delete();
-                    }
-                });
+                        if ($hasExisting) {
+                            // User sudah like, hapus guest like duplikat
+                            $guestLike->delete();
+                        } else {
+                            try {
+                                $guestLike->update(['user_id' => $user->id]);
+                            } catch (QueryException $e) {
+                                // Jika masih duplicate key (race condition), hapus guest like
+                                if ($e->getCode() === '23000') {
+                                    $guestLike->delete();
+                                } else {
+                                    throw $e;
+                                }
+                            }
+                        }
+                    });
+            });
         }
 
         return response()->json([
