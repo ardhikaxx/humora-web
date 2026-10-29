@@ -131,34 +131,45 @@ class AuthController extends Controller
                     ->where('session_id', $sessionId)
                     ->get()
                     ->each(function ($guestLike) use ($user) {
-                        // Cek apakah user sudah memiliki like yang akan conflict dengan unique constraint
-                        // Unique constraint: ['user_id', 'series_id'] dan ['user_id', 'episode_id']
-                        $hasExisting = Like::where('user_id', $user->id)
-                            ->when($guestLike->episode_id, function ($q) use ($guestLike) {
-                                // Jika guest like punya episode_id: cek episode_id sama, ATAU series_id sama tanpa episode_id
-                                $q->where('episode_id', $guestLike->episode_id)
-                                    ->orWhere(function ($q2) use ($guestLike) {
-                                        $q2->where('series_id', $guestLike->series_id)
-                                            ->whereNull('episode_id');
-                                    });
-                            }, function ($q) use ($guestLike) {
-                                // Jika guest like tanpa episode_id: cek series_id sama (terlepas episode_id)
-                                $q->where('series_id', $guestLike->series_id);
-                            })
-                            ->exists();
+                        // Check if user already liked the same episode or series
+                        if ($guestLike->episode_id) {
+                            $hasExisting = Like::where('user_id', $user->id)
+                                ->where('episode_id', $guestLike->episode_id)
+                                ->exists();
 
-                        if ($hasExisting) {
-                            // User sudah like, hapus guest like duplikat
-                            $guestLike->delete();
+                            if ($hasExisting) {
+                                $guestLike->delete();
+                            } else {
+                                try {
+                                    $guestLike->update([
+                                        'user_id' => $user->id,
+                                        'series_id' => null,
+                                    ]);
+                                } catch (QueryException $e) {
+                                    if ($e->getCode() === '23000') {
+                                        $guestLike->delete();
+                                    } else {
+                                        throw $e;
+                                    }
+                                }
+                            }
                         } else {
-                            try {
-                                $guestLike->update(['user_id' => $user->id]);
-                            } catch (QueryException $e) {
-                                // Jika masih duplicate key (race condition), hapus guest like
-                                if ($e->getCode() === '23000') {
-                                    $guestLike->delete();
-                                } else {
-                                    throw $e;
+                            $hasExisting = Like::where('user_id', $user->id)
+                                ->where('series_id', $guestLike->series_id)
+                                ->whereNull('episode_id')
+                                ->exists();
+
+                            if ($hasExisting) {
+                                $guestLike->delete();
+                            } else {
+                                try {
+                                    $guestLike->update(['user_id' => $user->id]);
+                                } catch (QueryException $e) {
+                                    if ($e->getCode() === '23000') {
+                                        $guestLike->delete();
+                                    } else {
+                                        throw $e;
+                                    }
                                 }
                             }
                         }

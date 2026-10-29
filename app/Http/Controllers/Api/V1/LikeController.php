@@ -104,7 +104,7 @@ class LikeController extends Controller
                 'user_id' => $user?->id,
                 'session_id' => $user ? null : $sessionId,
                 'ip_address' => $ip,
-                'series_id' => $episode->series_id,
+                'series_id' => null,
                 'episode_id' => $episode->id,
             ]);
             $isLiked = true;

@@ -145,3 +145,47 @@ test('guest likes are merged to user on login', function () {
     // Guest like should now be associated with the user
     expect(Like::first()->user_id)->toBe($user->id);
 });
+
+test('authenticated user can like multiple episodes (Part 1 and Part 2) of the same series', function () {
+    $user = User::create([
+        'name' => 'Multi Part Member',
+        'email' => 'multipart-'.uniqid().'@example.com',
+        'phone' => '0814'.rand(10000000, 99999999),
+        'password' => Hash::make('password'),
+        'status' => 'active',
+        'tier' => 'free',
+    ]);
+
+    $episode2 = Episode::create([
+        'series_id' => $this->series->id,
+        'episode_number' => 2,
+        'title' => 'Episode 2 Part 2',
+        'duration' => '02:00',
+        'duration_seconds' => 120,
+        'access_type' => 'free',
+        'status' => 'published',
+    ]);
+
+    // 1. Member likes Part 1
+    $res1 = $this->actingAs($user, 'sanctum')
+        ->postJson("/api/v1/episodes/{$this->episode->id}/like");
+
+    $res1->assertStatus(200)
+        ->assertJson(['success' => true, 'data' => ['is_liked' => true]]);
+
+    // 2. Member likes Part 2 of the same series
+    $res2 = $this->actingAs($user, 'sanctum')
+        ->postJson("/api/v1/episodes/{$episode2->id}/like");
+
+    $res2->assertStatus(200)
+        ->assertJson(['success' => true, 'data' => ['is_liked' => true]]);
+
+    // 3. Verify both episodes are marked liked for the user
+    expect(Like::where('user_id', $user->id)->count())->toBe(2);
+
+    $status1 = $this->actingAs($user, 'sanctum')->getJson("/api/v1/episodes/{$this->episode->id}/like-status");
+    $status1->assertStatus(200)->assertJson(['data' => ['is_liked' => true, 'likes_count' => 1]]);
+
+    $status2 = $this->actingAs($user, 'sanctum')->getJson("/api/v1/episodes/{$episode2->id}/like-status");
+    $status2->assertStatus(200)->assertJson(['data' => ['is_liked' => true, 'likes_count' => 1]]);
+});
