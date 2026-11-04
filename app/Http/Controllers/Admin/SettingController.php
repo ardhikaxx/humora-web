@@ -25,7 +25,6 @@ class SettingController extends Controller
      */
     public function index(): View
     {
-        $freeEpisodes = SystemSetting::get('free_preview_episodes', 2);
         $bankAccounts = SystemSetting::get('official_bank_accounts');
         if (empty($bankAccounts) || ! is_array($bankAccounts)) {
             $bankAccounts = [
@@ -139,7 +138,6 @@ class SettingController extends Controller
         $qrisAccountName = SystemSetting::get('qris_account_name', 'Global Mobile Content');
 
         return view('admin.settings.index', compact(
-            'freeEpisodes',
             'bankAccounts',
             'allBanks',
             'groupedBanks',
@@ -162,7 +160,6 @@ class SettingController extends Controller
         }
 
         $validated = $request->validate([
-            'free_preview_episodes' => ['required', 'integer', 'min:1', 'max:5'],
             'bank_accounts' => ['required', 'array', 'min:1'],
             'bank_accounts.*.bank_name' => ['required', 'string', 'max:100'],
             'bank_accounts.*.bank_code' => ['nullable', 'string', 'max:50'],
@@ -208,7 +205,6 @@ class SettingController extends Controller
         }
 
         // Save system settings
-        SystemSetting::set('free_preview_episodes', (string) $validated['free_preview_episodes'], 'integer');
         SystemSetting::set('official_bank_accounts', $cleanBankAccounts, 'json');
 
         // Backwards compatibility for single BCA & Mandiri if present

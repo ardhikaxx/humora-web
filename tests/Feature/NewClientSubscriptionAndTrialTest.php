@@ -69,74 +69,46 @@ beforeEach(function () {
                 'episode_number' => $e,
                 'title' => "Series $s Ep $e",
                 'duration' => '02:00',
+                'access_type' => $e <= 2 ? 'free' : 'premium',
                 'status' => 'published',
             ]);
         }
     }
 });
 
-test('trial rule: series with 2 episodes has 1 free video, series with >2 episodes has 2 free videos', function () {
-    // 1. Series with 2 episodes
-    $series2 = Series::create([
-        'title' => 'Serial 2 Episode',
-        'slug' => 'serial-2-episode-'.uniqid(),
+test('video access is free or premium depending on admin access_type setting', function () {
+    $series = Series::create([
+        'title' => 'Serial Uji Akses',
+        'slug' => 'serial-uji-akses-'.uniqid(),
         'synopsis' => 'Test sinopsis',
         'release_year' => 2026,
         'catalog_order' => 100,
         'status' => 'published',
     ]);
-    $ep1_s2 = Episode::create([
-        'series_id' => $series2->id,
+    $ep1 = Episode::create([
+        'series_id' => $series->id,
         'episode_number' => 1,
-        'title' => 'Ep 1',
+        'title' => 'Ep 1 Gratis',
         'duration' => '02:00',
+        'access_type' => 'free',
         'status' => 'published',
     ]);
-    $ep2_s2 = Episode::create([
-        'series_id' => $series2->id,
+    $ep2 = Episode::create([
+        'series_id' => $series->id,
         'episode_number' => 2,
-        'title' => 'Ep 2',
+        'title' => 'Ep 2 Premium',
         'duration' => '02:00',
+        'access_type' => 'premium',
         'status' => 'published',
     ]);
 
-    expect($ep1_s2->isFreePreview())->toBeTrue();
-    expect($ep2_s2->isFreePreview())->toBeFalse(); // 2nd episode is locked because total is 2!
+    expect($ep1->isFreePreview())->toBeTrue();
+    expect($ep1->is_free)->toBeTrue();
+    expect($ep1->is_premium)->toBeFalse();
 
-    // 2. Series with 4 episodes
-    $series4 = Series::create([
-        'title' => 'Serial 4 Episode',
-        'slug' => 'serial-4-episode-'.uniqid(),
-        'synopsis' => 'Test sinopsis',
-        'release_year' => 2026,
-        'catalog_order' => 101,
-        'status' => 'published',
-    ]);
-    $ep1_s4 = Episode::create([
-        'series_id' => $series4->id,
-        'episode_number' => 1,
-        'title' => 'Ep 1',
-        'duration' => '02:00',
-        'status' => 'published',
-    ]);
-    $ep2_s4 = Episode::create([
-        'series_id' => $series4->id,
-        'episode_number' => 2,
-        'title' => 'Ep 2',
-        'duration' => '02:00',
-        'status' => 'published',
-    ]);
-    $ep3_s4 = Episode::create([
-        'series_id' => $series4->id,
-        'episode_number' => 3,
-        'title' => 'Ep 3',
-        'duration' => '02:00',
-        'status' => 'published',
-    ]);
-
-    expect($ep1_s4->isFreePreview())->toBeTrue();
-    expect($ep2_s4->isFreePreview())->toBeTrue(); // 2nd episode is free trial because total > 2!
-    expect($ep3_s4->isFreePreview())->toBeFalse(); // 3rd episode is locked!
+    expect($ep2->isFreePreview())->toBeFalse();
+    expect($ep2->is_free)->toBeFalse();
+    expect($ep2->is_premium)->toBeTrue();
 });
 
 test('weekly 15-video plan allocates 15 non-free episodes for 7 days', function () {

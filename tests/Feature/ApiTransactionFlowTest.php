@@ -61,7 +61,6 @@ test('user can browse active subscription plans and system payment info', functi
 test('admin can save multiple dynamic bank accounts and API serves them', function () {
     $response = $this->actingAs($this->financeAdmin, 'admin')
         ->post('/admin/settings', [
-            'free_preview_episodes' => 2,
             'price_monthly' => 19000,
             'price_quarterly' => 49000,
             'price_yearly' => 179000,

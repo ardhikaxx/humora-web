@@ -26,8 +26,13 @@
         <div class="humora-field has-suffix @error('password') is-error @enderror">
             <input type="password" id="password" name="password" class="form-control-custom @error('password') is-invalid @enderror" placeholder=" " required autocomplete="current-password">
             <label for="password" class="humora-floating-label">Kata Sandi</label>
-            <button type="button" class="btn btn-link humora-field-suffix text-muted text-decoration-none p-0" id="togglePassword">
-                <i data-lucide="eye" id="eyeIcon"></i>
+            <button type="button" class="humora-field-suffix btn-toggle-password" id="togglePassword" title="Tampilkan kata sandi" aria-label="Tampilkan kata sandi" tabindex="-1">
+                <span id="eyeOpenIcon" class="d-flex align-items-center">
+                    <i data-lucide="eye"></i>
+                </span>
+                <span id="eyeClosedIcon" class="d-none align-items-center">
+                    <i data-lucide="eye-off"></i>
+                </span>
             </button>
         </div>
         @error('password')
@@ -53,20 +58,39 @@
 <script>
     const togglePassword = document.getElementById('togglePassword');
     const password = document.getElementById('password');
-    const eyeIcon = document.getElementById('eyeIcon');
+    const eyeOpenIcon = document.getElementById('eyeOpenIcon');
+    const eyeClosedIcon = document.getElementById('eyeClosedIcon');
     const emailInput = document.getElementById('email');
     const rememberCheckbox = document.getElementById('remember');
     const loginForm = document.querySelector('form');
 
-    if (togglePassword && password && eyeIcon) {
-        togglePassword.addEventListener('click', function () {
-            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-            password.setAttribute('type', type);
-            const iconName = type === 'password' ? 'eye' : 'eye-off';
-            eyeIcon.setAttribute('data-lucide', iconName);
-            if (window.lucide) {
-                window.lucide.createIcons();
+    if (togglePassword && password) {
+        togglePassword.addEventListener('click', function (e) {
+            e.preventDefault();
+            const isPassword = password.getAttribute('type') === 'password';
+
+            if (isPassword) {
+                password.setAttribute('type', 'text');
+                togglePassword.setAttribute('title', 'Sembunyikan kata sandi');
+                togglePassword.setAttribute('aria-label', 'Sembunyikan kata sandi');
+                if (eyeOpenIcon && eyeClosedIcon) {
+                    eyeOpenIcon.classList.remove('d-flex');
+                    eyeOpenIcon.classList.add('d-none');
+                    eyeClosedIcon.classList.remove('d-none');
+                    eyeClosedIcon.classList.add('d-flex');
+                }
+            } else {
+                password.setAttribute('type', 'password');
+                togglePassword.setAttribute('title', 'Tampilkan kata sandi');
+                togglePassword.setAttribute('aria-label', 'Tampilkan kata sandi');
+                if (eyeOpenIcon && eyeClosedIcon) {
+                    eyeClosedIcon.classList.remove('d-flex');
+                    eyeClosedIcon.classList.add('d-none');
+                    eyeOpenIcon.classList.remove('d-none');
+                    eyeOpenIcon.classList.add('d-flex');
+                }
             }
+            password.focus();
         });
     }
 
@@ -81,6 +105,16 @@
                 field.classList.remove('has-value');
             }
         }
+    }
+
+    if (password) {
+        updateFieldState(password);
+        password.addEventListener('input', function () {
+            updateFieldState(password);
+        });
+        password.addEventListener('blur', function () {
+            updateFieldState(password);
+        });
     }
 
     // Restore remembered email from localStorage if not already provided by server cookie

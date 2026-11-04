@@ -104,11 +104,12 @@ test('storing video without manual episode number automatically assigns next seq
     expect($ep2->episode_number)->toBe(2);
     expect($ep2->access_type)->toBe('free'); // Policy: Ep 2 is free
 
-    // Create third episode without passing episode_number -> should be 3 and premium
+    // Create third episode with explicit premium access_type
     $res3 = $this->actingAs($this->admin, 'admin')->post('/admin/videos', [
         'series_id' => $this->series->id,
         'title' => 'Episode Ketiga Auto',
         'synopsis' => 'Deskripsi ep 3',
+        'access_type' => 'premium',
         'status' => 'published',
     ]);
 
@@ -117,7 +118,7 @@ test('storing video without manual episode number automatically assigns next seq
     $ep3 = Episode::where('series_id', $this->series->id)->where('title', 'Episode Ketiga Auto')->first();
     expect($ep3)->not->toBeNull();
     expect($ep3->episode_number)->toBe(3);
-    expect($ep3->access_type)->toBe('premium'); // Policy: Ep 3+ is premium
+    expect($ep3->access_type)->toBe('premium'); // Admin explicitly set premium
 });
 
 test('storing video with uploaded file automatically extracts video duration via ffprobe', function () {
@@ -223,4 +224,29 @@ test('admin can explicitly set and update episode access_type to free or premium
     $epFree->refresh();
     expect($epFree->access_type)->toBe('premium');
     expect($epFree->isFreePreview())->toBeFalse();
+
+    // 4. Create episode 1 explicitly as premium (proves ep1 is NOT forced to free)
+    $resEp1Prem = $this->actingAs($this->admin, 'admin')->post('/admin/videos', [
+        'series_id' => $this->series->id,
+        'episode_number' => 10,
+        'title' => 'Explicit Premium Ep 10',
+        'access_type' => 'free',
+        'status' => 'published',
+    ]);
+    $resEp1Prem->assertRedirect('/admin/videos');
+    $ep10 = Episode::where('series_id', $this->series->id)->where('episode_number', 10)->first();
+    expect($ep10->access_type)->toBe('free');
+    expect($ep10->isFreePreview())->toBeTrue();
+    expect($ep10->is_free)->toBeTrue();
+    expect($ep10->is_premium)->toBeFalse();
+});
+
+test('settings page does not contain access rules and free preview section', function () {
+    $response = $this->actingAs($this->admin, 'admin')->get('/admin/settings');
+
+    $response->assertStatus(200);
+    $response->assertDontSee('ATURAN AKSES & FREE PREVIEW');
+    $response->assertDontSee('free_preview_episodes');
+    $response->assertSee('KONFIGURASI PAKET VIP');
+    $response->assertSee('REKENING TRANSFER BANK RESMI');
 });

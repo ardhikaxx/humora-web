@@ -58,8 +58,9 @@ class SeriesController extends Controller
     {
         $categories = Category::where('is_active', true)->orderBy('name')->get();
         $suggestedOrder = ((Series::max('catalog_order') ?? 0) + 1);
+        $activeFeatured = Series::where('is_featured', true)->first();
 
-        return view('admin.series.create', compact('categories', 'suggestedOrder'));
+        return view('admin.series.create', compact('categories', 'suggestedOrder', 'activeFeatured'));
     }
 
     /**
@@ -67,6 +68,13 @@ class SeriesController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        if ($request->boolean('is_featured')) {
+            $activeFeatured = Series::where('is_featured', true)->first();
+            if ($activeFeatured) {
+                return back()->withInput()->with('error', "Gagal mengaktifkan unggulan. Judul '{$activeFeatured->title}' saat ini sedang aktif sebagai Unggulan. Harap nonaktifkan judul tersebut terlebih dahulu.");
+            }
+        }
+
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:200'],
             'slug' => ['nullable', 'string', 'max:220', 'unique:series,slug'],
@@ -144,8 +152,9 @@ class SeriesController extends Controller
     {
         $series = Series::with('categories')->findOrFail($id);
         $categories = Category::where('is_active', true)->orderBy('name')->get();
+        $activeFeatured = Series::where('is_featured', true)->where('id', '!=', $series->id)->first();
 
-        return view('admin.series.edit', compact('series', 'categories'));
+        return view('admin.series.edit', compact('series', 'categories', 'activeFeatured'));
     }
 
     /**
@@ -154,6 +163,13 @@ class SeriesController extends Controller
     public function update(Request $request, int $id): RedirectResponse
     {
         $series = Series::findOrFail($id);
+
+        if ($request->boolean('is_featured')) {
+            $activeFeatured = Series::where('is_featured', true)->where('id', '!=', $series->id)->first();
+            if ($activeFeatured) {
+                return back()->withInput()->with('error', "Gagal mengaktifkan unggulan. Judul '{$activeFeatured->title}' saat ini sedang aktif sebagai Unggulan. Harap nonaktifkan judul tersebut terlebih dahulu.");
+            }
+        }
 
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:200'],

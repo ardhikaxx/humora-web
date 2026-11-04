@@ -98,29 +98,14 @@
                                 @endphp
                                 @foreach ($categories as $cat)
                                 @php
-                                    $slug = strtolower($cat->slug ?? Str::slug($cat->name));
-                                    $icon = match($slug) {
-                                        'romantis' => 'heart',
-                                        'komedi' => 'laugh',
-                                        'sketsa' => 'clapperboard',
-                                        'keluarga' => 'home',
-                                        'kantor' => 'briefcase',
-                                        'sosial' => 'users',
-                                        default => 'sparkles'
-                                    };
                                     $isChecked = in_array($cat->id, $oldCategories);
                                 @endphp
                                 <label class="genre-chip-card {{ $isChecked ? 'is-selected' : '' }}" for="cat_{{ $cat->id }}">
                                     <input type="checkbox" name="categories[]" id="cat_{{ $cat->id }}" value="{{ $cat->id }}" class="genre-checkbox-native" {{ $isChecked ? 'checked' : '' }}>
-                                    <div class="genre-chip-icon-box">
-                                        <i data-lucide="{{ $icon }}"></i>
-                                    </div>
-                                    <div class="genre-chip-text">
-                                        <span class="genre-chip-title">{{ $cat->name }}</span>
-                                    </div>
-                                    <div class="genre-chip-indicator">
+                                    <span class="genre-chip-indicator">
                                         <i data-lucide="check"></i>
-                                    </div>
+                                    </span>
+                                    <span class="genre-chip-title">{{ $cat->name }}</span>
                                 </label>
                                 @endforeach
                             </div>
@@ -201,12 +186,19 @@
                     </div>
 
                     <div class="form-check form-switch mt-3">
-                        <input class="form-check-input" type="checkbox" name="is_featured" value="1" id="is_featured" {{ old('is_featured') ? 'checked' : '' }} style="cursor: pointer;">
+                        <input class="form-check-input" type="checkbox" name="is_featured" value="1" id="is_featured" {{ old('is_featured') ? 'checked' : '' }} style="cursor: pointer;" data-active-featured="{{ $activeFeatured ? $activeFeatured->title : '' }}">
                         <label class="form-check-label fw-bold text-dark" for="is_featured" style="font-size: 0.85rem; cursor: pointer;">
                             Jadikan Series Unggulan (Spotlight Hero)
                         </label>
                     </div>
-                    <small class="text-muted d-block ps-4" style="font-size: 0.75rem;">Tampil di carousel spotlight beranda aplikasi mobile.</small>
+                    @if ($activeFeatured)
+                        <small class="text-danger-emphasis d-block ps-4 mt-1" style="font-size: 0.74rem;">
+                            <i data-lucide="info" style="width: 12px; height: 12px; vertical-align: -1px;"></i>
+                            Unggulan aktif saat ini: <strong>{{ $activeFeatured->title }}</strong>. Nonaktifkan terlebih dahulu jika ingin mengganti unggulan.
+                        </small>
+                    @else
+                        <small class="text-muted d-block ps-4 mt-1" style="font-size: 0.75rem;">Tampil di carousel spotlight beranda aplikasi mobile (Maksimal 1 judul aktif).</small>
+                    @endif
                 </div>
             </div>
 
@@ -249,6 +241,34 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         slugInput.addEventListener('input', function () {
             slugInput.dataset.manual = 'true';
+        });
+    }
+
+    // Featured Series Single Restriction Alert
+    const featuredSwitch = document.getElementById('is_featured');
+    if (featuredSwitch) {
+        const activeFeaturedTitle = featuredSwitch.dataset.activeFeatured || '';
+
+        featuredSwitch.addEventListener('click', function (e) {
+            if (this.checked && activeFeaturedTitle) {
+                e.preventDefault();
+                this.checked = false;
+
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Unggulan Sudah Aktif',
+                        html: `Judul <strong>"${activeFeaturedTitle}"</strong> saat ini sedang aktif sebagai Series Unggulan.<br><br>Harap nonaktifkan status unggulan pada judul tersebut terlebih dahulu sebelum mengaktifkan unggulan untuk judul ini.`,
+                        confirmButtonColor: '#43135C',
+                        confirmButtonText: 'Mengerti',
+                        customClass: {
+                            confirmButton: 'btn btn-humora-primary px-4 py-2'
+                        }
+                    });
+                } else {
+                    alert(`Judul "${activeFeaturedTitle}" saat ini sedang aktif sebagai Series Unggulan. Harap nonaktifkan judul tersebut terlebih dahulu.`);
+                }
+            }
         });
     }
 });

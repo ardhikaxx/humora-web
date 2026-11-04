@@ -943,6 +943,131 @@ body {
     stroke-width: 2.3px;
 }
 
+/* ================= VIP PLANS CONFIGURATION UI ================= */
+.plan-config-card {
+    background: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 1.15rem;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 1rem;
+}
+
+.plan-config-card:hover {
+    border-color: #CBD5E1;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.plan-config-card.plan-weekly {
+    border-left: 4.5px solid #7C3AED;
+}
+
+.plan-config-card.plan-addon-5 {
+    border-left: 4.5px solid #F59E0B;
+}
+
+.plan-config-card.plan-addon-10 {
+    border-left: 4.5px solid #EA580C;
+}
+
+.plan-config-card.plan-full {
+    border-left: 4.5px solid #10B981;
+}
+
+.plan-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.65rem;
+    padding-bottom: 0.65rem;
+    border-bottom: 1px dashed #E2E8F0;
+}
+
+.plan-card-title-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 0.3rem 0.65rem;
+    border-radius: 8px;
+    letter-spacing: 0.03em;
+}
+
+.plan-badge-weekly {
+    background: #F3E8FF;
+    color: #6D28D9;
+    border: 1px solid #E9D5FF;
+}
+
+.plan-badge-addon5 {
+    background: #FEF3C7;
+    color: #B45309;
+    border: 1px solid #FDE68A;
+}
+
+.plan-badge-addon10 {
+    background: #FFEDD5;
+    color: #C2410C;
+    border: 1px solid #FED7AA;
+}
+
+.plan-badge-full {
+    background: #ECFDF5;
+    color: #047857;
+    border: 1px solid #A7F3D0;
+}
+
+.plan-card-desc {
+    font-size: 0.77rem;
+    color: #64748B;
+    line-height: 1.45;
+    margin-bottom: 0.85rem;
+}
+
+.plan-number-input {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #0F172A;
+}
+
+.plan-info-input {
+    background-color: #F8FAFC !important;
+    color: #475569 !important;
+    font-weight: 600;
+    font-size: 0.82rem;
+    cursor: not-allowed;
+    border-left: none !important;
+}
+
+.plan-info-input.is-unlimited {
+    color: #059669 !important;
+    font-weight: 700;
+}
+
+.plan-info-icon-addon {
+    background-color: #F8FAFC !important;
+    border-right: none !important;
+    color: #64748B;
+}
+
+.plan-info-icon-addon.is-unlimited {
+    color: #059669;
+}
+
+.plan-config-card .form-check-input {
+    width: 2.3rem;
+    height: 1.2rem;
+    cursor: pointer;
+}
+
+.plan-config-card .form-check-input:checked {
+    background-color: #43135C;
+    border-color: #43135C;
+}
+
 /* ================= TABLES ================= */
 .table-humora {
     width: 100%;
@@ -1247,6 +1372,35 @@ body {
     padding-right: 2.75rem !important;
 }
 
+.humora-field-suffix.btn-toggle-password {
+    background: transparent;
+    border: none;
+    color: #94A3B8;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.humora-field-suffix.btn-toggle-password:hover {
+    color: #43135C;
+    background-color: #F3E8FF;
+}
+
+.humora-field-suffix.btn-toggle-password:focus-visible {
+    outline: 2px solid #43135C;
+    outline-offset: 2px;
+}
+
+.humora-field-suffix.btn-toggle-password svg.lucide {
+    width: 19px !important;
+    height: 19px !important;
+    stroke-width: 2px !important;
+}
+
 .humora-field .humora-field-prefix {
     position: absolute;
     left: 14px;
@@ -1369,6 +1523,24 @@ body {
 .input-group > .form-control-custom.border-start-0 {
     border-left: none !important;
 }
+.input-group > .form-control-custom.border-end-0 {
+    border-right: none !important;
+}
+.input-group > .input-group-text.border-start-0 {
+    border-left: none !important;
+}
+
+.input-group > .input-group-text:first-child,
+.input-group > .form-control-custom:first-child {
+    border-top-left-radius: 12px !important;
+    border-bottom-left-radius: 12px !important;
+}
+
+.input-group > .input-group-text:last-child,
+.input-group > .form-control-custom:last-child {
+    border-top-right-radius: 12px !important;
+    border-bottom-right-radius: 12px !important;
+}
 
 /* Cohesive states across input-group elements */
 .input-group:hover:not(:focus-within) > .input-group-text,
@@ -1395,6 +1567,16 @@ body {
     border-color: #E2E8F0 !important;
     color: #CBD5E1 !important;
     cursor: not-allowed;
+}
+
+.input-group:has(:disabled) > .plan-info-input,
+.input-group:has(:disabled) > .plan-info-icon-addon {
+    color: #475569 !important;
+}
+
+.input-group:has(:disabled) > .plan-info-input.is-unlimited,
+.input-group:has(:disabled) > .plan-info-icon-addon.is-unlimited {
+    color: #059669 !important;
 }
 
 .search-input-wrap {
@@ -2690,23 +2872,24 @@ svg.lucide.fs-6, .fs-6 svg.lucide { width: 1rem !important; height: 1rem !import
 }
 
 .genre-chips-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
-    gap: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.6rem;
+    align-items: center;
 }
 
 .genre-chip-card {
     position: relative;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 0.65rem;
-    padding: 0.65rem 0.85rem;
-    border-radius: 12px;
-    border: 1.5px solid #E2E8F0;
+    gap: 0.45rem;
+    padding: 0.42rem 0.85rem;
+    border-radius: 9999px;
+    border: 1.5px solid #CBD5E1;
     background-color: #FFFFFF;
     cursor: pointer;
     user-select: none;
-    transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     margin-bottom: 0;
 }
 
@@ -2728,54 +2911,18 @@ svg.lucide.fs-6, .fs-6 svg.lucide { width: 1rem !important; height: 1rem !import
 .genre-chip-card.is-selected {
     border-color: #43135C;
     background: #FAF5FF;
-    box-shadow: 0 3px 10px rgba(67, 19, 92, 0.12);
+    box-shadow: 0 2px 6px rgba(67, 19, 92, 0.12);
     transform: translateY(-1px);
 }
 
-.genre-chip-icon-box {
-    width: 32px;
-    height: 32px;
-    border-radius: 9px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #F1F5F9;
-    color: #64748B;
-    transition: all 0.18s ease;
-    flex-shrink: 0;
-}
-
-.genre-chip-icon-box svg.lucide {
-    width: 16px !important;
-    height: 16px !important;
-    stroke-width: 2.2px;
-}
-
-.genre-chip-card:hover .genre-chip-icon-box {
-    background: #E2E8F0;
-    color: #1E293B;
-}
-
-.genre-chip-card.is-selected .genre-chip-icon-box {
-    background: #43135C;
-    color: #FFFFFF;
-}
-
-.genre-chip-text {
-    flex-grow: 1;
-    min-width: 0;
-}
-
 .genre-chip-title {
-    display: block;
-    font-size: 0.86rem;
+    display: inline-block;
+    font-size: 0.84rem;
     font-weight: 600;
     color: #334155;
-    line-height: 1.2;
-    transition: color 0.18s ease;
+    line-height: 1.25;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    transition: color 0.15s ease;
 }
 
 .genre-chip-card.is-selected .genre-chip-title {
@@ -2784,26 +2931,25 @@ svg.lucide.fs-6, .fs-6 svg.lucide { width: 1rem !important; height: 1rem !import
 }
 
 .genre-chip-indicator {
-    width: 20px;
-    height: 20px;
+    width: 17px;
+    height: 17px;
     border-radius: 50%;
     border: 1.5px solid #CBD5E1;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-left: auto;
     flex-shrink: 0;
-    transition: all 0.18s ease;
+    transition: all 0.15s ease;
     background: #FFFFFF;
 }
 
 .genre-chip-indicator svg.lucide {
-    width: 12px !important;
-    height: 12px !important;
-    stroke-width: 3px !important;
+    width: 10px !important;
+    height: 10px !important;
+    stroke-width: 3.2px !important;
     opacity: 0;
     color: #FFFFFF;
-    transition: opacity 0.18s ease;
+    transition: opacity 0.15s ease;
 }
 
 .genre-chip-card.is-selected .genre-chip-indicator {

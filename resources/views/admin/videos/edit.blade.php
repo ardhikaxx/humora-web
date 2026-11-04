@@ -265,8 +265,8 @@
                     @enderror
 
                     <div class="p-2.5 rounded-2" style="background: #FAF5FF; border: 1px dashed #E9D5FF; font-size: 0.72rem; color: #581C87;">
-                        <i data-lucide="sparkles" class="me-1" style="width: 12px; height: 12px;"></i>
-                        <strong>Rekomendasi Otomatis:</strong> <span id="accessNoticeText">Ep 1 &amp; 2 Gratis, Ep 3+ Premium.</span>
+                        <i data-lucide="info" class="me-1" style="width: 12px; height: 12px;"></i>
+                        <strong>Akses Episode:</strong> Penentuan video gratis atau premium ditentukan langsung oleh opsi pilihan admin di atas.
                     </div>
                 </div>
             </div>
@@ -299,17 +299,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const accessTypePremium = document.getElementById('accessTypePremium');
     const accessCardFree = document.getElementById('accessCardFree');
     const accessCardPremium = document.getElementById('accessCardPremium');
-    const accessNoticeText = document.getElementById('accessNoticeText');
-    let hasAdminManuallyChangedAccess = false;
 
     function applyAccessCardStyling() {
         if (!accessCardFree || !accessCardPremium) return;
-        if (accessTypeFree.checked) {
+        if (accessTypeFree && accessTypeFree.checked) {
             accessCardFree.style.borderColor = '#16A34A';
             accessCardFree.style.background = '#F0FDF4';
             accessCardPremium.style.borderColor = '#E2E8F0';
             accessCardPremium.style.background = '#FFFFFF';
-        } else {
+        } else if (accessTypePremium && accessTypePremium.checked) {
             accessCardPremium.style.borderColor = '#D97706';
             accessCardPremium.style.background = '#FFFBEB';
             accessCardFree.style.borderColor = '#E2E8F0';
@@ -318,14 +316,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (accessTypeFree && accessTypePremium) {
-        accessTypeFree.addEventListener('change', function () {
-            hasAdminManuallyChangedAccess = true;
-            applyAccessCardStyling();
-        });
-        accessTypePremium.addEventListener('change', function () {
-            hasAdminManuallyChangedAccess = true;
-            applyAccessCardStyling();
-        });
+        accessTypeFree.addEventListener('change', applyAccessCardStyling);
+        accessTypePremium.addEventListener('change', applyAccessCardStyling);
         applyAccessCardStyling();
     }
 
@@ -338,23 +330,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const nextEp = isCurrent 
             ? parseInt(opt.dataset.currentEp || 1, 10) 
             : parseInt(opt.dataset.nextEp || 1, 10);
-        const count = parseInt(opt.dataset.epCount || 0, 10);
-        const title = opt.dataset.title || 'judul ini';
 
         if (epNumInput) epNumInput.value = nextEp;
         if (epNumberBadge) epNumberBadge.textContent = 'Auto Ep #' + nextEp;
         if (epNumberNotice) {
             epNumberNotice.textContent = 'Otomatis Urutan ke-' + nextEp;
-        }
-
-        // Calculate suggested access rule
-        const isFreeRecommended = count <= 2 ? (nextEp <= 1) : (nextEp <= 2);
-        if (accessNoticeText) {
-            if (count <= 2) {
-                accessNoticeText.textContent = `Series memiliki ${count} episode. Ep 1 disarankan Gratis, Ep 2+ Premium VIP.`;
-            } else {
-                accessNoticeText.textContent = `Series memiliki ${count} episode. Ep 1 & 2 disarankan Gratis, Ep 3+ Premium VIP.`;
-            }
         }
 
         if (window.lucide) lucide.createIcons();

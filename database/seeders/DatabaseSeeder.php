@@ -30,7 +30,6 @@ class DatabaseSeeder extends Seeder
         );
 
         // 2. System Settings
-        SystemSetting::set('free_preview_episodes', '2', 'integer');
         SystemSetting::set('bca_account_number', '2103039177', 'text');
         SystemSetting::set('bca_account_name', 'PT Global Mobile Content', 'text');
         SystemSetting::set('mandiri_account_number', '', 'text');

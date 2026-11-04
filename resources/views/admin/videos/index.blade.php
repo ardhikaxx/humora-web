@@ -12,7 +12,7 @@
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
     <div>
         <h1 class="page-title">Kelola Video Episode</h1>
-        <p class="page-subtitle mb-0">Kelola episode sketsa komedi (~2 menit), file master video, durasi presisi, dan aturan akses preview vs VIP.</p>
+        <p class="page-subtitle mb-0">Kelola episode sketsa komedi (~2 menit), file master video, durasi presisi, dan penetapan status gratis atau VIP.</p>
     </div>
     <a href="{{ route('admin.videos.create') }}" class="btn btn-humora-primary">
         <i data-lucide="plus"></i>
@@ -29,40 +29,40 @@
 @endphp
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
-        <x-stat-card 
-            label="Total Episode" 
-            :value="$totalVid" 
-            icon="video" 
-            iconBg="purple" 
-            subtext="Seluruh episode terdaftar" 
+        <x-stat-card
+            label="Total Episode"
+            :value="$totalVid"
+            icon="video"
+            iconBg="purple"
+            subtext="Seluruh episode terdaftar"
         />
     </div>
     <div class="col-6 col-md-3">
-        <x-stat-card 
-            label="Free Preview" 
-            :value="$freeVid" 
-            icon="sparkles" 
-            iconBg="green" 
-            subtext="Ep 1 & 2 (Bebas tonton)" 
+        <x-stat-card
+            label="Free Preview"
+            :value="$freeVid"
+            icon="sparkles"
+            iconBg="green"
+            subtext="Akses Gratis (Bebas tonton)"
         />
     </div>
     <div class="col-6 col-md-3">
-        <x-stat-card 
-            label="Episode Premium" 
-            :value="$premVid" 
+        <x-stat-card
+            label="Episode Premium"
+            :value="$premVid"
             badge="VIP"
-            icon="gem" 
-            iconBg="purple" 
-            subtext="Ep 3+ (Khusus Subscriber)" 
+            icon="gem"
+            iconBg="purple"
+            subtext="Khusus Subscriber VIP"
         />
     </div>
     <div class="col-6 col-md-3">
-        <x-stat-card 
-            label="Status Terpublikasi" 
-            :value="$pubVid" 
-            icon="check-circle" 
-            iconBg="yellow" 
-            subtext="Tampil di katalog mobile" 
+        <x-stat-card
+            label="Status Terpublikasi"
+            :value="$pubVid"
+            icon="check-circle"
+            iconBg="yellow"
+            subtext="Tampil di katalog mobile"
         />
     </div>
 </div>
@@ -183,7 +183,7 @@
                         </td>
                     </tr>
                     @empty
-                    <x-empty-state 
+                    <x-empty-state
                         colspan="8"
                         icon="video"
                         title="Belum Ada Episode Video"

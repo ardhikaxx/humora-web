@@ -89,3 +89,14 @@ test('login page without remembered cookie has blank email and unchecked remembe
     $response->assertDontSee('checked style="accent-color: #43135C;', false);
     $response->assertSee('Ingat Saya di Perangkat Ini');
 });
+
+test('login page contains password toggle with eye and eye-off icons', function () {
+    $response = $this->get(route('admin.login'));
+
+    $response->assertStatus(200);
+    $response->assertSee('id="togglePassword"', false);
+    $response->assertSee('data-lucide="eye"', false);
+    $response->assertSee('data-lucide="eye-off"', false);
+    $response->assertSee('id="eyeOpenIcon"', false);
+    $response->assertSee('id="eyeClosedIcon"', false);
+});

@@ -166,37 +166,10 @@
 <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data">
     @csrf
     <div class="row g-4">
-        <!-- Left Column: Aturan Preview & Harga Paket VIP -->
+        <!-- Left Column: Harga & Konfigurasi Paket VIP -->
         <div class="col-12 col-lg-6">
-            <!-- 1. Akses Konten -->
+            <!-- Harga & Konfigurasi Paket VIP Resmi -->
             <div class="humora-card mb-4">
-                <div class="humora-card-header">
-                    <div>
-                        <div class="humora-card-title">ATURAN AKSES & FREE PREVIEW</div>
-                        <div class="humora-card-subtitle">Jumlah episode preview gratis sebelum paywall VIP.</div>
-                    </div>
-                    <div class="text-muted"><i data-lucide="sliders"></i></div>
-                </div>
-                <div class="humora-card-body p-4">
-                    <div class="mb-3">
-                        <label for="freeEpisodesSelect" class="form-label-custom">Jumlah Episode Preview Gratis Per Series <span class="text-danger">*</span></label>
-                        <select id="freeEpisodesSelect" name="free_preview_episodes" class="form-select-custom @error('free_preview_episodes') is-invalid @enderror">
-                            <option value="1" {{ $freeEpisodes == 1 ? 'selected' : '' }}>1 Episode Gratis</option>
-                            <option value="2" {{ $freeEpisodes == 2 ? 'selected' : '' }}>2 Episode Gratis (Default Standar HUMORA)</option>
-                            <option value="3" {{ $freeEpisodes == 3 ? 'selected' : '' }}>3 Episode Gratis</option>
-                        </select>
-                        <small class="text-muted mt-1 d-block" style="font-size: 0.75rem;">
-                            Episode berikutnya otomatis memerlukan langganan Premium VIP aktif.
-                        </small>
-                        @error('free_preview_episodes')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-            </div>
-
-            <!-- 2. Harga & Konfigurasi Paket VIP Resmi -->
-            <div class="humora-card mb-0">
                 <div class="humora-card-header">
                     <div>
                         <div class="humora-card-title">HARGA & KONFIGURASI PAKET VIP (KUOTA & AKSES)</div>
@@ -211,135 +184,165 @@
                     <input type="hidden" name="price_yearly" value="179000">
 
                     <!-- Plan 1: Paket Akses Mingguan (15 Video) -->
-                    <div class="p-3 mb-3 rounded border bg-light">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="badge bg-primary text-white px-2 py-1" style="font-size: 0.75rem;">1. PAKET AKSES MINGGUAN</span>
-                            <div class="form-check form-switch mb-0">
+                    <div class="plan-config-card plan-weekly">
+                        <div class="plan-card-header">
+                            <span class="plan-card-title-badge plan-badge-weekly">
+                                <i data-lucide="calendar" style="width: 14px; height: 14px;"></i>
+                                <span>1. PAKET AKSES MINGGUAN</span>
+                            </span>
+                            <div class="form-check form-switch mb-0 d-flex align-items-center gap-2">
                                 <input class="form-check-input" type="checkbox" name="plans[weekly_15][is_active]" value="1" id="switchWeekly" {{ ($plans['weekly_15']->is_active ?? true) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="switchWeekly" style="font-size: 0.75rem;">Aktif</label>
+                                <label class="form-check-label fw-semibold text-secondary" for="switchWeekly" style="font-size: 0.78rem; cursor: pointer;">Aktif</label>
                             </div>
                         </div>
-                        <small class="text-muted d-block mb-2" style="font-size: 0.72rem;">Pengguna mendapat 15 video unik pertama selama 7 hari. Pembelian berikutnya memberi 15 video berikutnya tanpa mengulang.</small>
+                        <div class="plan-card-desc">Pengguna mendapat 15 video unik pertama selama 7 hari. Pembelian berikutnya memberi 15 video berikutnya tanpa mengulang.</div>
                         
-                        <div class="row g-2">
+                        <div class="row g-2 g-sm-3">
                             <div class="col-12 col-sm-4">
-                                <label class="form-label-custom mb-1" style="font-size: 0.75rem;">Harga (Rp) <span class="text-danger">*</span></label>
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text">Rp</span>
-                                    <input type="number" name="plans[weekly_15][price]" class="form-control" value="{{ old('plans.weekly_15.price', $plans['weekly_15']->price ?? 15000) }}" required min="0">
+                                <label class="form-label-custom">Harga (Rp) <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 fw-semibold text-muted">Rp</span>
+                                    <input type="number" name="plans[weekly_15][price]" class="form-control-custom plan-number-input border-start-0" value="{{ old('plans.weekly_15.price', $plans['weekly_15']->price ?? 15000) }}" required min="0" placeholder="15000">
                                 </div>
                             </div>
                             <div class="col-6 col-sm-4">
-                                <label class="form-label-custom mb-1" style="font-size: 0.75rem;">Kuota Video</label>
-                                <div class="input-group input-group-sm">
-                                    <input type="number" name="plans[weekly_15][video_quota]" class="form-control" value="{{ old('plans.weekly_15.video_quota', $plans['weekly_15']->video_quota ?? 15) }}" required min="1">
-                                    <span class="input-group-text">Video</span>
+                                <label class="form-label-custom">Kuota Video <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" name="plans[weekly_15][video_quota]" class="form-control-custom plan-number-input border-end-0" value="{{ old('plans.weekly_15.video_quota', $plans['weekly_15']->video_quota ?? 15) }}" required min="1" placeholder="15">
+                                    <span class="input-group-text bg-light border-start-0 text-muted">Video</span>
                                 </div>
                             </div>
                             <div class="col-6 col-sm-4">
-                                <label class="form-label-custom mb-1" style="font-size: 0.75rem;">Masa Aktif</label>
-                                <div class="input-group input-group-sm">
-                                    <input type="number" name="plans[weekly_15][duration_days]" class="form-control" value="{{ old('plans.weekly_15.duration_days', $plans['weekly_15']->duration_days ?? 7) }}" required min="1">
-                                    <span class="input-group-text">Hari</span>
+                                <label class="form-label-custom">Masa Aktif <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" name="plans[weekly_15][duration_days]" class="form-control-custom plan-number-input border-end-0" value="{{ old('plans.weekly_15.duration_days', $plans['weekly_15']->duration_days ?? 7) }}" required min="1" placeholder="7">
+                                    <span class="input-group-text bg-light border-start-0 text-muted">Hari</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Plan 2: Add-on 5 Video -->
-                    <div class="p-3 mb-3 rounded border bg-light">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="badge bg-warning text-dark px-2 py-1" style="font-size: 0.75rem;">2. ADD-ON 5 VIDEO</span>
-                            <div class="form-check form-switch mb-0">
+                    <div class="plan-config-card plan-addon-5">
+                        <div class="plan-card-header">
+                            <span class="plan-card-title-badge plan-badge-addon5">
+                                <i data-lucide="plus-circle" style="width: 14px; height: 14px;"></i>
+                                <span>2. ADD-ON 5 VIDEO</span>
+                            </span>
+                            <div class="form-check form-switch mb-0 d-flex align-items-center gap-2">
                                 <input class="form-check-input" type="checkbox" name="plans[addon_5][is_active]" value="1" id="switchAddon5" {{ ($plans['addon_5']->is_active ?? true) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="switchAddon5" style="font-size: 0.75rem;">Aktif</label>
+                                <label class="form-check-label fw-semibold text-secondary" for="switchAddon5" style="font-size: 0.78rem; cursor: pointer;">Aktif</label>
                             </div>
                         </div>
-                        <small class="text-muted d-block mb-2" style="font-size: 0.72rem;">Tambahan 5 video katalog baru non-repetisi. Masa aktif otomatis mengikuti paket mingguan aktif.</small>
+                        <div class="plan-card-desc">Tambahan 5 video katalog baru non-repetisi. Masa aktif otomatis mengikuti paket mingguan aktif.</div>
                         
-                        <div class="row g-2 align-items-center">
-                            <div class="col-12 col-sm-6">
-                                <label class="form-label-custom mb-1" style="font-size: 0.75rem;">Harga (Rp) <span class="text-danger">*</span></label>
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text">Rp</span>
-                                    <input type="number" name="plans[addon_5][price]" class="form-control" value="{{ old('plans.addon_5.price', $plans['addon_5']->price ?? 7500) }}" required min="0">
+                        <div class="row g-2 g-sm-3">
+                            <div class="col-12 col-sm-4">
+                                <label class="form-label-custom">Harga (Rp) <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 fw-semibold text-muted">Rp</span>
+                                    <input type="number" name="plans[addon_5][price]" class="form-control-custom plan-number-input border-start-0" value="{{ old('plans.addon_5.price', $plans['addon_5']->price ?? 7500) }}" required min="0" placeholder="7500">
                                 </div>
                             </div>
-                            <div class="col-6 col-sm-3">
-                                <label class="form-label-custom mb-1" style="font-size: 0.75rem;">Kuota Video</label>
-                                <div class="input-group input-group-sm">
-                                    <input type="number" name="plans[addon_5][video_quota]" class="form-control" value="{{ old('plans.addon_5.video_quota', $plans['addon_5']->video_quota ?? 5) }}" required min="1">
-                                    <span class="input-group-text">Video</span>
+                            <div class="col-6 col-sm-4">
+                                <label class="form-label-custom">Kuota Video <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" name="plans[addon_5][video_quota]" class="form-control-custom plan-number-input border-end-0" value="{{ old('plans.addon_5.video_quota', $plans['addon_5']->video_quota ?? 5) }}" required min="1" placeholder="5">
+                                    <span class="input-group-text bg-light border-start-0 text-muted">Video</span>
                                 </div>
                             </div>
-                            <div class="col-6 col-sm-3 text-center">
-                                <label class="form-label-custom mb-1 text-muted" style="font-size: 0.75rem;">Masa Aktif</label>
-                                <div class="text-muted" style="font-size: 0.72rem; line-height: 1.2;">Ikut Paket Utama</div>
+                            <div class="col-6 col-sm-4">
+                                <label class="form-label-custom">Masa Aktif</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0 plan-info-icon-addon">
+                                        <i data-lucide="link-2" style="width: 14px; height: 14px;"></i>
+                                    </span>
+                                    <input type="text" class="form-control-custom plan-info-input" value="Ikut Paket Utama" disabled readonly title="Masa aktif paket add-on otomatis sinkron dengan masa aktif paket utama">
+                                </div>
+                                <input type="hidden" name="plans[addon_5][duration_days]" value="{{ $plans['addon_5']->duration_days ?? 0 }}">
                             </div>
                         </div>
                     </div>
 
                     <!-- Plan 3: Add-on 10 Video -->
-                    <div class="p-3 mb-3 rounded border bg-light">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="badge bg-warning text-dark px-2 py-1" style="font-size: 0.75rem;">3. ADD-ON 10 VIDEO</span>
-                            <div class="form-check form-switch mb-0">
+                    <div class="plan-config-card plan-addon-10">
+                        <div class="plan-card-header">
+                            <span class="plan-card-title-badge plan-badge-addon10">
+                                <i data-lucide="plus-circle" style="width: 14px; height: 14px;"></i>
+                                <span>3. ADD-ON 10 VIDEO</span>
+                            </span>
+                            <div class="form-check form-switch mb-0 d-flex align-items-center gap-2">
                                 <input class="form-check-input" type="checkbox" name="plans[addon_10][is_active]" value="1" id="switchAddon10" {{ ($plans['addon_10']->is_active ?? true) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="switchAddon10" style="font-size: 0.75rem;">Aktif</label>
+                                <label class="form-check-label fw-semibold text-secondary" for="switchAddon10" style="font-size: 0.78rem; cursor: pointer;">Aktif</label>
                             </div>
                         </div>
-                        <small class="text-muted d-block mb-2" style="font-size: 0.72rem;">Tambahan 10 video katalog baru non-repetisi. Masa aktif otomatis mengikuti paket mingguan aktif.</small>
+                        <div class="plan-card-desc">Tambahan 10 video katalog baru non-repetisi. Masa aktif otomatis mengikuti paket mingguan aktif.</div>
                         
-                        <div class="row g-2 align-items-center">
-                            <div class="col-12 col-sm-6">
-                                <label class="form-label-custom mb-1" style="font-size: 0.75rem;">Harga (Rp) <span class="text-danger">*</span></label>
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text">Rp</span>
-                                    <input type="number" name="plans[addon_10][price]" class="form-control" value="{{ old('plans.addon_10.price', $plans['addon_10']->price ?? 12500) }}" required min="0">
+                        <div class="row g-2 g-sm-3">
+                            <div class="col-12 col-sm-4">
+                                <label class="form-label-custom">Harga (Rp) <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 fw-semibold text-muted">Rp</span>
+                                    <input type="number" name="plans[addon_10][price]" class="form-control-custom plan-number-input border-start-0" value="{{ old('plans.addon_10.price', $plans['addon_10']->price ?? 12500) }}" required min="0" placeholder="12500">
                                 </div>
                             </div>
-                            <div class="col-6 col-sm-3">
-                                <label class="form-label-custom mb-1" style="font-size: 0.75rem;">Kuota Video</label>
-                                <div class="input-group input-group-sm">
-                                    <input type="number" name="plans[addon_10][video_quota]" class="form-control" value="{{ old('plans.addon_10.video_quota', $plans['addon_10']->video_quota ?? 10) }}" required min="1">
-                                    <span class="input-group-text">Video</span>
+                            <div class="col-6 col-sm-4">
+                                <label class="form-label-custom">Kuota Video <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" name="plans[addon_10][video_quota]" class="form-control-custom plan-number-input border-end-0" value="{{ old('plans.addon_10.video_quota', $plans['addon_10']->video_quota ?? 10) }}" required min="1" placeholder="10">
+                                    <span class="input-group-text bg-light border-start-0 text-muted">Video</span>
                                 </div>
                             </div>
-                            <div class="col-6 col-sm-3 text-center">
-                                <label class="form-label-custom mb-1 text-muted" style="font-size: 0.75rem;">Masa Aktif</label>
-                                <div class="text-muted" style="font-size: 0.72rem; line-height: 1.2;">Ikut Paket Utama</div>
+                            <div class="col-6 col-sm-4">
+                                <label class="form-label-custom">Masa Aktif</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0 plan-info-icon-addon">
+                                        <i data-lucide="link-2" style="width: 14px; height: 14px;"></i>
+                                    </span>
+                                    <input type="text" class="form-control-custom plan-info-input" value="Ikut Paket Utama" disabled readonly title="Masa aktif paket add-on otomatis sinkron dengan masa aktif paket utama">
+                                </div>
+                                <input type="hidden" name="plans[addon_10][duration_days]" value="{{ $plans['addon_10']->duration_days ?? 0 }}">
                             </div>
                         </div>
                     </div>
 
                     <!-- Plan 4: Full Access Seluruh Katalog -->
-                    <div class="p-3 mb-0 rounded border bg-light">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="badge bg-success text-white px-2 py-1" style="font-size: 0.75rem;">4. FULL ACCESS SELURUH KATALOG</span>
-                            <div class="form-check form-switch mb-0">
+                    <div class="plan-config-card plan-full mb-0">
+                        <div class="plan-card-header">
+                            <span class="plan-card-title-badge plan-badge-full">
+                                <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i>
+                                <span>4. FULL ACCESS KATALOG</span>
+                            </span>
+                            <div class="form-check form-switch mb-0 d-flex align-items-center gap-2">
                                 <input class="form-check-input" type="checkbox" name="plans[full_30][is_active]" value="1" id="switchFull" {{ ($plans['full_30']->is_active ?? true) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="switchFull" style="font-size: 0.75rem;">Aktif</label>
+                                <label class="form-check-label fw-semibold text-secondary" for="switchFull" style="font-size: 0.78rem; cursor: pointer;">Aktif</label>
                             </div>
                         </div>
-                        <small class="text-muted d-block mb-2" style="font-size: 0.72rem;">Akses penuh ke seluruh katalog video (~68 video) selama 30 hari.</small>
+                        <div class="plan-card-desc">Akses penuh ke seluruh katalog video tanpa batasan kuota selama 30 hari kalender.</div>
                         
-                        <div class="row g-2">
-                            <div class="col-12 col-sm-6">
-                                <label class="form-label-custom mb-1" style="font-size: 0.75rem;">Harga (Rp) <span class="text-danger">*</span></label>
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text">Rp</span>
-                                    <input type="number" name="plans[full_30][price]" class="form-control" value="{{ old('plans.full_30.price', $plans['full_30']->price ?? 49000) }}" required min="0">
+                        <div class="row g-2 g-sm-3">
+                            <div class="col-12 col-sm-4">
+                                <label class="form-label-custom">Harga (Rp) <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 fw-semibold text-muted">Rp</span>
+                                    <input type="number" name="plans[full_30][price]" class="form-control-custom plan-number-input border-start-0" value="{{ old('plans.full_30.price', $plans['full_30']->price ?? 49000) }}" required min="0" placeholder="49000">
                                 </div>
                             </div>
-                            <div class="col-6 col-sm-3 text-center">
-                                <label class="form-label-custom mb-1 text-muted" style="font-size: 0.75rem;">Kuota Video</label>
-                                <div class="text-success fw-bold" style="font-size: 0.78rem; line-height: 1.8;">Semua Video</div>
+                            <div class="col-6 col-sm-4">
+                                <label class="form-label-custom">Kuota Video</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0 plan-info-icon-addon is-unlimited">
+                                        <i data-lucide="infinity" style="width: 15px; height: 15px;"></i>
+                                    </span>
+                                    <input type="text" class="form-control-custom plan-info-input is-unlimited" value="Semua Video (Full)" disabled readonly title="Akses tanpa batas ke seluruh koleksi video komedi">
+                                </div>
+                                <input type="hidden" name="plans[full_30][video_quota]" value="">
                             </div>
-                            <div class="col-6 col-sm-3">
-                                <label class="form-label-custom mb-1" style="font-size: 0.75rem;">Masa Aktif</label>
-                                <div class="input-group input-group-sm">
-                                    <input type="number" name="plans[full_30][duration_days]" class="form-control" value="{{ old('plans.full_30.duration_days', $plans['full_30']->duration_days ?? 30) }}" required min="1">
-                                    <span class="input-group-text">Hari</span>
+                            <div class="col-6 col-sm-4">
+                                <label class="form-label-custom">Masa Aktif <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" name="plans[full_30][duration_days]" class="form-control-custom plan-number-input border-end-0" value="{{ old('plans.full_30.duration_days', $plans['full_30']->duration_days ?? 30) }}" required min="1" placeholder="30">
+                                    <span class="input-group-text bg-light border-start-0 text-muted">Hari</span>
                                 </div>
                             </div>
                         </div>

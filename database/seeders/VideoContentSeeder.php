@@ -31,7 +31,14 @@ class VideoContentSeeder extends Seeder
             );
         }
 
-        DB::transaction(function () use ($categories) {
+        $freeFirstEpisodeSlugs = [
+            'tipe-penumpang-taxi-online',
+            'juru-parkir-liar',
+            'tipe-ibu-ibu',
+            'tipe-pengunjung-cafe',
+        ];
+
+        DB::transaction(function () use ($categories, $freeFirstEpisodeSlugs) {
             Episode::query()->delete();
             DB::table('category_series')->delete();
             Series::query()->delete();
@@ -48,9 +55,13 @@ class VideoContentSeeder extends Seeder
                     $categorySlugs
                 ));
 
+                $hasFreeFirstEpisode = in_array($series->slug, $freeFirstEpisodeSlugs, true);
+
                 foreach ($episodes as $episode) {
                     $episode['series_id'] = $series->id;
-                    $episode['access_type'] = $episode['episode_number'] <= 2 ? 'free' : 'premium';
+                    $episode['access_type'] = ($hasFreeFirstEpisode && (int) $episode['episode_number'] === 1)
+                        ? 'free'
+                        : 'premium';
                     Episode::create($episode);
                 }
             }
@@ -113,7 +124,7 @@ class VideoContentSeeder extends Seeder
                 'release_year' => '2026',
                 'thumbnail' => 'thumb_baru-jadian-vs-lama-jadian_20261022_120000_9wAdSP9zrC5Y.webp',
                 'catalog_order' => 1,
-                'is_featured' => true,
+                'is_featured' => false,
                 'status' => 'published',
                 'categories' => [
                     'romantis',
@@ -729,7 +740,7 @@ class VideoContentSeeder extends Seeder
                 'release_year' => '2026',
                 'thumbnail' => 'thumb_tipe-penumpang-taxi-online_20261022_120000_3TfjjhVt4cLu.webp',
                 'catalog_order' => 14,
-                'is_featured' => false,
+                'is_featured' => true,
                 'status' => 'published',
                 'categories' => [
                     'komedi',

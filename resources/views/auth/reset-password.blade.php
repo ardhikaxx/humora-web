@@ -20,8 +20,9 @@
         <div class="humora-field has-suffix @error('password') is-error @enderror">
             <input type="password" id="new_password" name="password" class="form-control-custom @error('password') is-invalid @enderror" placeholder=" " required autocomplete="off">
             <label for="new_password" class="humora-floating-label">Kata Sandi Baru</label>
-            <button type="button" class="btn btn-link humora-field-suffix text-muted text-decoration-none p-0" onclick="toggleVisibility('new_password', 'eye1')">
-                <i data-lucide="eye" id="eye1"></i>
+            <button type="button" class="humora-field-suffix btn-toggle-password" onclick="togglePasswordVisibility('new_password', this)" title="Tampilkan kata sandi" aria-label="Tampilkan kata sandi" tabindex="-1">
+                <span class="eye-open d-flex align-items-center"><i data-lucide="eye"></i></span>
+                <span class="eye-closed d-none align-items-center"><i data-lucide="eye-off"></i></span>
             </button>
         </div>
         @error('password')
@@ -33,8 +34,9 @@
         <div class="humora-field has-suffix @error('password_confirmation') is-error @enderror">
             <input type="password" id="confirm_password" name="password_confirmation" class="form-control-custom @error('password_confirmation') is-invalid @enderror" placeholder=" " required autocomplete="off">
             <label for="confirm_password" class="humora-floating-label">Konfirmasi Kata Sandi Baru</label>
-            <button type="button" class="btn btn-link humora-field-suffix text-muted text-decoration-none p-0" onclick="toggleVisibility('confirm_password', 'eye2')">
-                <i data-lucide="eye" id="eye2"></i>
+            <button type="button" class="humora-field-suffix btn-toggle-password" onclick="togglePasswordVisibility('confirm_password', this)" title="Tampilkan kata sandi" aria-label="Tampilkan kata sandi" tabindex="-1">
+                <span class="eye-open d-flex align-items-center"><i data-lucide="eye"></i></span>
+                <span class="eye-closed d-none align-items-center"><i data-lucide="eye-off"></i></span>
             </button>
         </div>
         @error('password_confirmation')
@@ -64,19 +66,32 @@
 
 @section('scripts')
 <script>
-    function toggleVisibility(inputId, iconId) {
+    function togglePasswordVisibility(inputId, btn) {
         const input = document.getElementById(inputId);
-        const icon = document.getElementById(iconId);
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.setAttribute('data-lucide', 'eye-off');
-        } else {
-            input.type = 'password';
-            icon.setAttribute('data-lucide', 'eye');
+        if (!input || !btn) return;
+
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        btn.title = isPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi';
+        btn.setAttribute('aria-label', btn.title);
+
+        const eyeOpen = btn.querySelector('.eye-open');
+        const eyeClosed = btn.querySelector('.eye-closed');
+
+        if (eyeOpen && eyeClosed) {
+            if (isPassword) {
+                eyeOpen.classList.remove('d-flex');
+                eyeOpen.classList.add('d-none');
+                eyeClosed.classList.remove('d-none');
+                eyeClosed.classList.add('d-flex');
+            } else {
+                eyeClosed.classList.remove('d-flex');
+                eyeClosed.classList.add('d-none');
+                eyeOpen.classList.remove('d-none');
+                eyeOpen.classList.add('d-flex');
+            }
         }
-        if (window.lucide) {
-            window.lucide.createIcons();
-        }
+        input.focus();
     }
 </script>
 @endsection

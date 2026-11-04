@@ -148,12 +148,8 @@ class EpisodeController extends Controller
             $formattedDuration = sprintf('%dm %02ds', $minutes, $seconds);
         }
 
-        // Access Type: Admin can explicitly choose 'free' or 'premium', or fallback to trial policy
-        if (! empty($validated['access_type'])) {
-            $accessType = $validated['access_type'];
-        } else {
-            $accessType = $validated['episode_number'] <= 2 ? 'free' : 'premium';
-        }
+        // Access Type: Admin explicitly chooses 'free' or 'premium'
+        $accessType = ! empty($validated['access_type']) ? $validated['access_type'] : 'free';
 
         $videoFilename = null;
         if ($request->hasFile('video_file')) {
@@ -296,12 +292,8 @@ class EpisodeController extends Controller
             $formattedDuration = sprintf('%dm %02ds', $minutes, $seconds);
         }
 
-        // Access Type: Admin can explicitly choose 'free' or 'premium', or fallback to trial policy
-        if (! empty($validated['access_type'])) {
-            $accessType = $validated['access_type'];
-        } else {
-            $accessType = $validated['episode_number'] <= 2 ? 'free' : 'premium';
-        }
+        // Access Type: Admin explicitly chooses 'free' or 'premium'
+        $accessType = ! empty($validated['access_type']) ? $validated['access_type'] : 'free';
 
         $videoFilename = $episode->video_file;
         $hasNewVideo = false;
