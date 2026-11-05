@@ -55,7 +55,7 @@ class EpisodeController extends Controller
             ? $user->watchHistories()->where('episode_id', $episode->id)->first()
             : null;
 
-        $sessionId = $request->header('X-Session-ID') ?: $request->header('X-Guest-ID') ?: session()->getId();
+        $sessionId = $this->resolveGuestSessionId($request);
         $ip = $request->ip();
 
         $isLiked = $user
@@ -85,10 +85,23 @@ class EpisodeController extends Controller
         ]);
     }
 
+    protected function resolveGuestSessionId(Request $request): ?string
+    {
+        $sessionId = $request->header('X-Session-ID') ?: $request->header('X-Guest-ID');
+        if (! $sessionId) {
+            try {
+                $sessionId = session()->isStarted() ? session()->getId() : null;
+            } catch (\Throwable $e) {
+                $sessionId = null;
+            }
+        }
+        return $sessionId;
+    }
+
     protected function recordViewingEvent(Episode $episode, Request $request, $user): void
     {
         try {
-            $sessionId = $request->header('X-Session-ID', session()->getId());
+            $sessionId = $this->resolveGuestSessionId($request);
             $ip = $request->ip();
 
             // Deduplicate viewing event within last 10 minutes for same episode & user/ip

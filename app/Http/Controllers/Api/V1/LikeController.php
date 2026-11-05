@@ -13,13 +13,29 @@ use Illuminate\Support\Facades\Auth;
 class LikeController extends Controller
 {
     /**
+     * Helper to resolve guest session identifier safely
+     */
+    protected function resolveGuestSessionId(Request $request): ?string
+    {
+        $sessionId = $request->header('X-Session-ID') ?: $request->header('X-Guest-ID');
+        if (! $sessionId) {
+            try {
+                $sessionId = session()->isStarted() ? session()->getId() : null;
+            } catch (\Throwable $e) {
+                $sessionId = null;
+            }
+        }
+        return $sessionId;
+    }
+
+    /**
      * Toggle like on a series (supports both authenticated users and guests)
      */
     public function toggleSeriesLike(Request $request, int $id): JsonResponse
     {
         $user = Auth::guard('sanctum')->user() ?: $request->user();
         $series = Series::findOrFail($id);
-        $sessionId = $request->header('X-Session-ID') ?: $request->header('X-Guest-ID') ?: session()->getId();
+        $sessionId = $this->resolveGuestSessionId($request);
         $ip = $request->ip();
 
         if ($user) {
@@ -76,7 +92,7 @@ class LikeController extends Controller
     {
         $user = Auth::guard('sanctum')->user() ?: $request->user();
         $episode = Episode::findOrFail($id);
-        $sessionId = $request->header('X-Session-ID') ?: $request->header('X-Guest-ID') ?: session()->getId();
+        $sessionId = $this->resolveGuestSessionId($request);
         $ip = $request->ip();
 
         if ($user) {
@@ -129,7 +145,7 @@ class LikeController extends Controller
     {
         $user = Auth::guard('sanctum')->user() ?: $request->user();
         $episode = Episode::findOrFail($id);
-        $sessionId = $request->header('X-Session-ID') ?: $request->header('X-Guest-ID') ?: session()->getId();
+        $sessionId = $this->resolveGuestSessionId($request);
         $ip = $request->ip();
 
         if ($user) {

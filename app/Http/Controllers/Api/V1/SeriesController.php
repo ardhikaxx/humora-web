@@ -134,6 +134,22 @@ class SeriesController extends Controller
     }
 
     /**
+     * Helper to resolve guest session identifier safely
+     */
+    protected function resolveGuestSessionId(?Request $request): ?string
+    {
+        $sessionId = $request?->header('X-Session-ID') ?: $request?->header('X-Guest-ID');
+        if (! $sessionId) {
+            try {
+                $sessionId = session()->isStarted() ? session()->getId() : null;
+            } catch (\Throwable $e) {
+                $sessionId = null;
+            }
+        }
+        return $sessionId;
+    }
+
+    /**
      * Helper to resolve liked episode IDs for user or guest session
      */
     protected function getLikedEpisodeIds(?User $user, ?Request $request): Collection
@@ -145,7 +161,7 @@ class SeriesController extends Controller
                 ->flip();
         }
 
-        $sessionId = $request?->header('X-Session-ID') ?: $request?->header('X-Guest-ID') ?: session()->getId();
+        $sessionId = $this->resolveGuestSessionId($request);
         $ip = $request?->ip();
 
         return Like::whereNull('user_id')
@@ -174,7 +190,7 @@ class SeriesController extends Controller
                 ->flip();
         }
 
-        $sessionId = $request?->header('X-Session-ID') ?: $request?->header('X-Guest-ID') ?: session()->getId();
+        $sessionId = $this->resolveGuestSessionId($request);
         $ip = $request?->ip();
 
         return Like::whereNull('user_id')
