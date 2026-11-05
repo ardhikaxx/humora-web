@@ -8,6 +8,7 @@ use App\Models\Notification;
 use App\Models\SubscriptionPlan;
 use App\Models\SystemSetting;
 use App\Models\Transaction;
+use App\Services\AdminNotificationService;
 use App\Services\FileStorageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,7 +17,8 @@ use Illuminate\Support\Str;
 class TransactionController extends Controller
 {
     public function __construct(
-        protected FileStorageService $fileStorage
+        protected FileStorageService $fileStorage,
+        protected AdminNotificationService $adminNotification
     ) {}
 
     /**
@@ -66,6 +68,9 @@ class TransactionController extends Controller
             'amount' => $plan->price, // Server authoritative price
             'status' => 'pending',
         ]);
+
+        // Send email notification to all active admins
+        $this->adminNotification->notifyAdminsNewSubscription($transaction, 'checkout');
 
         return response()->json([
             'success' => true,
@@ -153,6 +158,9 @@ class TransactionController extends Controller
             'type' => 'transaction',
             'is_read' => false,
         ]);
+
+        // Send email notification to all active admins (proof uploaded, ready to verify)
+        $this->adminNotification->notifyAdminsNewSubscription($transaction, 'proof_uploaded');
 
         return response()->json([
             'success' => true,
