@@ -340,7 +340,7 @@ class User extends Authenticatable
      */
     public function activeAccessibleEpisodeIds(): array
     {
-        if ($this->hasActiveFullAccess()) {
+        if ($this->hasActiveFullAccess() || $this->hasActiveWeeklySubscription()) {
             return Episode::where('status', 'published')->pluck('id')->all();
         }
 

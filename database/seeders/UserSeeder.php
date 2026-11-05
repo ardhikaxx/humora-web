@@ -83,26 +83,8 @@ class UserSeeder extends Seeder
                 ]
             );
 
-            // Grant 15 locked episodes to user2
-            $lockedEpisodes = Episode::where('status', 'published')
-                ->where('episode_number', '>', 2)
-                ->take(15)
-                ->get();
-
-            foreach ($lockedEpisodes as $ep) {
-                UserVideoAccess::updateOrCreate(
-                    [
-                        'user_id' => $user2->id,
-                        'episode_id' => $ep->id,
-                    ],
-                    [
-                        'subscription_id' => $sub2->id,
-                        'transaction_id' => $trx2->id,
-                        'granted_at' => Carbon::now()->subDay(),
-                        'expires_at' => Carbon::now()->addDays(6),
-                    ]
-                );
-            }
+            // Clean up any legacy pre-allocated video accesses so user2 gets 15 quota to freely pick any video
+            UserVideoAccess::where('user_id', $user2->id)->delete();
         }
 
         // 3. User Expired (Langganan Kedaluwarsa)
