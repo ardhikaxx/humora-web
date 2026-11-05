@@ -70,6 +70,9 @@ Route::prefix('v1')->group(function () {
         Route::put('/auth/password', [AuthController::class, 'updatePassword']);
         Route::post('/auth/logout', [AuthController::class, 'logout']);
 
+        // Episode Quota Unlock
+        Route::post('/episodes/{id}/unlock', [EpisodeController::class, 'unlock']);
+
         // Subscriptions & Transactions
         Route::get('/subscription/status', [SubscriptionController::class, 'status']);
         Route::post('/subscription/checkout', [TransactionController::class, 'checkout']);

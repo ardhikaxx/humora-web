@@ -49,7 +49,7 @@ class TransactionController extends Controller
             ->firstOrFail();
 
         // Add-on plan requires an active weekly package
-        if ($plan->isAddon() && ! $user->hasActiveWeeklySubscription()) {
+        if ($plan->isAddon() && ! $user->canPurchaseAddon()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Paket Add-on hanya dapat dibeli jika Anda memiliki Paket Akses Mingguan yang masih aktif.',

@@ -77,6 +77,13 @@ class FileStorageController extends Controller
         // Check authentication for mobile user via Sanctum or session
         $user = Auth::guard('sanctum')->user() ?? Auth::guard('web')->user();
 
+        // Auto-unlock with weekly quota if weekly subscriber streams a new episode
+        if ($user && $user->hasActiveVip() && ! $user->hasActiveFullAccess() && ! $user->hasActiveAccessToEpisode($episode->id)) {
+            if ($user->remainingVideoQuota() > 0) {
+                $user->unlockEpisodeWithQuota($episode->id);
+            }
+        }
+
         // Check episode accessibility
         if (! $episode->isAccessibleBy($user)) {
             return response()->json([

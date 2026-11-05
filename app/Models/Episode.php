@@ -126,8 +126,13 @@ class Episode extends Model
             return true;
         }
 
+        // 3. User is an active Weekly/Add-on subscriber with remaining quota > 0
+        if ($user->hasActiveVip() && $user->remainingVideoQuota() > 0) {
+            return true;
+        }
+
         // Fallback for legacy users before quota system:
-        if ($user->hasActiveVip() && ! $user->userVideoAccesses()->exists()) {
+        if ($user->hasActiveVip() && ! $user->userVideoAccesses()->exists() && $user->totalVideoQuota() === 0) {
             return true;
         }
 

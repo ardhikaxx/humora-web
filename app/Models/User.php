@@ -133,14 +133,31 @@ class User extends Authenticatable
             return false;
         }
 
+        if ($this->hasActiveFullAccess()) {
+            return false;
+        }
+
+        $weekly = $this->currentWeeklySubscription();
+        if (! $weekly) {
+            return false;
+        }
+
+        return $this->remainingVideoQuota() > 0;
+    }
+
+    /**
+     * Get the latest weekly subscription for the current cycle
+     */
+    public function currentWeeklySubscription(): ?Subscription
+    {
         return $this->subscriptions()
-            ->where('status', 'active')
-            ->where('end_date', '>=', Carbon::now())
+            ->with('plan')
             ->where(function ($q) {
                 $q->where('plan_type', 'weekly')
                     ->orWhereHas('plan', fn ($pq) => $pq->where('plan_type', 'weekly'));
             })
-            ->exists();
+            ->latest('id')
+            ->first();
     }
 
     /**
@@ -161,11 +178,146 @@ class User extends Authenticatable
     }
 
     /**
-     * User can purchase Add-on only if they have an active Weekly package
+     * User can purchase Add-on if they have an active or unexpired Weekly package period
      */
     public function canPurchaseAddon(): bool
     {
-        return $this->hasActiveWeeklySubscription();
+        $weekly = $this->currentWeeklySubscription();
+        if (! $weekly) {
+            return false;
+        }
+
+        return $weekly->end_date && Carbon::now()->lessThanOrEqualTo($weekly->end_date);
+    }
+
+    /**
+     * Total video quota available across the current weekly package and its add-ons
+     */
+    public function totalVideoQuota(): int
+    {
+        if ($this->hasActiveFullAccess()) {
+            return 0;
+        }
+
+        $weekly = $this->currentWeeklySubscription();
+        if (! $weekly) {
+            return 0;
+        }
+
+        $weeklyQuota = (int) ($weekly->video_quota ?: 15);
+
+        $addonQuota = (int) $this->subscriptions()
+            ->where('plan_type', 'addon')
+            ->where('created_at', '>=', $weekly->created_at)
+            ->sum('video_quota');
+
+        return $weeklyQuota + $addonQuota;
+    }
+
+    /**
+     * Count of distinct episodes unlocked in the current weekly cycle
+     */
+    public function usedVideoQuota(): int
+    {
+        $weekly = $this->currentWeeklySubscription();
+        if (! $weekly) {
+            return 0;
+        }
+
+        $addonIds = $this->subscriptions()
+            ->where('plan_type', 'addon')
+            ->where('created_at', '>=', $weekly->created_at)
+            ->pluck('id')
+            ->all();
+
+        $cycleSubIds = array_merge([$weekly->id], $addonIds);
+
+        return $this->userVideoAccesses()
+            ->where(function ($q) use ($cycleSubIds, $weekly) {
+                $q->whereIn('subscription_id', $cycleSubIds)
+                    ->orWhere('created_at', '>=', $weekly->created_at);
+            })
+            ->distinct('episode_id')
+            ->count('episode_id');
+    }
+
+    /**
+     * Remaining video quota available in the current cycle
+     */
+    public function remainingVideoQuota(): int
+    {
+        if ($this->hasActiveFullAccess()) {
+            return 0;
+        }
+
+        $weekly = $this->currentWeeklySubscription();
+        if (! $weekly) {
+            return 0;
+        }
+
+        $remaining = $this->totalVideoQuota() - $this->usedVideoQuota();
+
+        return max(0, $remaining);
+    }
+
+    /**
+     * Unlock an episode using available quota
+     */
+    public function unlockEpisodeWithQuota(int $episodeId): bool
+    {
+        if ($this->hasActiveFullAccess()) {
+            return true;
+        }
+
+        if ($this->hasActiveAccessToEpisode($episodeId)) {
+            return true;
+        }
+
+        if (! $this->hasActiveVip() || $this->remainingVideoQuota() <= 0) {
+            return false;
+        }
+
+        $weekly = $this->currentWeeklySubscription();
+        if (! $weekly) {
+            return false;
+        }
+
+        $activeSub = $this->subscriptions()
+            ->whereIn('plan_type', ['weekly', 'addon'])
+            ->where('status', 'active')
+            ->latest('id')
+            ->first() ?? $weekly;
+
+        $expiresAt = $this->valid_until && $this->valid_until->isFuture()
+            ? $this->valid_until
+            : ($weekly->end_date && $weekly->end_date->isFuture() ? $weekly->end_date : Carbon::now()->addDays(7));
+
+        UserVideoAccess::create([
+            'user_id' => $this->id,
+            'episode_id' => $episodeId,
+            'subscription_id' => $activeSub->id,
+            'transaction_id' => $activeSub->transaction_id,
+            'granted_at' => Carbon::now(),
+            'expires_at' => $expiresAt,
+        ]);
+
+        // Check if quota has reached 0 after this unlock
+        $remaining = $this->remainingVideoQuota();
+        if ($remaining <= 0) {
+            $this->update([
+                'tier' => 'free',
+                'valid_until' => Carbon::now(),
+            ]);
+
+            $this->subscriptions()
+                ->whereIn('plan_type', ['weekly', 'addon'])
+                ->where('status', 'active')
+                ->update([
+                    'status' => 'expired',
+                ]);
+        }
+
+        return true;
     }
 
     /**

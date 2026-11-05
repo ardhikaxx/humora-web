@@ -30,6 +30,14 @@ class EpisodeController extends Controller
         }
 
         $isFree = $episode->isFreePreview();
+
+        // Auto-unlock with weekly quota if weekly subscriber accesses new episode
+        if ($user && $user->hasActiveVip() && ! $user->hasActiveFullAccess() && ! $user->hasActiveAccessToEpisode($episode->id)) {
+            if ($user->remainingVideoQuota() > 0) {
+                $user->unlockEpisodeWithQuota($episode->id);
+            }
+        }
+
         $isAccessible = $episode->isAccessibleBy($user);
 
         if (! $isAccessible) {
@@ -129,5 +137,68 @@ class EpisodeController extends Controller
         } catch (\Throwable $e) {
             // Silently ignore tracking error to keep playback uninterrupted
         }
+    }
+
+    /**
+     * Unlock an episode using available weekly/add-on quota
+     */
+    public function unlock(Request $request, int $id): JsonResponse
+    {
+        $user = $request->user();
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Autentikasi diperlukan.',
+            ], 401);
+        }
+
+        $episode = Episode::with('series')->where('status', 'published')->findOrFail($id);
+
+        // If user already has access, return success immediately
+        if ($user->hasActiveFullAccess() || $user->hasActiveAccessToEpisode($episode->id)) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Episode sudah terbuka.',
+                'data' => [
+                    'episode_id' => $episode->id,
+                    'total_quota' => $user->totalVideoQuota(),
+                    'used_quota' => $user->usedVideoQuota(),
+                    'remaining_quota' => $user->remainingVideoQuota(),
+                    'tier' => $user->tier,
+                    'effective_tier' => $user->effective_tier,
+                ],
+            ]);
+        }
+
+        if (! $user->hasActiveVip() || $user->remainingVideoQuota() <= 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kuota video Anda telah habis. Silakan beli paket add-on atau berlangganan kembali.',
+                'error_code' => 'QUOTA_EXHAUSTED',
+                'data' => [
+                    'total_quota' => $user->totalVideoQuota(),
+                    'used_quota' => $user->usedVideoQuota(),
+                    'remaining_quota' => 0,
+                    'tier' => $user->tier,
+                    'effective_tier' => $user->effective_tier,
+                ],
+            ], 403);
+        }
+
+        $user->unlockEpisodeWithQuota($episode->id);
+        $user->refresh();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Episode berhasil dibuka dengan kuota video Anda.',
+            'data' => [
+                'episode_id' => $episode->id,
+                'total_quota' => $user->totalVideoQuota(),
+                'used_quota' => $user->usedVideoQuota(),
+                'remaining_quota' => $user->remainingVideoQuota(),
+                'tier' => $user->tier,
+                'effective_tier' => $user->effective_tier,
+            ],
+        ]);
     }
 }
