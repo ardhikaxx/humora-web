@@ -49,6 +49,14 @@ class NewSubscriptionNotificationMail extends Mailable
      */
     public function content(): Content
     {
+        $configured = config('app.url');
+        $appUrl = (! empty($configured) && ! str_contains($configured, 'localhost') && ! str_contains($configured, '127.0.0.1'))
+            ? $configured
+            : 'https://humora.web.id';
+
+        $appUrl = rtrim((string) $appUrl, '/');
+        $verificationUrl = $appUrl.'/admin/transactions?search='.urlencode($this->transaction->trx_code);
+
         return new Content(
             view: 'emails.admin.new-subscription',
             with: [
@@ -56,7 +64,7 @@ class NewSubscriptionNotificationMail extends Mailable
                 'user' => $this->transaction->user,
                 'plan' => $this->transaction->plan,
                 'eventType' => $this->eventType,
-                'verificationUrl' => route('admin.transactions.index', ['search' => $this->transaction->trx_code]),
+                'verificationUrl' => $verificationUrl,
             ],
         );
     }
@@ -68,6 +76,17 @@ class NewSubscriptionNotificationMail extends Mailable
      */
     public function attachments(): array
     {
-        return [];
+        $attachments = [];
+
+        if (! empty($this->transaction->proof_file)) {
+            $proofPath = storage_path('uploads/proofs/'.$this->transaction->proof_file);
+            if (file_exists($proofPath)) {
+                $ext = pathinfo($proofPath, PATHINFO_EXTENSION) ?: 'jpg';
+                $attachments[] = Attachment::fromPath($proofPath)
+                    ->as('bukti_transfer_'.$this->transaction->trx_code.'.'.$ext);
+            }
+        }
+
+        return $attachments;
     }
 }

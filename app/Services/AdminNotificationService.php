@@ -11,7 +11,31 @@ use Illuminate\Support\Facades\Mail;
 class AdminNotificationService
 {
     /**
-     * Notify all active admins about a new subscription / transaction event.
+     * Get all active administrator email addresses directly from the database.
+     *
+     * @return array<string>
+     */
+    public function getAdminRecipients(): array
+    {
+        try {
+            return Admin::where('is_active', true)
+                ->whereNotNull('email')
+                ->where('email', '!=', '')
+                ->pluck('email')
+                ->map(fn ($email) => strtolower(trim((string) $email)))
+                ->filter(fn ($email) => filter_var($email, FILTER_VALIDATE_EMAIL))
+                ->unique()
+                ->values()
+                ->all();
+        } catch (\Throwable $e) {
+            Log::warning('[AdminNotificationService] Tidak dapat membaca tabel admins dari database: '.$e->getMessage());
+
+            return [];
+        }
+    }
+
+    /**
+     * Notify all active admins in database about a new subscription / transaction event.
      *
      * @param  string  $eventType  'checkout' | 'proof_uploaded'
      * @return array<string> List of email recipients
@@ -19,18 +43,12 @@ class AdminNotificationService
     public function notifyAdminsNewSubscription(Transaction $transaction, string $eventType = 'proof_uploaded'): array
     {
         try {
-            $adminEmails = Admin::where('is_active', true)
-                ->whereNotNull('email')
-                ->where('email', '!=', '')
-                ->pluck('email')
-                ->map(fn ($email) => trim((string) $email))
-                ->filter(fn ($email) => filter_var($email, FILTER_VALIDATE_EMAIL))
-                ->unique()
-                ->values()
-                ->all();
+            $adminEmails = $this->getAdminRecipients();
 
             if (empty($adminEmails)) {
-                Log::info('[AdminNotificationService] Tidak ada email admin aktif yang ditemukan di database untuk menerima notifikasi.');
+                Log::warning('[AdminNotificationService] Tidak ada akun admin aktif yang ditemukan di database untuk menerima notifikasi.', [
+                    'trx_code' => $transaction->trx_code ?? null,
+                ]);
 
                 return [];
             }
@@ -42,29 +60,59 @@ class AdminNotificationService
             $defaultMailer = config('mail.default', 'log');
             $smtpPassword = config('mail.mailers.smtp.password');
 
-            if ($defaultMailer === 'smtp' && empty($smtpPassword)) {
-                Log::info("[AdminNotificationService] Notifikasi email langganan ({$transaction->trx_code}) ditunda karena MAIL_PASSWORD belum diatur di .env.", [
+            if ($defaultMailer === 'smtp' && empty($smtpPassword) && ! app()->environment('testing')) {
+                Log::warning("[AdminNotificationService] Pengiriman email ({$transaction->trx_code}) ditunda karena MAIL_PASSWORD di .env belum diisi.", [
                     'trx_code' => $transaction->trx_code,
-                    'recipients_count' => count($adminEmails),
                     'recipients' => $adminEmails,
                 ]);
+
+                // Fallback to log driver so details are not lost in development
+                try {
+                    Mail::mailer('log')->to($adminEmails[0])->send(new NewSubscriptionNotificationMail($transaction, $eventType));
+                } catch (\Throwable) {
+                    // Safe ignore
+                }
 
                 return $adminEmails;
             }
 
+            $sentRecipients = [];
+            $failedRecipients = [];
+
             foreach ($adminEmails as $email) {
-                Mail::to($email)->send(new NewSubscriptionNotificationMail($transaction, $eventType));
+                try {
+                    Mail::to($email)->send(new NewSubscriptionNotificationMail($transaction, $eventType));
+                    $sentRecipients[] = $email;
+                    Log::info("[AdminNotificationService] Email notifikasi ({$transaction->trx_code}) berhasil dikirim ke admin: {$email}", [
+                        'trx_code' => $transaction->trx_code,
+                        'recipient' => $email,
+                        'event' => $eventType,
+                    ]);
+                } catch (\Throwable $sendError) {
+                    $failedRecipients[$email] = $sendError->getMessage();
+                    Log::error("[AdminNotificationService] Gagal mengirim email notifikasi ke admin {$email}: {$sendError->getMessage()}", [
+                        'trx_code' => $transaction->trx_code,
+                        'recipient' => $email,
+                        'error' => $sendError->getMessage(),
+                    ]);
+                }
             }
 
-            Log::info("[AdminNotificationService] Notifikasi email langganan ({$transaction->trx_code}) berhasil dikirim ke seluruh admin.", [
-                'trx_code' => $transaction->trx_code,
-                'event' => $eventType,
-                'recipients' => $adminEmails,
-            ]);
+            // If SMTP failed for all recipients in non-testing environment, fallback to writing to log mailer
+            if (empty($sentRecipients) && ! empty($failedRecipients) && ! app()->environment('testing')) {
+                try {
+                    Mail::mailer('log')->to($adminEmails[0])->send(new NewSubscriptionNotificationMail($transaction, $eventType));
+                    Log::warning("[AdminNotificationService] Email notifikasi ({$transaction->trx_code}) dicadangkan ke channel log karena pengiriman SMTP gagal.", [
+                        'failed_recipients' => $failedRecipients,
+                    ]);
+                } catch (\Throwable) {
+                    // Safe ignore
+                }
+            }
 
             return $adminEmails;
         } catch (\Throwable $e) {
-            Log::error('[AdminNotificationService] Terjadi kesalahan saat mengirim notifikasi email ke admin: '.$e->getMessage(), [
+            Log::error('[AdminNotificationService] Terjadi kesalahan fatal pada layanan notifikasi admin: '.$e->getMessage(), [
                 'trx_code' => $transaction->trx_code ?? null,
                 'error' => $e->getMessage(),
             ]);

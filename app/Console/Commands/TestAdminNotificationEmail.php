@@ -3,10 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Mail\NewSubscriptionNotificationMail;
-use App\Models\Admin;
 use App\Models\SubscriptionPlan;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Services\AdminNotificationService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
@@ -70,13 +70,8 @@ class TestAdminNotificationEmail extends Command
         if ($specificEmail) {
             $recipients = [$specificEmail];
         } else {
-            $recipients = Admin::where('is_active', true)
-                ->whereNotNull('email')
-                ->where('email', '!=', '')
-                ->pluck('email')
-                ->unique()
-                ->values()
-                ->all();
+            $notificationService = app(AdminNotificationService::class);
+            $recipients = $notificationService->getAdminRecipients();
         }
 
         if (empty($recipients)) {
