@@ -19,12 +19,20 @@ class AuthController extends Controller
      */
     public function register(Request $request): JsonResponse
     {
+        // Standardize phone number format before validation to always be '08...'
+        if ($request->has('phone') && $request->filled('phone')) {
+            $request->merge(['phone' => User::normalizePhoneNumber($request->input('phone'))]);
+        }
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],
             'email' => ['nullable', 'email', 'max:150', 'unique:users,email'],
             'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone'],
             'password' => ['required', 'string', 'min:6'],
             'gender' => ['nullable', 'in:Laki-laki,Perempuan'],
+        ], [
+            'phone.unique' => 'Nomor telepon ini sudah terdaftar. Silakan gunakan nomor lain atau masuk ke akun Anda.',
+            'email.unique' => 'Email ini sudah terdaftar. Silakan gunakan email lain atau masuk ke akun Anda.',
         ]);
 
         if (empty($validated['email']) && empty($validated['phone'])) {
@@ -82,11 +90,15 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        $identifier = $validated['login'] ?? $validated['email'] ?? $validated['identifier'] ?? null;
+        $identifier = trim($validated['login'] ?? $validated['email'] ?? $validated['identifier'] ?? '');
 
-        $user = User::where('email', $identifier)
-            ->orWhere('phone', $identifier)
-            ->first();
+        // 1. Try finding user by email first
+        $user = User::where('email', $identifier)->first();
+
+        // 2. If not found by email, try finding user by phone (with normalization to 08... and variants)
+        if (! $user) {
+            $user = $this->findUserByPhone($identifier);
+        }
 
         if (! $user || ! Hash::check($validated['password'], $user->password)) {
             RateLimiter::hit($throttleKey, 60);
@@ -216,6 +228,10 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
+        if ($request->has('phone') && $request->filled('phone')) {
+            $request->merge(['phone' => User::normalizePhoneNumber($request->input('phone'))]);
+        }
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],
             'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone,'.$user->id],
@@ -283,25 +299,48 @@ class AuthController extends Controller
     }
 
     /**
-     * Verify user email for mobile forgot password flow
+     * Verify user email or phone for mobile forgot password flow
      */
     public function forgotPasswordVerify(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'email' => ['required', 'email'],
+            'identifier' => ['required_without_all:email,phone', 'nullable', 'string'],
+            'email' => ['nullable', 'email'],
+            'phone' => ['nullable', 'string'],
         ], [
-            'email.required' => 'Email wajib diisi.',
+            'identifier.required_without_all' => 'Email atau nomor telepon wajib diisi.',
             'email.email' => 'Format email tidak valid.',
         ]);
 
-        $user = User::where('email', $validated['email'])->first();
+        $identifier = trim($validated['identifier'] ?? $validated['email'] ?? $validated['phone'] ?? '');
 
-        if (! $user) {
+        if (empty($identifier)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Alamat email tidak terdaftar dalam basis data sistem.',
+                'message' => 'Email atau nomor telepon wajib diisi.',
                 'errors' => [
-                    'email' => ['Alamat email tidak terdaftar dalam sistem kami.'],
+                    'identifier' => ['Email atau nomor telepon harus diisi.'],
+                ],
+            ], 422);
+        }
+
+        $isEmail = filter_var($identifier, FILTER_VALIDATE_EMAIL) !== false || str_contains($identifier, '@');
+
+        if ($isEmail) {
+            $user = User::where('email', $identifier)->first();
+        } else {
+            $user = $this->findUserByPhone($identifier);
+        }
+
+        if (! $user) {
+            $typeLabel = $isEmail ? 'Alamat email' : 'Nomor telepon';
+
+            return response()->json([
+                'success' => false,
+                'message' => "{$typeLabel} tidak terdaftar dalam basis data sistem.",
+                'errors' => [
+                    'identifier' => ["{$typeLabel} tidak terdaftar dalam sistem kami."],
+                    $isEmail ? 'email' : 'phone' => ["{$typeLabel} tidak terdaftar dalam sistem kami."],
                 ],
             ], 404);
         }
@@ -315,9 +354,12 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Email pengguna berhasil diverifikasi.',
+            'message' => ($isEmail ? 'Email' : 'Nomor telepon').' pengguna berhasil diverifikasi.',
             'data' => [
+                'identifier' => $isEmail ? ($user->email ?: $user->phone) : ($user->phone ?: $user->email),
+                'type' => $isEmail ? 'email' : 'phone',
                 'email' => $user->email,
+                'phone' => $user->phone,
                 'name' => $user->name,
             ],
         ]);
@@ -329,22 +371,41 @@ class AuthController extends Controller
     public function resetPassword(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'email' => ['required', 'email'],
+            'identifier' => ['required_without_all:email,phone', 'nullable', 'string'],
+            'email' => ['nullable', 'email'],
+            'phone' => ['nullable', 'string'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
         ], [
-            'email.required' => 'Email wajib diisi.',
+            'identifier.required_without_all' => 'Email atau nomor telepon wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'password.required' => 'Kata sandi baru wajib diisi.',
             'password.min' => 'Kata sandi baru minimal terdiri dari 6 karakter.',
             'password.confirmed' => 'Konfirmasi kata sandi baru tidak cocok.',
         ]);
 
-        $user = User::where('email', $validated['email'])->first();
+        $identifier = trim($validated['identifier'] ?? $validated['email'] ?? $validated['phone'] ?? '');
 
-        if (! $user) {
+        if (empty($identifier)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Pengguna dengan email tersebut tidak ditemukan.',
+                'message' => 'Email atau nomor telepon wajib diisi.',
+            ], 422);
+        }
+
+        $isEmail = filter_var($identifier, FILTER_VALIDATE_EMAIL) !== false || str_contains($identifier, '@');
+
+        if ($isEmail) {
+            $user = User::where('email', $identifier)->first();
+        } else {
+            $user = $this->findUserByPhone($identifier);
+        }
+
+        if (! $user) {
+            $typeLabel = $isEmail ? 'email' : 'nomor telepon';
+
+            return response()->json([
+                'success' => false,
+                'message' => "Pengguna dengan {$typeLabel} tersebut tidak ditemukan.",
             ], 404);
         }
 
@@ -356,6 +417,48 @@ class AuthController extends Controller
             'success' => true,
             'message' => 'Kata sandi baru berhasil disimpan! Silakan masuk kembali dengan kata sandi baru Anda.',
         ]);
+    }
+
+    /**
+     * Find user by phone number supporting various phone formatting (e.g. 0812..., +62812..., 62812...)
+     */
+    protected function findUserByPhone(string $phone): ?User
+    {
+        $clean = preg_replace('/[^0-9]/', '', $phone);
+        if (empty($clean)) {
+            return null;
+        }
+
+        // 1. Normalized 08... format search (primary format stored in DB)
+        $normalized = User::normalizePhoneNumber($phone);
+        if ($normalized) {
+            $user = User::where('phone', $normalized)->first();
+            if ($user) {
+                return $user;
+            }
+        }
+
+        // 2. Direct match with input string
+        $user = User::where('phone', $phone)->first();
+        if ($user) {
+            return $user;
+        }
+
+        // 3. Fallback search for any legacy variants in DB (+62, 62, 08, etc.)
+        $variants = [$clean];
+        if (str_starts_with($clean, '62')) {
+            $variants[] = '0'.substr($clean, 2);
+            $variants[] = '+'.$clean;
+        } elseif (str_starts_with($clean, '0')) {
+            $variants[] = '62'.substr($clean, 1);
+            $variants[] = '+62'.substr($clean, 1);
+        } elseif (str_starts_with($clean, '8')) {
+            $variants[] = '0'.$clean;
+            $variants[] = '62'.$clean;
+            $variants[] = '+62'.$clean;
+        }
+
+        return User::whereIn('phone', array_unique($variants))->first();
     }
 
     /**

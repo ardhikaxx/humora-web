@@ -45,6 +45,46 @@ class User extends Authenticatable
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::saving(function (User $user) {
+            if ($user->phone !== null && $user->phone !== '') {
+                $user->phone = static::normalizePhoneNumber($user->phone);
+            }
+        });
+    }
+
+    /**
+     * Standardize Indonesian phone numbers to '08...' format
+     * Examples:
+     *   +6281234567890 -> 081234567890
+     *   6281234567890  -> 081234567890
+     *   81234567890    -> 081234567890
+     *   0812-3456-7890 -> 081234567890
+     *   081234567890   -> 081234567890
+     */
+    public static function normalizePhoneNumber(?string $phone): ?string
+    {
+        if ($phone === null) {
+            return null;
+        }
+
+        $clean = preg_replace('/[^0-9]/', '', $phone);
+        if (empty($clean)) {
+            return null;
+        }
+
+        if (str_starts_with($clean, '62')) {
+            return '0'.substr($clean, 2);
+        }
+
+        if (str_starts_with($clean, '8')) {
+            return '0'.$clean;
+        }
+
+        return $clean;
+    }
+
     /**
      * Generate initials from name (e.g. Ardhika Pradana -> AP, Admin Humora -> AH)
      */

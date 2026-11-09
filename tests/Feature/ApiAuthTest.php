@@ -147,3 +147,79 @@ test('authenticated user can access profile me endpoint', function () {
             ],
         ]);
 });
+
+test('register with +62 phone number stores normalized 08 in database', function () {
+    $payload = [
+        'name' => 'Pengguna Plus 62',
+        'phone' => '+6281234567899',
+        'password' => 'SecurePass123!',
+        'gender' => 'Laki-laki',
+    ];
+
+    $response = $this->postJson('/api/v1/auth/register', $payload);
+
+    $response->assertStatus(201);
+    expect($response->json('data.user.phone'))->toBe('081234567899');
+
+    // Database must store strictly '081234567899'
+    $this->assertDatabaseHas('users', [
+        'name' => 'Pengguna Plus 62',
+        'phone' => '081234567899',
+    ]);
+});
+
+test('user registered with +62 can login using 08 prefix and vice versa', function () {
+    // 1. Register with +628987654321
+    $regResponse = $this->postJson('/api/v1/auth/register', [
+        'name' => 'Pengguna Normalisasi',
+        'phone' => '+628987654321',
+        'password' => 'PasswordTest123!',
+    ]);
+    $regResponse->assertStatus(201);
+
+    // Verify stored as 08987654321
+    $this->assertDatabaseHas('users', [
+        'phone' => '08987654321',
+    ]);
+
+    // 2. Login using 08 prefix
+    $login08Response = $this->postJson('/api/v1/auth/login', [
+        'identifier' => '08987654321',
+        'password' => 'PasswordTest123!',
+    ]);
+    $login08Response->assertStatus(200)
+        ->assertJson([
+            'success' => true,
+            'message' => 'Login berhasil.',
+        ]);
+
+    // 3. Login using +62 prefix
+    $loginPlus62Response = $this->postJson('/api/v1/auth/login', [
+        'identifier' => '+628987654321',
+        'password' => 'PasswordTest123!',
+    ]);
+    $loginPlus62Response->assertStatus(200)
+        ->assertJson([
+            'success' => true,
+            'message' => 'Login berhasil.',
+        ]);
+});
+
+test('registration rejects duplicate phone even if entered with different prefixes (+62 vs 08)', function () {
+    User::create([
+        'name' => 'First User',
+        'phone' => '085566778899',
+        'password' => Hash::make('Secret123!'),
+        'status' => 'active',
+    ]);
+
+    // Attempt registration with +62 of same number
+    $response = $this->postJson('/api/v1/auth/register', [
+        'name' => 'Second User',
+        'phone' => '+6285566778899',
+        'password' => 'Secret123!',
+    ]);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['phone']);
+});

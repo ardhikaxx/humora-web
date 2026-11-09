@@ -178,3 +178,125 @@ test('mobile api reset password succeeds and updates password', function () {
     $user->refresh();
     expect(Hash::check('freshpassword123', $user->password))->toBeTrue();
 });
+
+test('mobile api verify forgot password fails when phone number is not registered', function () {
+    $response = $this->postJson('/api/v1/auth/forgot-password', [
+        'phone' => '089999999999',
+    ]);
+
+    $response->assertStatus(404)
+        ->assertJson([
+            'success' => false,
+            'message' => 'Nomor telepon tidak terdaftar dalam basis data sistem.',
+        ]);
+});
+
+test('mobile api verify forgot password succeeds when user registered with phone only (no email)', function () {
+    $user = User::factory()->create([
+        'email' => null,
+        'phone' => '081298765432',
+        'status' => 'active',
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/forgot-password', [
+        'phone' => '081298765432',
+    ]);
+
+    $response->assertStatus(200)
+        ->assertJson([
+            'success' => true,
+            'message' => 'Nomor telepon pengguna berhasil diverifikasi.',
+            'data' => [
+                'type' => 'phone',
+                'phone' => '081298765432',
+            ],
+        ]);
+});
+
+test('mobile api reset password succeeds using phone number', function () {
+    $user = User::factory()->create([
+        'email' => null,
+        'phone' => '081277778888',
+        'password' => Hash::make('initialpass123'),
+        'status' => 'active',
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/reset-password', [
+        'phone' => '081277778888',
+        'password' => 'newsecretpass456',
+        'password_confirmation' => 'newsecretpass456',
+    ]);
+
+    $response->assertStatus(200)
+        ->assertJson([
+            'success' => true,
+        ]);
+
+    $user->refresh();
+    expect(Hash::check('newsecretpass456', $user->password))->toBeTrue();
+});
+
+test('mobile api verify forgot password succeeds with +62 prefix when user registered with 08 prefix', function () {
+    $user = User::factory()->create([
+        'email' => null,
+        'phone' => '081234567890',
+        'status' => 'active',
+    ]);
+
+    // User inputs with +62
+    $response = $this->postJson('/api/v1/auth/forgot-password', [
+        'phone' => '+6281234567890',
+    ]);
+
+    $response->assertStatus(200)
+        ->assertJson([
+            'success' => true,
+            'message' => 'Nomor telepon pengguna berhasil diverifikasi.',
+            'data' => [
+                'type' => 'phone',
+                'phone' => '081234567890',
+            ],
+        ]);
+});
+
+test('mobile api verify forgot password succeeds with 08 prefix when user registered with +62 prefix', function () {
+    $user = User::factory()->create([
+        'email' => null,
+        'phone' => '+6281234567890',
+        'status' => 'active',
+    ]);
+
+    // User inputs with 08
+    $response = $this->postJson('/api/v1/auth/forgot-password', [
+        'phone' => '081234567890',
+    ]);
+
+    $response->assertStatus(200)
+        ->assertJson([
+            'success' => true,
+            'message' => 'Nomor telepon pengguna berhasil diverifikasi.',
+        ]);
+});
+
+test('mobile api reset password succeeds with +62 prefix when registered with 08 prefix', function () {
+    $user = User::factory()->create([
+        'email' => null,
+        'phone' => '081234567890',
+        'password' => Hash::make('oldpassword'),
+        'status' => 'active',
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/reset-password', [
+        'phone' => '+6281234567890',
+        'password' => 'freshpassword456',
+        'password_confirmation' => 'freshpassword456',
+    ]);
+
+    $response->assertStatus(200)
+        ->assertJson([
+            'success' => true,
+        ]);
+
+    $user->refresh();
+    expect(Hash::check('freshpassword456', $user->password))->toBeTrue();
+});

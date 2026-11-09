@@ -6,7 +6,7 @@
     <title>HUMORA — Platform Serial Komedi | Aplikasi Mobile</title>
 
     <!-- Meta SEO -->
-    <meta name="description" content="Nonton puluhan serial sketsa komedi khas Indonesia di aplikasi HUMORA. Tontonan lancar bebas putus-putus. Episode 1 &amp; 2 GRATIS! Unduh sekarang.">
+    <meta name="description" content="Nonton puluhan serial sketsa komedi khas Indonesia di aplikasi HUMORA. Tontonan lancar bebas putus-putus. Tonton Gratis Episode 1 di Serial Pilihan! Unduh sekarang.">
     <meta name="keywords" content="humora, serial komedi, serial komedi indonesia, video pendek, sketsa komedi, sketsa komedi pendek, streaming indonesia, download aplikasi humora, video lucu, hiburan singkat">
     <meta name="author" content="HUMORA">
     <link rel="canonical" href="{{ url()->current() }}">
@@ -15,7 +15,7 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="HUMORA">
     <meta property="og:title" content="HUMORA — Platform Serial Komedi">
-    <meta property="og:description" content="Nonton puluhan serial sketsa komedi Indonesia lucu berdurasi pendek di aplikasi HUMORA. Tontonan lancar bebas putus-putus. Episode 1 &amp; 2 GRATIS!">
+    <meta property="og:description" content="Nonton puluhan serial sketsa komedi Indonesia lucu berdurasi pendek di aplikasi HUMORA. Tontonan lancar bebas putus-putus. Tonton Gratis Episode 1 di Serial Pilihan!">
     <meta property="og:url" content="{{ route('landing') }}">
     <meta property="og:image" content="{{ asset('images/logo-humora-komersial.png') }}">
     <meta property="og:image:secure_url" content="{{ asset('images/logo-humora-komersial.png') }}">
@@ -27,7 +27,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="HUMORA — Platform Serial Komedi">
-    <meta name="twitter:description" content="Nonton puluhan serial sketsa komedi Indonesia lucu berdurasi pendek di aplikasi HUMORA. Tontonan lancar bebas putus-putus. Episode 1 &amp; 2 GRATIS!">
+    <meta name="twitter:description" content="Nonton puluhan serial sketsa komedi Indonesia lucu berdurasi pendek di aplikasi HUMORA. Tontonan lancar bebas putus-putus. Tonton Gratis Episode 1 di Serial Pilihan!">
     <meta name="twitter:image" content="{{ asset('images/logo-humora-komersial.png') }}">
 
     <!-- Favicon -->
@@ -108,7 +108,7 @@
                     </h1>
 
                     <p class="hero-description">
-                        Serial sketsa komedi pendek dengan cerita lucu langsung ke inti lelucon. Nonton santai bebas putus-putus, dan <strong>Episode 1 &amp; 2 GRATIS</strong> untuk semua serial!
+                        Serial sketsa komedi pendek dengan cerita lucu langsung ke inti lelucon. Nonton santai bebas putus-putus, dan <strong>Tonton Gratis Episode 1 di Serial Pilihan!</strong>
                     </p>
 
                     <div class="hero-btn-group">
@@ -128,7 +128,7 @@
                     <div class="hero-trust-badges">
                         <div class="trust-item">
                             <i class="bi bi-gift-fill text-warning"></i>
-                            <span>Episode 1 &amp; 2 Gratis</span>
+                            <span>Tonton Gratis Episode 1 di Serial Pilihan!</span>
                         </div>
                         <div class="trust-divider"></div>
                         <div class="trust-item">
@@ -258,8 +258,8 @@
                                     <i class="bi bi-gift-fill"></i>
                                 </div>
                                 <div class="perk-mini-body">
-                                    <h6 class="perk-mini-title">Episode 1 &amp; 2 Gratis</h6>
-                                    <p class="perk-mini-desc">Bebas tonton awal episode di semua serial komedi.</p>
+                                    <h6 class="perk-mini-title">Tonton Gratis Episode 1 di Serial Pilihan!</h6>
+                                    <p class="perk-mini-desc">Bebas tonton awal episode di serial komedi pilihan.</p>
                                 </div>
                             </div>
                         </div>
@@ -317,7 +317,7 @@
                             <span class="feature-number">02</span>
                             <h3 class="feature-title">Gratis Nonton &amp; Langganan Murah</h3>
                             <p class="feature-desc">
-                                Episode 1 &amp; 2 GRATIS untuk semua judul serial. Mau lanjut nonton? Tersedia pilihan paket mingguan hemat mulai Rp15.000 atau tambah video mulai Rp7.500 saja.
+                                Tonton Gratis Episode 1 di Serial Pilihan! Mau lanjut nonton? Tersedia pilihan paket mingguan hemat mulai Rp15.000 atau tambah video mulai Rp7.500 saja.
                             </p>
                         </div>
 
